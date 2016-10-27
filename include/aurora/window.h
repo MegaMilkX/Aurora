@@ -10,11 +10,8 @@ namespace Au
 class Window
 {
 public:
-    static Window Create(const std::string& title = "MyWindow", int width = 800, int height = 600);
-
-    Window();
+    Window(const std::string& title = "MyWindow", int width = 800, int height = 600);
     ~Window();
-
     bool Show();
     bool Update();
 private:
