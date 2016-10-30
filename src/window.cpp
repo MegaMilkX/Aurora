@@ -49,11 +49,11 @@ Window::Window(const std::string& title, int width, int height)
         return;
     }
 
-	RECT rect;
-	rect.left = 0;
-	rect.top = 0;
-	rect.right = width;
-	rect.bottom = height;
+    RECT rect;
+    rect.left = 0;
+    rect.top = 0;
+    rect.right = width;
+    rect.bottom = height;
 
 	AdjustWindowRectEx(&rect, WS_OVERLAPPEDWINDOW, false, 0);
     
@@ -63,7 +63,8 @@ Window::Window(const std::string& title, int width, int height)
         w_name.c_str(),
         WS_OVERLAPPEDWINDOW,
         CW_USEDEFAULT, CW_USEDEFAULT, rect.right - rect.left, rect.bottom - rect.top,
-        NULL, NULL, hInstance, NULL);
+        NULL, NULL, hInstance, NULL
+    );
     
     hWnd = hWnd;
     msg = { 0 };
