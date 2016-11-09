@@ -1,6 +1,8 @@
 #ifndef INPUTHANDLER_H
 #define INPUTHANDLER_H
 
+#include #include "../../include/aurora/window.h"
+
 namespace Au{
 namespace Input{
 
@@ -12,7 +14,7 @@ struct Event
 class Handler
 {
 public:
-    Handler();
+    Handler(const Au::Window& window);
     virtual Handler();
     
     virtual void OnInput(const Event& e);
