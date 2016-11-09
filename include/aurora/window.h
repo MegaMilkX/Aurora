@@ -14,6 +14,8 @@ public:
     ~Window();
     bool Show();
     bool Update();
+    
+    bool operator<(const Window& other);
 private:
     HWND hWnd;
     MSG  msg;

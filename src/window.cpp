@@ -100,4 +100,9 @@ bool Window::Update()
     return true;
 }
 
+bool Window::operator<(const Window& other)
+{
+    return hWnd < other.hWnd;
+}
+
 }
