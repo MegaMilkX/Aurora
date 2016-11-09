@@ -17,8 +17,8 @@ LRESULT CALLBACK InputWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
         {
         }
         break;
-    default:
-        return CallWindowProc(OldWndProc, hWnd, msg, wParam, lParam);
+    //default:
+        //return CallWindowProc(OldWndProc, hWnd, msg, wParam, lParam);
     }
     return 0;
 }
