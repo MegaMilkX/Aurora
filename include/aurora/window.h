@@ -19,6 +19,8 @@ public:
 private:
     HWND hWnd;
     MSG  msg;
+    
+    static int windowClassId;
 };
 
 }

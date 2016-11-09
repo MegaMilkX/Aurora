@@ -1,9 +1,12 @@
 #include "../include/aurora/window.h"
 
 #include <codecvt>
+#include <sstream>
 
 namespace Au
 {
+    
+int Window::windowClassId = 0;
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
@@ -28,6 +31,13 @@ Window::Window(const std::string& title, int width, int height)
     std::wstring w_name = converter.from_bytes(title.c_str());
 
     HINSTANCE hInstance = GetModuleHandle(0);
+    
+    // Create a WINAPI class name
+    std::wostringstream os;
+    os << windowClassId;
+    std::wstring w_class_name = os.str();
+    windowClassId++;
+    //
 
     WNDCLASSEX wc;
     
@@ -41,7 +51,7 @@ Window::Window(const std::string& title, int width, int height)
     wc.hCursor = LoadCursor(NULL, IDC_ARROW);
     wc.hbrBackground = (HBRUSH)(COLOR_WINDOW);
     wc.lpszMenuName = NULL;
-    wc.lpszClassName = w_name.c_str();
+    wc.lpszClassName = w_class_name.c_str();
     wc.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
     
     if(!RegisterClassEx(&wc))
@@ -59,7 +69,7 @@ Window::Window(const std::string& title, int width, int height)
     
     hWnd = CreateWindowExW(
         0,
-        w_name.c_str(),
+        w_class_name.c_str(),
         w_name.c_str(),
         WS_OVERLAPPEDWINDOW,
         CW_USEDEFAULT, CW_USEDEFAULT, rect.right - rect.left, rect.bottom - rect.top,
