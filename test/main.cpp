@@ -29,6 +29,7 @@ int main()
     //InputHandler input_handler(window);
     
     window.Name("GAME");
+    window.Resize(1280, 720);
     
     if(window.Show() && w2.Show())
         while(Au::Window::PollMessages());
