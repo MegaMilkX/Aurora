@@ -29,7 +29,7 @@ int main()
     //InputHandler input_handler(window);
     
     if(window.Show() && w2.Show())
-        while(window.Update() || w2.Update());
+        while(Au::Window::PollMessages());
     
     return 0;
 }

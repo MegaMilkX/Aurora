@@ -13,12 +13,13 @@ public:
     Window(const std::string& title = "MyWindow", int width = 800, int height = 600);
     ~Window();
     bool Show();
-    bool Update();
+    
+    static bool PollMessages();
     
     bool operator<(const Window& other);
 private:
     HWND hWnd;
-    MSG  msg;
+    static MSG msg;
     
     static int windowClassId;
 };

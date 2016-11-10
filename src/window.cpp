@@ -3,29 +3,37 @@
 #include <codecvt>
 #include <sstream>
 
+#include <iostream>
+
 namespace Au
 {
-    
+
+MSG Window::msg = { 0 };
 int Window::windowClassId = 0;
+int gTotalActiveWindows = 0;
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
+    LRESULT result = 0;
     switch(msg)
     {
     case WM_CLOSE:
+        gTotalActiveWindows--;
         DestroyWindow(hWnd);
         break;
     case WM_DESTROY:
-        PostQuitMessage(0);
+        if(gTotalActiveWindows == 0)
+            PostQuitMessage(0);
         break;
     default:
         return DefWindowProc(hWnd, msg, wParam, lParam);
     }
-    return 0;
+    
+    return result;
 }
 
 Window::Window(const std::string& title, int width, int height)
- : hWnd(NULL), msg({ 0 })
+ : hWnd(NULL)
 {
     std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
     std::wstring w_name = converter.from_bytes(title.c_str());
@@ -76,14 +84,14 @@ Window::Window(const std::string& title, int width, int height)
         NULL, NULL, hInstance, NULL
     );
     
-    hWnd = hWnd;
-    msg = { 0 };
+    gTotalActiveWindows++;
 
     return;
 }
 
 Window::~Window()
 {
+    CloseWindow(hWnd);
 }
 
 bool Window::Show()
@@ -97,13 +105,12 @@ bool Window::Show()
     return true;
 }
 
-bool Window::Update()
+bool Window::PollMessages()
 {
     while(PeekMessage(&msg, 0, 0, 0, PM_REMOVE))
     {
         TranslateMessage(&msg);
         DispatchMessage(&msg);
-
         if(msg.message == WM_QUIT)
             return false;
     }
