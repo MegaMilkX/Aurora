@@ -14,6 +14,8 @@ public:
     ~Window();
     bool Show();
     
+    void Name(const std::string& name);
+    
     static bool PollMessages();
     
     bool operator<(const Window& other);

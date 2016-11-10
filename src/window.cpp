@@ -105,6 +105,11 @@ bool Window::Show()
     return true;
 }
 
+void Window::Name(const std::string& name)
+{
+    SetWindowTextA(hWnd, name.c_str());
+}
+
 bool Window::PollMessages()
 {
     while(PeekMessage(&msg, 0, 0, 0, PM_REMOVE))
