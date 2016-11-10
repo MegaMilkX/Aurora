@@ -110,6 +110,19 @@ void Window::Name(const std::string& name)
     SetWindowTextA(hWnd, name.c_str());
 }
 
+void Window::Resize(unsigned width, unsigned height)
+{
+    RECT rect;
+    rect.left = 0;
+    rect.top = 0;
+    rect.right = width;
+    rect.bottom = height;
+
+	AdjustWindowRectEx(&rect, WS_OVERLAPPEDWINDOW, false, 0);
+    
+    SetWindowPos(hWnd, 0, 0, 0, rect.right, rect.bottom, SWP_NOMOVE);
+}
+
 bool Window::PollMessages()
 {
     while(PeekMessage(&msg, 0, 0, 0, PM_REMOVE))

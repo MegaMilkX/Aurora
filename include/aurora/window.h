@@ -15,6 +15,7 @@ public:
     bool Show();
     
     void Name(const std::string& name);
+    void Resize(unsigned width, unsigned height);
     
     static bool PollMessages();
     
