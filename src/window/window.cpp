@@ -1,4 +1,4 @@
-#include "../include/aurora/window.h"
+#include "window.h"
 
 #include <codecvt>
 #include <sstream>
