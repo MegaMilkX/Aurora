@@ -19,6 +19,8 @@ public:
     
     bool Destroyed();
     
+    operator HWND() const
+    { return hWnd; }
     bool operator<(const Window& other);
     
     static bool PollMessages();
