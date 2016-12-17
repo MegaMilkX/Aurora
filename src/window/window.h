@@ -23,6 +23,9 @@ public:
     
     static bool PollMessages();
 private:
+    Window(const Window& other){}
+    Window& operator=(const Window& other){}
+
     HWND hWnd;
     static MSG msg;
     
