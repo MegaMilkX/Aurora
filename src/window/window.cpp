@@ -2,7 +2,7 @@
 
 #include <codecvt>
 #include <sstream>
-
+#include <map>
 #include <iostream>
 
 namespace Au
@@ -12,6 +12,8 @@ MSG Window::msg = { 0 };
 int Window::windowClassId = 0;
 int gTotalActiveWindows = 0;
 
+std::map<HWND, bool*> flags_destroyed;
+
 LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     LRESULT result = 0;
@@ -20,6 +22,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
     case WM_CLOSE:
         gTotalActiveWindows--;
         DestroyWindow(hWnd);
+        *flags_destroyed[hWnd] = true;
         break;
     case WM_DESTROY:
         if(gTotalActiveWindows == 0)
@@ -85,6 +88,9 @@ Window::Window(const std::string& title, int width, int height)
     );
     
     gTotalActiveWindows++;
+    
+    destroyed = new bool(false);
+    flags_destroyed[hWnd] = destroyed;
 
     return;
 }
@@ -92,6 +98,8 @@ Window::Window(const std::string& title, int width, int height)
 Window::~Window()
 {
     CloseWindow(hWnd);
+    flags_destroyed.erase(hWnd);
+    delete destroyed;
 }
 
 bool Window::Show()
@@ -133,6 +141,11 @@ bool Window::PollMessages()
             return false;
     }
     return true;
+}
+
+bool Window::Destroyed()
+{
+    return *destroyed;
 }
 
 bool Window::operator<(const Window& other)

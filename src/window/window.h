@@ -17,12 +17,16 @@ public:
     void Name(const std::string& name);
     void Resize(unsigned width, unsigned height);
     
-    static bool PollMessages();
+    bool Destroyed();
     
     bool operator<(const Window& other);
+    
+    static bool PollMessages();
 private:
     HWND hWnd;
     static MSG msg;
+    
+    bool* destroyed;
     
     static int windowClassId;
 };
