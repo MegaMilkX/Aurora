@@ -19,7 +19,8 @@ odbc32.lib ^
 odbccp32.lib ^
 winmm.lib ^
 Shlwapi.lib ^
-legacy_stdio_definitions.lib
+legacy_stdio_definitions.lib ^
+Opengl32.lib
 
 set COMPILER_ARGS= /D "_UNICODE" /D "UNICODE" /GS /GL /analyze- /W3 /Gy /Zc:wchar_t /EHsc /MT /WX- /Zc:forScope /Gd /Oy- /Oi /Gm- /O2 /nologo
 
