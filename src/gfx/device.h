@@ -14,6 +14,7 @@ public:
     void Cleanup();
     
     void Clear();
+    void Render();
     void SwapBuffers();
     
     int APIVersion();

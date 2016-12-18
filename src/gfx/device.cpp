@@ -115,6 +115,11 @@ void Device::Clear()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
+void Device::Render()
+{
+    
+}
+
 void Device::SwapBuffers()
 {
     ::SwapBuffers(deviceContext);
