@@ -2,7 +2,7 @@
 #define GFXDEVICE_H
 
 #include "../window/window.h"
-#include "gl/glextutil.h"
+#include "shader.h"
 
 namespace Au{
 namespace GFX{
