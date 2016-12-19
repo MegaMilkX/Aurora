@@ -12,14 +12,14 @@ struct Keyframe
     Keyframe()
     : time(0)
     {}
-    Keyframe(unsigned int time)
+    Keyframe(float time)
     : time(time)
     {}
-    Keyframe(unsigned int time, T value)
+    Keyframe(float time, T value)
     : time(time), value(value) 
     {}
     
-    unsigned int    time;
+    float           time;
     T               value;
     
     bool operator<(const Keyframe& other)
@@ -38,7 +38,7 @@ template<typename T>
 class InterpolatorFlat
 {
 public:  
-    T operator()(const Keyframe<T>& first, const Keyframe<T>& second, unsigned int time)
+    T operator()(const Keyframe<T>& first, const Keyframe<T>& second, float time)
     {
         return first.value;
     }
@@ -52,12 +52,12 @@ public:
     : max_time(0)
     {}
 
-    void SetKey(unsigned int time, T value)
+    void SetKey(float time, T value)
     {
         (*this)[time] = value;
     }
     
-    void ClearKey(unsigned int time)
+    void ClearKey(float time)
     {
         for(unsigned int i = 0; i < timeline.size(); ++i)
         {
@@ -74,7 +74,7 @@ public:
         }
     }
     
-    Keyframe<T>& operator[](unsigned int time)
+    Keyframe<T>& operator[](float time)
     {
         for(unsigned int i = 0; i < timeline.size(); ++i)
             if(timeline[i].time == time)
@@ -92,7 +92,7 @@ public:
         return timeline[0];
     }
     
-    T Evaluate(unsigned int time)
+    T Evaluate(float time)
     {
         if(timeline.empty())
             return T();
@@ -100,7 +100,7 @@ public:
         Keyframe<T> first;
         Keyframe<T> second;
         
-        unsigned int time_overflow = (int)(time / max_time) * max_time;
+        float time_overflow = (int)(time / max_time) * max_time;
         time = time - time_overflow;
         
         for(unsigned int i = timeline.size() - 1; i >= 0; --i)
@@ -120,7 +120,7 @@ public:
     }
 private:
     std::vector<Keyframe<T>> timeline;
-    unsigned int max_time;
+    float max_time;
 };
 
 }
