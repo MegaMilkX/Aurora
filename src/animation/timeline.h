@@ -77,10 +77,8 @@ public:
         std::sort(timeline.begin(), timeline.end());
         
         for(unsigned int i = 0; i < timeline.size(); ++i)
-        {
             if(timeline[i].time == time)
                 return timeline[i];
-        }
         
         return timeline[0];
     }
