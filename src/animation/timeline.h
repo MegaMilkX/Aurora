@@ -48,7 +48,9 @@ template<typename T, typename INTERPOLATOR = InterpolatorFlat<T>>
 class Timeline
 {
 public:
-    
+    Timeline()
+    : max_time(0)
+    {}
 
     void SetKey(unsigned int time, T value)
     {
@@ -61,6 +63,11 @@ public:
         {
             if(timeline[i].time == time)
             {
+                if(i == timeline.size() - 1)
+                    if(i != 0)
+                        max_time = timeline[i - 1].time;
+                    else
+                        max_time = 0;
                 timeline.erase(timeline.begin() + i);
                 break;
             }
@@ -75,6 +82,8 @@ public:
         
         timeline.push_back(Keyframe<T>(time));
         std::sort(timeline.begin(), timeline.end());
+        if(max_time < time)
+            max_time = time;
         
         for(unsigned int i = 0; i < timeline.size(); ++i)
             if(timeline[i].time == time)
@@ -90,6 +99,9 @@ public:
         
         Keyframe<T> first;
         Keyframe<T> second;
+        
+        unsigned int time_overflow = (int)(time / max_time) * max_time;
+        time = time - time_overflow;
         
         for(unsigned int i = timeline.size() - 1; i >= 0; --i)
         {
@@ -108,6 +120,7 @@ public:
     }
 private:
     std::vector<Keyframe<T>> timeline;
+    unsigned int max_time;
 };
 
 }
