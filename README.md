@@ -1,4 +1,3 @@
-# Aurora
-Multipurpose C++ library. With emphasis on graphics.
+# Aurora [Multipurpose C++ library]
 
 Check out the [wiki](https://github.com/MegaMilkX/Aurora/wiki)!
