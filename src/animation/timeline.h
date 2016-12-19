@@ -69,7 +69,9 @@ public:
     
     Keyframe<T>& operator[](unsigned int time)
     {
-        ClearKey(time);
+        for(unsigned int i = 0; i < timeline.size(); ++i)
+            if(timeline[i].time == time)
+                return timeline[i];
         
         timeline.push_back(Keyframe<T>(time));
         std::sort(timeline.begin(), timeline.end());
