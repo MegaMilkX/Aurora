@@ -2,6 +2,7 @@
 #define GFXDEVICE_H
 
 #include "../window/window.h"
+#include "mesh.h"
 #include "shader.h"
 
 namespace Au{
