@@ -45,6 +45,12 @@ int main()
     Au::GFX::Device gfx_device;
     gfx_device.Init(window);
     
+    Au::GFX::Mesh mesh = gfx_device.CreateMesh();
+    mesh.Attrib<Au::GFX::Position,
+                Au::GFX::Normal,
+                Au::GFX::ColorRGB>
+                ();
+    
     Au::GFX::Shader shader;
     shader.AddStage(Au::GFX::Shader::PIXEL, R"(
         void main()
@@ -61,14 +67,7 @@ int main()
 
     window.Name("GAME");
     window.Resize(640, 480);
-    
-    Au::Timeline<std::string, InterpolatorStr> track;
-    track[0] = "Hello";
-    track[50] = "Hello, World";
-    track[100] = "Hello, World!";
-    track[150] = "Hello, World!";
 
-    unsigned int time = 0;
     if(window.Show())
         while(!window.Destroyed())
         {
@@ -76,8 +75,6 @@ int main()
             gfx_device.Clear();
             gfx_device.Render();
             gfx_device.SwapBuffers();
-            time++;
-            std::cout << track.Evaluate(time) << std::endl;
         }
         
     gfx_device.Cleanup();
