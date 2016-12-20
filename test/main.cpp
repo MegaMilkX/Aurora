@@ -66,6 +66,7 @@ int main()
     track[0] = "Hello";
     track[50] = "Hello, World";
     track[100] = "Hello, World!";
+    track[150] = "Hello, World!";
 
     unsigned int time = 0;
     if(window.Show())
@@ -76,8 +77,6 @@ int main()
             gfx_device.Render();
             gfx_device.SwapBuffers();
             time++;
-            if(time > 100)
-                time = 0;
             std::cout << track.Evaluate(time) << std::endl;
         }
         
