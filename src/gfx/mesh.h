@@ -3,9 +3,14 @@
 
 namespace Au{
 namespace GFX{
+    
+class AttributeBase
+{
+    
+};
 
 template<typename T, int count>
-class Attribute
+class Attribute : public AttributeBase
 {
 public:
     T& operator[](unsigned int index) { return value[index]; }
