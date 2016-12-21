@@ -45,11 +45,12 @@ int main()
     Au::GFX::Device gfx_device;
     gfx_device.Init(window);
     
-    Au::GFX::Mesh mesh = gfx_device.CreateMesh();
-    mesh.Attrib<Au::GFX::Position,
-                Au::GFX::Normal,
-                Au::GFX::ColorRGB>
-                ();
+    Au::GFX::Mesh mesh;// = gfx_device.CreateMesh();
+    mesh.Format(Au::GFX::Position() <<
+                Au::GFX::Normal() <<
+                Au::GFX::ColorRGB());
+    mesh.PrintFormat();
+    //mesh.VertexData(vertices, count);
     
     Au::GFX::Shader shader;
     shader.AddStage(Au::GFX::Shader::PIXEL, R"(
