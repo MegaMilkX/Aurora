@@ -4,6 +4,12 @@
 namespace Au{
 namespace GFX{
     
+struct AttribInfo
+{
+    unsigned int elemType;
+    unsigned char elemCount;
+};
+    
 class AttributeBase
 {
     
@@ -13,6 +19,13 @@ template<typename T, int count>
 class Attribute : public AttributeBase
 {
 public:
+    operator AttribInfo() const
+    {
+        AttribInfo info;
+        info.elemType = 0;
+        info.elemCount = count;
+        return info;
+    }
     T& operator[](unsigned int index) { return value[index]; }
 private:
     T value[count];
