@@ -1,6 +1,9 @@
 #ifndef MESH_H
 #define MESH_H
 
+#include <vector>
+#include <iostream>
+
 namespace Au{
 namespace GFX{
     
@@ -15,6 +18,13 @@ class AttributeBase
     
 };
 
+inline std::vector<AttribInfo> operator<<(const std::vector<AttribInfo>& left, const AttribInfo& right)
+{
+    std::vector<AttribInfo> result = left;
+    result.push_back(right);
+    return result;
+}
+
 template<typename T, int count>
 class Attribute : public AttributeBase
 {
@@ -27,12 +37,18 @@ public:
         return info;
     }
     T& operator[](unsigned int index) { return value[index]; }
+    std::vector<AttribInfo> operator<<(const AttribInfo& other)
+    {
+        std::vector<AttribInfo> result;
+        result.push_back(*this);
+        result.push_back(other);
+        return result;
+    }
 private:
     T value[count];
-}
+};
 
 #define DEFINE_MESH_ATTRIB(NAME, TYPE, COUNT) \
-template<int LAYER> \
 class NAME : public Attribute<TYPE, COUNT> \
 {}
 
@@ -44,30 +60,21 @@ DEFINE_MESH_ATTRIB(ColorRGB, char, 3);
 class Mesh
 {
 public:
-    void SetVertices(const vector<AttribInfo> attributes, void* data, unsigned int vertex_count);
-
-    template<typename ATTR0>
-    void Fill(void* data, unsigned int vertex_count);
-    template<typename ATTR0, typename ATTR1>
-    void Fill(void* data, unsigned int vertex_count);
-    template<typename ATTR0, typename ATTR1, typename ATTR2>
-    void Fill(void* data, unsigned int vertex_count);
-    template<typename ATTR0, typename ATTR1, typename ATTR2, typename ATTR3>
-    void Fill(void* data, unsigned int vertex_count);
-    template<typename ATTR0, typename ATTR1, typename ATTR2, typename ATTR3, typename ATTR4>
-    void Fill(void* data, unsigned int vertex_count);
-    template<typename ATTR0, typename ATTR1, typename ATTR2, typename ATTR3, typename ATTR4, typename ATTR5>
-    void Fill(void* data, unsigned int vertex_count);
-    template<typename ATTR0, typename ATTR1, typename ATTR2, typename ATTR3, typename ATTR4, typename ATTR5, typename ATTR6>
-    void Fill(void* data, unsigned int vertex_count);
-    template<typename ATTR0, typename ATTR1, typename ATTR2, typename ATTR3, typename ATTR4, typename ATTR5, typename ATTR6, typename ATTR7>
-    void Fill(void* data, unsigned int vertex_count);
-    template<typename ATTR0, typename ATTR1, typename ATTR2, typename ATTR3, typename ATTR4, typename ATTR5, typename ATTR6, typename ATTR7, typename ATTR8>
-    void Fill(void* data, unsigned int vertex_count);
-    template<typename ATTR0, typename ATTR1, typename ATTR2, typename ATTR3, typename ATTR4, typename ATTR5, typename ATTR6, typename ATTR7, typename ATTR9>
-    void Fill(void* data, unsigned int vertex_count);
-    template<typename ATTR0, typename ATTR1, typename ATTR2, typename ATTR3, typename ATTR4, typename ATTR5, typename ATTR6, typename ATTR7, typename ATTR9, typename ATTR10>
-    void Fill(void* data, unsigned int vertex_count);
+    void Format(const std::vector<AttribInfo>& vertexFormat)
+    {
+        this->vertexFormat = vertexFormat;
+    }
+    
+    void PrintFormat()
+    {
+        for(unsigned int i = 0; i < vertexFormat.size(); ++i)
+        {
+            std::cout << "Attrib: " << std::endl;
+            std::cout << (int)(vertexFormat[i].elemCount) << std::endl;
+        }
+    }
+private:
+    std::vector<AttribInfo> vertexFormat;
 };
 
 }
