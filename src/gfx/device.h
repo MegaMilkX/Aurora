@@ -18,6 +18,9 @@ public:
     void Render();
     void SwapBuffers();
     
+    Mesh* CreateMesh();
+    Shader* CreateShader();
+    
     int APIVersion();
 private:
     HDC deviceContext;
