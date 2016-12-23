@@ -20,6 +20,8 @@ public:
     
     Mesh* CreateMesh();
     Shader* CreateShader();
+    void Destroy(Mesh* mesh);
+    void Destroy(Shader* shader);
     
     int APIVersion();
 private:
