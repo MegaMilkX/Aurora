@@ -5,6 +5,8 @@
 #include <iostream>
 #include <string>
 
+#include "gl/glbuffer.h"
+
 namespace Au{
 namespace GFX{
     
@@ -87,6 +89,8 @@ public:
     }
 private:
     std::vector<AttribInfo> vertexFormat;
+    GLBuffer vertexBuffer;
+    GLBuffer indexBuffer;
 };
 
 }
