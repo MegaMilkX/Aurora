@@ -66,6 +66,7 @@ DEFINE_MESH_ATTRIB(Position, float, 3);
 DEFINE_MESH_ATTRIB(Normal, float, 3);
 DEFINE_MESH_ATTRIB(ColorRGBA, char, 4);
 DEFINE_MESH_ATTRIB(ColorRGB, char, 3);
+DEFINE_MESH_ATTRIB(UV, float, 2);
 
 class Mesh
 {
