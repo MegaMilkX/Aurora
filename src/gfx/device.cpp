@@ -125,6 +125,32 @@ void Device::SwapBuffers()
     ::SwapBuffers(deviceContext);
 }
 
+Mesh* Device::CreateMesh()
+{
+    wglMakeCurrent(deviceContext, context);
+    Mesh* mesh = new Mesh();
+    return mesh;
+}
+
+Shader* Device::CreateShader()
+{
+    wglMakeCurrent(deviceContext, context);
+    Shader* shader = new Shader();
+    return shader;
+}
+
+void Device::Destroy(Mesh* mesh)
+{
+    wglMakeCurrent(deviceContext, context);
+    delete mesh;
+}
+
+void Device::Destroy(Shader* shader)
+{
+    wglMakeCurrent(deviceContext, context);
+    delete shader;
+}
+
 int Device::APIVersion()
 {
     return contextVersion;
