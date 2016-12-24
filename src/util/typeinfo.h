@@ -16,6 +16,12 @@ struct TypeInfo
 private:
 };
 
+template<typename T>
+typeindex GetTypeIndex(T value)
+{
+    return TypeInfo<T>::Index();
+}
+
 inline typeindex _NewId()
 {
     static typeindex id;
