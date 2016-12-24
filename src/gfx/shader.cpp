@@ -45,7 +45,7 @@ bool Shader::Compile()
         compiled_stages.push_back(shader);
     }
     
-    unsigned int program = glCreateProgram();
+    program = glCreateProgram();
     for(unsigned int i = 0; i < compiled_stages.size(); ++i)
         glAttachShader(program, compiled_stages[i]);
     

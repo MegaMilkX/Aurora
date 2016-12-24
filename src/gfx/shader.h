@@ -26,6 +26,7 @@ public:
 private:
     std::map<STAGE, std::string> stages;
     std::string status_string;
+    unsigned int program;
 };
     
 }
