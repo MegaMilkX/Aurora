@@ -1,7 +1,5 @@
 #include "glbuffer.h"
 
-#include "glextutil.h"
-
 namespace Au{
 namespace GFX{
 

@@ -1,6 +1,8 @@
 #ifndef GLBUFFER_H
 #define GLBUFFER_H
 
+#include "glextutil.h"
+
 namespace Au{
 namespace GFX{
 
