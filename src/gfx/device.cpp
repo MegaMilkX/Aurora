@@ -117,7 +117,7 @@ void Device::Clear()
 
 void Device::Render()
 {
-    
+    boundMesh->Render();
 }
 
 void Device::SwapBuffers()
@@ -149,6 +149,18 @@ void Device::Destroy(Shader* shader)
 {
     wglMakeCurrent(deviceContext, context);
     delete shader;
+}
+
+void Device::Bind(Mesh* mesh)
+{
+    boundMesh = mesh;
+    mesh->Bind();
+}
+
+void Device::Bind(Shader* shader)
+{
+    boundShader = shader;
+    shader->Bind();
 }
 
 int Device::APIVersion()

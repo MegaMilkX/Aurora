@@ -23,12 +23,18 @@ public:
     void Destroy(Mesh* mesh);
     void Destroy(Shader* shader);
     
+    void Bind(Mesh* mesh);
+    void Bind(Shader* shader);
+    
     int APIVersion();
 private:
     HDC deviceContext;
     HGLRC context;
     HGLRC threadingContext;
     int contextVersion = 0;
+    
+    Mesh* boundMesh;
+    Shader* boundShader;
 };
 
 }
