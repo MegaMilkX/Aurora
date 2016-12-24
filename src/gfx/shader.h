@@ -22,6 +22,8 @@ public:
     
     bool Compile();
     
+    void Bind();
+    
     std::string StatusString(){ return status_string; }
 private:
     std::map<STAGE, std::string> stages;

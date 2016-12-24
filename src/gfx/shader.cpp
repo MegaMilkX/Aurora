@@ -65,7 +65,12 @@ bool Shader::Compile()
     }
     
     return true;
-} 
+}
+
+void Shader::Bind()
+{
+    glUseProgram(program);
+}
     
 }
 }
