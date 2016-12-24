@@ -4,11 +4,18 @@
 #include <vector>
 #include <iostream>
 #include <string>
+#include <map>
 
 #include "../util/typeinfo.h"
 
 namespace Au{
 namespace GFX{
+    
+// Global attribute index
+typedef unsigned int AttribIndex;
+// A number that tells you which one of the same attribute type
+// of the same vertex format this is
+typedef unsigned int AttribInstance;
 
 struct AttribInfo
 {
@@ -70,6 +77,8 @@ protected:
     std::string name;
     typeindex myTypeIndex;
 };
+
+AttribIndex GetGlobalAttribIndex(typeindex type, unsigned int instance);
 
 #define DEFINE_MESH_ATTRIB(NAME, TYPE, COUNT) \
 class NAME : public Attribute<TYPE, COUNT> \
