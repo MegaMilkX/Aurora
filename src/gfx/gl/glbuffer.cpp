@@ -5,7 +5,7 @@ namespace GFX{
 
 GLBuffer GLBuffer::Create(unsigned int target, unsigned int usage_hint)
 {
-    GeometryBuffer gb;
+    GLBuffer gb;
     gb.target = target;
     gb.usage = usage_hint;
     glGenBuffers(1, &gb.buffer);
