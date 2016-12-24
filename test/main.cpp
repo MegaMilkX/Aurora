@@ -56,14 +56,14 @@ int main()
     // Setting up a mesh ============================================
 
     std::vector<Vertex> vertices =
-    { {-0.5f, -0.5f, 0.5f, 255, 50, 255},
-      {0.5f, -0.5f, 0.5f, 255, 50, 255},
-      {0.5f, 0.5f, 0.5f, 255, 50, 255},
-      {-0.5f, 0.5f, 0.5f, 255, 50, 255},
-      {-0.5f, -0.5f, -0.5f, 255, 50, 255},
-      {0.5f, -0.5f, -0.5f, 255, 50, 255},
-      {0.5f, 0.5f, -0.5f, 255, 50, 255},
-      {-0.5f, 0.5f, -0.5f, 255, 50, 255} };
+    { {-0.5f, -0.5f, 0.5f, 255, 100, 0},
+      {0.5f, -0.5f, 0.5f, 0, 100, 255},
+      {0.5f, 0.5f, 0.5f, 0, 255, 100},
+      {-0.5f, 0.5f, 0.5f, 100, 255, 0},
+      {-0.5f, -0.5f, -0.5f, 0, 0, 0},
+      {0.5f, -0.5f, -0.5f, 0, 0, 0},
+      {0.5f, 0.5f, -0.5f, 0, 0, 0},
+      {-0.5f, 0.5f, -0.5f, 0, 0, 0} };
 
     std::vector<unsigned short> indices =
     { 0, 1, 2, 2, 3, 0,
@@ -84,20 +84,29 @@ int main()
     // ==============================================================
 
     Au::GFX::Shader* shader = gfx_device.CreateShader();
+    shader->AttribFormat(Au::GFX::Position() << Au::GFX::ColorRGB());
     shader->AddStage(Au::GFX::Shader::PIXEL, R"(
+        varying vec3 color;
         void main()
         {
-            gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+            gl_FragColor = vec4(color, 1.0);
         })");
     shader->AddStage(Au::GFX::Shader::VERTEX, R"(
+        uniform mat4 MatrixModel;
+        uniform mat4 MatrixView;
+        uniform mat4 MatrixProjection;
+        in vec3 Position;
+        in vec3 ColorRGB;
+        varying vec3 color;
         void main()
         {
-            gl_Position = vec4(0.0, 0.0, 0.0, 1.0);
+            color = ColorRGB;
+            gl_Position = vec4(Position, 1.0);
         })");
     shader->Compile();
     std::cout << shader->StatusString();
 
-    //gfx_device.Bind(shader);
+    gfx_device.Bind(shader);
     
     window.Name("GAME");
     window.Resize(640, 480);
