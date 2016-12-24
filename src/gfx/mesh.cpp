@@ -66,10 +66,13 @@ void Mesh::Format(const std::vector<AttribInfo>& vertexFormat)
         AttribIndex globalAttribIndex = 
             GetGlobalAttribIndex(attrInfo.typeIndex,
                                  instanceCounters[attrInfo.typeIndex]++);
+        GLboolean normalized = GL_FALSE;
+        if(GetGLType(attrInfo.elemType) == GL_UNSIGNED_BYTE)
+            normalized = GL_TRUE;
         glVertexAttribPointer(globalAttribIndex,                    //*attrib index
                               attrInfo.elemCount,                   //*attrib element count
                               GetGLType(attrInfo.elemType),         //*element type
-                              GL_FALSE,                             //*normalize?
+                              normalized,                           //*normalize?
                               vertexSize,                           //*stride
                               (void*)offset);                       //*offset
         offset += attrInfo.elemSize * attrInfo.elemCount;
