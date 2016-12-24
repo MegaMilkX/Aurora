@@ -67,6 +67,25 @@ bool Shader::Compile()
     return true;
 }
 
+void Shader::AttribFormat(const std::vector<AttribInfo>& vertexFormat)
+{
+    this->vertexFormat = vertexFormat;
+    std::map<typeindex, AttribInstance> instanceCounters;
+    for(unsigned int i = 0; i < vertexFormat.size(); ++i)
+    {
+        const AttribInfo& attrInfo = vertexFormat[i];
+        AttribIndex globalAttribIndex = 
+            GetGlobalAttribIndex(attrInfo.typeIndex,
+                                 instanceCounters[attrInfo.typeIndex]++);
+        
+        std::string shaderInputName = attrInfo.name;
+        if(globalAttribIndex > 0)
+            shaderInputName += std::to_string(globalAttribIndex);
+                                 
+        glBindAttribLocation(program, globalAttribIndex, shaderInputName.c_str());
+    }
+}
+
 void Shader::Bind()
 {
     glUseProgram(program);

@@ -6,6 +6,8 @@
 #include <string>
 #include "gl/glextutil.h"
 
+#include "attribute.h"
+
 namespace Au{
 namespace GFX{
     
@@ -19,8 +21,8 @@ public:
     };
     
     void AddStage(STAGE stage, const std::string& source);
-    
     bool Compile();
+    void AttribFormat(const std::vector<AttribInfo>& vertexFormat);
     
     void Bind();
     
@@ -29,6 +31,8 @@ private:
     std::map<STAGE, std::string> stages;
     std::string status_string;
     unsigned int program;
+    
+    std::vector<AttribInfo> vertexFormat;
 };
     
 }
