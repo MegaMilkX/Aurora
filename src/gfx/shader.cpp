@@ -91,33 +91,33 @@ void Shader::Bind()
     glUseProgram(program);
 }
 
-void Shader::Uniform(std::string& name, float value) 
+void Shader::Uniform(const std::string& name, float value) 
 { glUniform1f(glGetUniformLocation(program, name.c_str()), value); }
-void Shader::Uniform(std::string& name, Math::Vec2f& value) 
+void Shader::Uniform(const std::string& name, Math::Vec2f& value) 
 { glUniform2f(glGetUniformLocation(program, name.c_str()), value.x, value.y); }
-void Shader::Uniform(std::string& name, Math::Vec3f& value) 
+void Shader::Uniform(const std::string& name, Math::Vec3f& value) 
 { glUniform3f(glGetUniformLocation(program, name.c_str()), value.x, value.y, value.z); }
-void Shader::Uniform(std::string& name, Math::Vec4f& value) 
+void Shader::Uniform(const std::string& name, Math::Vec4f& value) 
 { glUniform4f(glGetUniformLocation(program, name.c_str()), value.x, value.y, value.z, value.w); }
-void Shader::Uniform(std::string& name, int value) 
+void Shader::Uniform(const std::string& name, int value) 
 { glUniform1i(glGetUniformLocation(program, name.c_str()), value); }
-void Shader::Uniform(std::string& name, Math::Vec2i& value) 
+void Shader::Uniform(const std::string& name, Math::Vec2i& value) 
 { glUniform2i(glGetUniformLocation(program, name.c_str()), value.x, value.y); }
-void Shader::Uniform(std::string& name, Math::Vec3i& value) 
+void Shader::Uniform(const std::string& name, Math::Vec3i& value) 
 { glUniform3i(glGetUniformLocation(program, name.c_str()), value.x, value.y, value.z); }
-void Shader::Uniform(std::string& name, Math::Vec4i& value) 
+void Shader::Uniform(const std::string& name, Math::Vec4i& value) 
 { glUniform4i(glGetUniformLocation(program, name.c_str()), value.x, value.y, value.z, value.w); }
-void Shader::Uniform(std::string& name, unsigned int value) 
+void Shader::Uniform(const std::string& name, unsigned int value) 
 { glUniform1ui(glGetUniformLocation(program, name.c_str()), value); }
-void Shader::Uniform(std::string& name, Math::Vec2ui& value) 
+void Shader::Uniform(const std::string& name, Math::Vec2ui& value) 
 { glUniform2ui(glGetUniformLocation(program, name.c_str()), value.x, value.y); }
-void Shader::Uniform(std::string& name, Math::Vec3ui& value) 
+void Shader::Uniform(const std::string& name, Math::Vec3ui& value) 
 { glUniform3ui(glGetUniformLocation(program, name.c_str()), value.x, value.y, value.z); }
-void Shader::Uniform(std::string& name, Math::Vec4ui& value) 
+void Shader::Uniform(const std::string& name, Math::Vec4ui& value) 
 { glUniform4ui(glGetUniformLocation(program, name.c_str()), value.x, value.y, value.z, value.w); }
-void Shader::Uniform(std::string& name, Math::Mat3f& value) 
+void Shader::Uniform(const std::string& name, Math::Mat3f& value) 
 { glUniformMatrix3fv(glGetUniformLocation(program, name.c_str()), 1, GL_FALSE, (float*)&value); }
-void Shader::Uniform(std::string& name, Math::Mat4f& value) 
+void Shader::Uniform(const std::string& name, Math::Mat4f& value) 
 { glUniformMatrix4fv(glGetUniformLocation(program, name.c_str()), 1, GL_FALSE, (float*)&value); }
     
 }
