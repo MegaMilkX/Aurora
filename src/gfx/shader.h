@@ -8,6 +8,8 @@
 
 #include "attribute.h"
 
+#include "../math.h"
+
 namespace Au{
 namespace GFX{
     
@@ -25,6 +27,21 @@ public:
     void AttribFormat(const std::vector<AttribInfo>& vertexFormat);
     
     void Bind();
+    
+    void Uniform(std::string& name, float value);
+    void Uniform(std::string& name, Math::Vec2f& value);
+    void Uniform(std::string& name, Math::Vec3f& value);
+    void Uniform(std::string& name, Math::Vec4f& value);
+    void Uniform(std::string& name, int value);
+    void Uniform(std::string& name, Math::Vec2i& value);
+    void Uniform(std::string& name, Math::Vec3i& value);
+    void Uniform(std::string& name, Math::Vec4i& value);
+    void Uniform(std::string& name, unsigned int value);
+    void Uniform(std::string& name, Math::Vec2ui& value);
+    void Uniform(std::string& name, Math::Vec3ui& value);
+    void Uniform(std::string& name, Math::Vec4ui& value);
+    void Uniform(std::string& name, Math::Mat3f& value);
+    void Uniform(std::string& name, Math::Mat4f& value);
     
     std::string StatusString(){ return status_string; }
 private:
