@@ -57,14 +57,14 @@ int main()
     // Setting up a mesh ============================================
 
     std::vector<Vertex> vertices =
-    { {-0.5f, -0.5f, 0.5f, 255, 50, 0},
-      {0.5f, -0.5f, 0.5f, 0, 50, 255},
-      {0.5f, 0.5f, 0.5f, 0, 255, 50},
-      {-0.5f, 0.5f, 0.5f, 50, 255, 0},
-      {-0.5f, -0.5f, -0.5f, 0, 0, 0},
-      {0.5f, -0.5f, -0.5f, 0, 0, 0},
-      {0.5f, 0.5f, -0.5f, 0, 0, 0},
-      {-0.5f, 0.5f, -0.5f, 0, 0, 0} };
+    { {-0.5f, -0.5f, 0.5f, 255, 100, 0},
+      {0.5f, -0.5f, 0.5f, 0, 100, 255},
+      {0.5f, 0.5f, 0.5f, 0, 255, 100},
+      {-0.5f, 0.5f, 0.5f, 100, 255, 0},
+      {-0.5f, -0.5f, -0.5f, 0, 100, 255},
+      {0.5f, -0.5f, -0.5f, 0, 255, 100},
+      {0.5f, 0.5f, -0.5f, 100, 255, 0},
+      {-0.5f, 0.5f, -0.5f, 255, 100, 0} };
 
     std::vector<unsigned short> indices =
     { 0, 1, 2, 2, 3, 0,
@@ -116,7 +116,7 @@ int main()
     shader->AddUniform(Au::GFX::Uniform<Au::Math::Mat4f>::Get("MatrixView"));
     shader->AddUniform(Au::GFX::Uniform<Au::Math::Mat4f>::Get("MatrixProjection"));
     
-    window.Name("GAME");
+    window.Name("Aurora");
     window.Resize(640, 480);
 
     if(window.Show())
@@ -124,15 +124,14 @@ int main()
         {
             Au::Window::PollMessages();
             
+            model.Rotate(0.0001f, Au::Math::Vec3f(0, 1, 0));
+            
             Au::GFX::Uniform<Au::Math::Mat4f>::Get("MatrixModel") = model.GetTransform();
             Au::GFX::Uniform<Au::Math::Mat4f>::Get("MatrixView") = Au::Math::Inverse(view.GetTransform());
             Au::GFX::Uniform<Au::Math::Mat4f>::Get("MatrixProjection") = projection;
             
             gfx_device.Bind(mesh);
             gfx_device.Bind(shader);
-            
-            model.Rotate(0.0001f, Au::Math::Vec3f(0, 1, 0));
-            shader->SetUniform("MatrixModel", model.GetTransform());
             
             gfx_device.Clear();
             gfx_device.Render();
