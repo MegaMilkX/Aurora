@@ -297,19 +297,19 @@ inline Vec3f operator*(const Mat3f &m, const Vec3f &v)
 }
 
 //
-inline Mat3f transpose(const Mat3f &m)
+inline Mat3f Transpose(const Mat3f &m)
 {
     //TODO
     return Mat3f();
 }
 
-inline Mat4f transpose(const Mat4f &m)
+inline Mat4f Transpose(const Mat4f &m)
 {
     //TODO
     return Mat4f();
 }
 
-inline Mat4f scale(const Mat4f &m, const Vec3f &v)
+inline Mat4f Scale(const Mat4f &m, const Vec3f &v)
 {
     Mat4f r = m;
     r[0] *= v[0];
@@ -318,14 +318,14 @@ inline Mat4f scale(const Mat4f &m, const Vec3f &v)
     return r;
 }
 
-inline Mat4f translate(const Mat4f &m, const Vec3f &v)
+inline Mat4f Translate(const Mat4f &m, const Vec3f &v)
 {
     Mat4f r = m;
     r[3] = m[0] * v[0] + m[1] * v[1] + m[2] * v[2] + m[3];
     return r;
 }
 
-inline Mat4f inverse(const Mat4f &m)
+inline Mat4f Inverse(const Mat4f &m)
 {
     float det;
     Mat4f inv;
@@ -455,7 +455,7 @@ inline Mat4f inverse(const Mat4f &m)
     return inv;
 }
 
-inline Mat4f perspective(float fov, float aspect, float znear, float zfar)
+inline Mat4f Perspective(float fov, float aspect, float znear, float zfar)
 {
     assert(aspect != 0.0f);
     assert(zfar != znear);
@@ -471,7 +471,7 @@ inline Mat4f perspective(float fov, float aspect, float znear, float zfar)
     return r;
 }
 
-inline Mat4f ortho(float left, float right, float bottom, float top, float znear, float zfar)
+inline Mat4f Ortho(float left, float right, float bottom, float top, float znear, float zfar)
 {
     Mat4f r(1.0f);
     r[0][0] = 2.0f / (right - left);
@@ -537,7 +537,7 @@ inline float Clamp(float f, float a, float b)
 
 inline float Smoothstep(float a, float b, float x)
 {
-    x = clamp((x - a) / (b - a), 0.0f, 1.0f);
+    x = Clamp((x - a) / (b - a), 0.0f, 1.0f);
     return x * x * (3 - 2 * x);
 }
    
