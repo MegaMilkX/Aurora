@@ -7,8 +7,7 @@
 #include "gl/glextutil.h"
 
 #include "attribute.h"
-
-#include "../math.h"
+#include "uniform.h"
 
 namespace Au{
 namespace GFX{
@@ -22,13 +21,15 @@ public:
         PIXEL
     };
     
+    ~Shader();
+    
     void AddStage(STAGE stage, const std::string& source);
     bool Compile();
     void AttribFormat(const std::vector<AttribInfo>& vertexFormat);
     
     void Bind();
     
-    void AddUniform(IUniform* uniform);
+    void AddUniform(const IUniform& uniform);
     
     void SetUniform(const std::string& name, float value);
     void SetUniform(const std::string& name, Math::Vec2f& value);
@@ -52,6 +53,9 @@ private:
     unsigned int program;
     
     std::vector<AttribInfo> vertexFormat;
+    
+    std::vector<IUniform*> uniforms;
+    std::vector<unsigned int> uniformLocations;
 };
     
 }

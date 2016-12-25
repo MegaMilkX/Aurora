@@ -2,6 +2,14 @@
 
 namespace Au{
 namespace GFX{
+    
+Shader::~Shader()
+{
+    for(unsigned int i = 0; i < uniforms.size(); ++i)
+    {
+        delete uniforms[i];
+    }
+}
  
 void Shader::AddStage(STAGE stage, const std::string& source)
 {
@@ -89,6 +97,16 @@ void Shader::AttribFormat(const std::vector<AttribInfo>& vertexFormat)
 void Shader::Bind()
 {
     glUseProgram(program);
+    for(unsigned int i = 0; i < uniforms.size(); ++i)
+    {
+        uniforms[i]->Upload(uniformLocations[i]);
+    }
+}
+
+void Shader::AddUniform(const IUniform& uniform)
+{
+    uniformLocations.push_back(glGetUniformLocation(program, uniform.Name().c_str()));
+    uniforms.push_back(uniform.Copy());
 }
 
 void Shader::SetUniform(const std::string& name, float value) 
