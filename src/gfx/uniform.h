@@ -5,7 +5,7 @@
 #include <vector>
 #include <map>
 
-#include "../math.h"
+#include "../math/math.h"
 
 namespace Au{
 namespace GFX{
