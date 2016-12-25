@@ -83,6 +83,13 @@ int main()
 
     // ==============================================================
 
+    Au::Math::Mat4f projection = Au::Math::Perspective(1.6f, 4.0f/3.0f, 0.1f, 100);
+    Au::Math::Mat4f view = Au::Math::Mat4f(1.0f);
+    Au::Math::Mat4f model = Au::Math::Mat4f(1.0f);
+    view = Au::Math::Translate(view, Au::Math::Vec3f(0.0f, 1.0f, 2.0f));
+    
+    // ==============================================================
+    
     Au::GFX::Shader* shader = gfx_device.CreateShader();
     shader->AttribFormat(Au::GFX::Position() << Au::GFX::ColorRGB());
     shader->AddStage(Au::GFX::Shader::PIXEL, R"(
@@ -105,16 +112,16 @@ int main()
         })");
     shader->Compile();
     std::cout << shader->StatusString();
-
-    gfx_device.Bind(shader);
     
-    Au::Math::Mat4f projection = Au::Math::Perspective(1.6f, 4.0f/3.0f, 0.1f, 100);
-    Au::Math::Mat4f view = Au::Math::Mat4f(1.0f);
-    Au::Math::Mat4f model = Au::Math::Mat4f(1.0f);
-    view = Au::Math::Translate(view, Au::Math::Vec3f(0.0f, 0.7f, 2.0f));
-    shader->Uniform(std::string("MatrixModel"), model);
-    shader->Uniform(std::string("MatrixView"), Au::Math::Inverse(view));
-    shader->Uniform(std::string("MatrixProjection"), projection);
+    shader->AddUniform(Au::GFX::Uniform<Au::Math::Mat4f>::Get("MatrixModel"));
+    shader->AddUniform(Au::GFX::Uniform<Au::Math::Mat4f>::Get("MatrixView"));
+    shader->AddUniform(Au::GFX::Uniform<Au::Math::Mat4f>::Get("MatrixProjection"));
+
+    Au::GFX::Uniform<Au::Math::Mat4f>::Get("MatrixModel") = model;
+    Au::GFX::Uniform<Au::Math::Mat4f>::Get("MatrixView") = Au::Math::Inverse(view);
+    Au::GFX::Uniform<Au::Math::Mat4f>::Get("MatrixProjection") = projection;
+    
+    gfx_device.Bind(shader);
     
     // ==============================================================
     
