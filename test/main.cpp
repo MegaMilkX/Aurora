@@ -1,6 +1,7 @@
 #include <aurora/window.h>
 #include <aurora/gfx.h>
 #include <aurora/timeline.h>
+#include <aurora/transform.h>
 
 #include <iostream>
 
@@ -56,10 +57,10 @@ int main()
     // Setting up a mesh ============================================
 
     std::vector<Vertex> vertices =
-    { {-0.5f, -0.5f, 0.5f, 255, 100, 0},
-      {0.5f, -0.5f, 0.5f, 0, 100, 255},
-      {0.5f, 0.5f, 0.5f, 0, 255, 100},
-      {-0.5f, 0.5f, 0.5f, 100, 255, 0},
+    { {-0.5f, -0.5f, 0.5f, 255, 50, 0},
+      {0.5f, -0.5f, 0.5f, 0, 50, 255},
+      {0.5f, 0.5f, 0.5f, 0, 255, 50},
+      {-0.5f, 0.5f, 0.5f, 50, 255, 0},
       {-0.5f, -0.5f, -0.5f, 0, 0, 0},
       {0.5f, -0.5f, -0.5f, 0, 0, 0},
       {0.5f, 0.5f, -0.5f, 0, 0, 0},
@@ -79,14 +80,12 @@ int main()
     mesh->VertexData(vertices);
     mesh->IndexData(indices);
 
-    gfx_device.Bind(mesh);
-
     // ==============================================================
 
+    Au::Math::Transform model;
+    Au::Math::Transform view;
     Au::Math::Mat4f projection = Au::Math::Perspective(1.6f, 4.0f/3.0f, 0.1f, 100);
-    Au::Math::Mat4f view = Au::Math::Mat4f(1.0f);
-    Au::Math::Mat4f model = Au::Math::Mat4f(1.0f);
-    view = Au::Math::Translate(view, Au::Math::Vec3f(0.0f, 1.0f, 2.0f));
+    view.Translate(Au::Math::Vec3f(0.0f, 1.0f, 2.0f));
     
     // ==============================================================
     
@@ -116,14 +115,6 @@ int main()
     shader->AddUniform(Au::GFX::Uniform<Au::Math::Mat4f>::Get("MatrixModel"));
     shader->AddUniform(Au::GFX::Uniform<Au::Math::Mat4f>::Get("MatrixView"));
     shader->AddUniform(Au::GFX::Uniform<Au::Math::Mat4f>::Get("MatrixProjection"));
-
-    Au::GFX::Uniform<Au::Math::Mat4f>::Get("MatrixModel") = model;
-    Au::GFX::Uniform<Au::Math::Mat4f>::Get("MatrixView") = Au::Math::Inverse(view);
-    Au::GFX::Uniform<Au::Math::Mat4f>::Get("MatrixProjection") = projection;
-    
-    gfx_device.Bind(shader);
-    
-    // ==============================================================
     
     window.Name("GAME");
     window.Resize(640, 480);
@@ -132,6 +123,17 @@ int main()
         while(!window.Destroyed())
         {
             Au::Window::PollMessages();
+            
+            Au::GFX::Uniform<Au::Math::Mat4f>::Get("MatrixModel") = model.GetTransform();
+            Au::GFX::Uniform<Au::Math::Mat4f>::Get("MatrixView") = Au::Math::Inverse(view.GetTransform());
+            Au::GFX::Uniform<Au::Math::Mat4f>::Get("MatrixProjection") = projection;
+            
+            gfx_device.Bind(mesh);
+            gfx_device.Bind(shader);
+            
+            model.Rotate(0.0001f, Au::Math::Vec3f(0, 1, 0));
+            shader->SetUniform("MatrixModel", model.GetTransform());
+            
             gfx_device.Clear();
             gfx_device.Render();
             gfx_device.SwapBuffers();
