@@ -169,19 +169,19 @@ inline Vec3f operator/=(Vec3f &a, const float &f){
 }
 
 //
-inline float dot(const Vec3f &a, const Vec3f &b){
+inline float Dot(const Vec3f &a, const Vec3f &b){
     return a.x * b.x + a.y * b.y + a.z * b.z;
 }
 
-inline Vec3f cross(const Vec3f &a, const Vec3f &b){
+inline Vec3f Cross(const Vec3f &a, const Vec3f &b){
     return Vec3f(a.y * b.z - a.z * b.y, a.z * b.x - a.x * b.z, a.x * b.y - a.y * b.x);
 }
 
-inline Vec3f normalize(const Vec3f &a){
+inline Vec3f Normalize(const Vec3f &a){
     return a / a.length();
 }
 
-inline Vec4f normalize(const Vec4f &a){
+inline Vec4f Normalize(const Vec4f &a){
     return a / a.length();
 }
 
@@ -460,7 +460,7 @@ inline Mat4f Perspective(float fov, float aspect, float znear, float zfar)
     assert(aspect != 0.0f);
     assert(zfar != znear);
 
-    float tanHalfFovy = tan(fov / 2.0f);
+    float tanHalfFovy = tanf(fov / 2.0f);
 
     Mat4f r(0);
     r[0][0] = 1.0f / (aspect * tanHalfFovy);
@@ -502,8 +502,8 @@ inline Vec3f Rotate(const Quat &q, const Vec3f &v)
 
 inline Quat AngleAxis(const float &a, const Vec3f &axis)
 {
-    float s = sin(a * 0.5f);
-    return Quat(axis.x * s, axis.y * s, axis.z * s, cos(a*0.5f));
+    float s = sinf(a * 0.5f);
+    return Quat(axis.x * s, axis.y * s, axis.z * s, cosf(a*0.5f));
 }
 
 ///////////////////////////////////////////////
