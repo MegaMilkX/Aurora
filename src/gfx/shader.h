@@ -30,20 +30,20 @@ public:
     
     void AddUniform(IUniform* uniform);
     
-    void Uniform(const std::string& name, float value);
-    void Uniform(const std::string& name, Math::Vec2f& value);
-    void Uniform(const std::string& name, Math::Vec3f& value);
-    void Uniform(const std::string& name, Math::Vec4f& value);
-    void Uniform(const std::string& name, int value);
-    void Uniform(const std::string& name, Math::Vec2i& value);
-    void Uniform(const std::string& name, Math::Vec3i& value);
-    void Uniform(const std::string& name, Math::Vec4i& value);
-    void Uniform(const std::string& name, unsigned int value);
-    void Uniform(const std::string& name, Math::Vec2ui& value);
-    void Uniform(const std::string& name, Math::Vec3ui& value);
-    void Uniform(const std::string& name, Math::Vec4ui& value);
-    void Uniform(const std::string& name, Math::Mat3f& value);
-    void Uniform(const std::string& name, Math::Mat4f& value);
+    void SetUniform(const std::string& name, float value);
+    void SetUniform(const std::string& name, Math::Vec2f& value);
+    void SetUniform(const std::string& name, Math::Vec3f& value);
+    void SetUniform(const std::string& name, Math::Vec4f& value);
+    void SetUniform(const std::string& name, int value);
+    void SetUniform(const std::string& name, Math::Vec2i& value);
+    void SetUniform(const std::string& name, Math::Vec3i& value);
+    void SetUniform(const std::string& name, Math::Vec4i& value);
+    void SetUniform(const std::string& name, unsigned int value);
+    void SetUniform(const std::string& name, Math::Vec2ui& value);
+    void SetUniform(const std::string& name, Math::Vec3ui& value);
+    void SetUniform(const std::string& name, Math::Vec4ui& value);
+    void SetUniform(const std::string& name, Math::Mat3f& value);
+    void SetUniform(const std::string& name, Math::Mat4f& value);
     
     std::string StatusString(){ return status_string; }
 private:
