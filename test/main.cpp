@@ -101,12 +101,22 @@ int main()
         void main()
         {
             color = ColorRGB;
-            gl_Position = vec4(Position, 1.0);
+            gl_Position = MatrixProjection * MatrixView * MatrixModel * vec4(Position, 1.0);
         })");
     shader->Compile();
     std::cout << shader->StatusString();
 
     gfx_device.Bind(shader);
+    
+    Au::Math::Mat4f projection = Au::Math::Perspective(1.6f, 4.0f/3.0f, 0.1f, 100);
+    Au::Math::Mat4f view = Au::Math::Mat4f(1.0f);
+    Au::Math::Mat4f model = Au::Math::Mat4f(1.0f);
+    view = Au::Math::Translate(view, Au::Math::Vec3f(0.0f, 0.7f, 2.0f));
+    shader->Uniform(std::string("MatrixModel"), model);
+    shader->Uniform(std::string("MatrixView"), Au::Math::Inverse(view));
+    shader->Uniform(std::string("MatrixProjection"), projection);
+    
+    // ==============================================================
     
     window.Name("GAME");
     window.Resize(640, 480);
