@@ -4,6 +4,8 @@
 #include <vector>
 #include <string>
 
+#include "../utils/file.h"
+
 namespace Au{
 namespace Media{
 
@@ -13,6 +15,8 @@ public:
 };
 
 std::vector<MeshObject> LoadFromFBX(const std::string& filename);
+std::vector<MeshObject> LoadFromFBX(const File& file);
+std::vector<MeshObject> LoadFromFBX(const void* data, size_t sz);
 
 }
 }
