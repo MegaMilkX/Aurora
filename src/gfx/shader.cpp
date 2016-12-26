@@ -82,13 +82,13 @@ void Shader::AttribFormat(const std::vector<AttribInfo>& vertexFormat)
     for(unsigned int i = 0; i < vertexFormat.size(); ++i)
     {
         const AttribInfo& attrInfo = vertexFormat[i];
+        unsigned int instance = instanceCounters[attrInfo.typeIndex]++;
         AttribIndex globalAttribIndex = 
-            GetGlobalAttribIndex(attrInfo.typeIndex,
-                                 instanceCounters[attrInfo.typeIndex]++);
+            GetGlobalAttribIndex(attrInfo.typeIndex, instance);
         
         std::string shaderInputName = attrInfo.name;
-        if(globalAttribIndex > 0)
-            shaderInputName += std::to_string(globalAttribIndex);
+        if(instance > 0)
+            shaderInputName += std::to_string(instance);
                                  
         glBindAttribLocation(program, globalAttribIndex, shaderInputName.c_str());
     }
