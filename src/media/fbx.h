@@ -6,6 +6,9 @@
 
 #include "../utils/file.h"
 
+#include <fbxsdk.h>
+#include <fbxsdk\fileio\fbxiosettings.h>
+
 namespace Au{
 namespace Media{
 
