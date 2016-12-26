@@ -43,6 +43,32 @@ std::vector<MeshObject> LoadFromFBX(const std::string& filename)
     std::vector<FbxMesh*> meshes;
     FbxNode* node = scene->GetRootNode();
     GetMeshes(node, meshes);
+    
+    for(unsigned int i = 0; i < meshes.size(); ++i)
+    {
+        FbxMesh* mesh = meshes[i];
+        if(!mesh->IsTriangleMesh())
+        {
+            //continue;
+            // ??
+        }
+        
+        FbxVector4* vertices = mesh->GetControlPoints();
+        FbxLayer* layer = mesh->GetLayer(0);
+        FbxLayerElementNormal* normals = layer->GetNormals();
+        FbxLayerElementUV* uvElement = layer->GetUVs();
+        FbxLayerElementArrayTemplate<FbxVector2> uvs = uvElement->GetDirectArray();
+        
+        unsigned long nV = mesh->GetControlPointsCount();
+        for (unsigned int v = 0; v < nV; ++v)
+        {
+            //vertices[v].mData[0];
+            //vertices[v].mData[2];
+            //-vertices[v].mData[1];
+            
+            
+        }
+    }
 }
 
 std::vector<MeshObject> LoadFromFBX(const File& file)
