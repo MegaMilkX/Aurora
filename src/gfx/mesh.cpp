@@ -58,6 +58,8 @@ void Mesh::Format(const std::vector<AttribInfo>& vertexFormat)
     
     Bind();
     
+    std::cout << "Formatting mesh data" << std::endl;
+    
     size_t offset = 0;
     std::map<typeindex, AttribInstance> instanceCounters;
     for(unsigned int i = 0; i < vertexFormat.size(); ++i)
@@ -77,6 +79,9 @@ void Mesh::Format(const std::vector<AttribInfo>& vertexFormat)
                               (void*)offset);                       //*offset
         offset += attrInfo.elemSize * attrInfo.elemCount;
         glEnableVertexAttribArray(globalAttribIndex);
+        
+        attrInfo.Print();
+        std::cout << "globalAttribIndex: " << globalAttribIndex << std::endl;
     }
 }
 
