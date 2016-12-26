@@ -78,6 +78,12 @@ bool Shader::Compile()
         status_string += &ProgramErrorMessage[0];
     }
     
+    for(unsigned int i = 0; i < compiled_stages.size(); ++i)
+    {
+        glDetachShader(program, compiled_stages[i]);
+        glDeleteShader(compiled_stages[i]);
+    }
+    
     return true;
 }
 
