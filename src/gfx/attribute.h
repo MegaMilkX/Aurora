@@ -25,7 +25,7 @@ struct AttribInfo
     unsigned char elemSize;
     unsigned char elemCount;
     
-    void Print()
+    void Print() const
     {
         std::cout << name << ": " << std::endl;
         std::cout << "typeIndex: " << typeIndex << std::endl;
