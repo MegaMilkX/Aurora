@@ -21,6 +21,7 @@ public:
         PIXEL
     };
     
+    Shader();
     ~Shader();
     
     void AddStage(STAGE stage, const std::string& source);

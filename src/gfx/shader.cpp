@@ -3,12 +3,19 @@
 namespace Au{
 namespace GFX{
     
+Shader::Shader()
+{
+    program = glCreateProgram();
+}
+    
 Shader::~Shader()
 {
     for(unsigned int i = 0; i < uniforms.size(); ++i)
     {
         delete uniforms[i];
     }
+    
+    glDeleteProgram(program);
 }
  
 void Shader::AddStage(STAGE stage, const std::string& source)
@@ -53,7 +60,6 @@ bool Shader::Compile()
         compiled_stages.push_back(shader);
     }
     
-    program = glCreateProgram();
     for(unsigned int i = 0; i < compiled_stages.size(); ++i)
         glAttachShader(program, compiled_stages[i]);
     
