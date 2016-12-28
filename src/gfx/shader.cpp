@@ -23,7 +23,7 @@ void Shader::Source(const std::string& source)
     unsigned int type;
     if(stage == VERTEX)
         type = GL_VERTEX_SHADER;
-    else if (stage == VERTEX)
+    else if (stage == PIXEL)
         type = GL_FRAGMENT_SHADER;
     else
         return;
