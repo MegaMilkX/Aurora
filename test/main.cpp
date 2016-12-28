@@ -51,9 +51,9 @@ int main()
 
     //InputHandler input_handler(window);
 
-    Au::GFX::Device gfx_device;
-    gfx_device.Init(window);
-
+    Au::GFX::Device gfxDevice;
+    gfxDevice.Init(window);
+    
     // Setting up a mesh ============================================
 
     std::vector<Vertex> vertices =
@@ -74,30 +74,15 @@ int main()
       0, 1, 5, 5, 4, 0,
       1, 5, 6, 6, 2, 1 };
 
-    Au::GFX::Mesh* mesh = gfx_device.CreateMesh();
+    Au::GFX::Mesh* mesh = gfxDevice.CreateMesh();
     mesh->Format(Au::GFX::Position() << Au::GFX::ColorRGB());
-    mesh->PrintFormat();
     mesh->VertexData(vertices);
     mesh->IndexData(indices);
-
-    // ==============================================================
-
-    Au::Math::Transform model;
-    Au::Math::Transform view;
-    Au::Math::Mat4f projection = Au::Math::Perspective(1.6f, 4.0f/3.0f, 0.1f, 100);
-    view.Translate(Au::Math::Vec3f(0.0f, 1.0f, 2.0f));
     
     // ==============================================================
     
-    Au::GFX::Shader* shader = gfx_device.CreateShader();
-    shader->AttribFormat(Au::GFX::Position() << Au::GFX::ColorRGB());
-    shader->AddStage(Au::GFX::Shader::PIXEL, R"(
-        varying vec3 color;
-        void main()
-        {
-            gl_FragColor = vec4(color, 1.0);
-        })");
-    shader->AddStage(Au::GFX::Shader::VERTEX, R"(
+    Au::GFX::Shader* shaderVertex = gfxDevice.CreateShader(Au::GFX::Shader::VERTEX);
+    shaderVertex->Source(R"(
         uniform mat4 MatrixModel;
         uniform mat4 MatrixView;
         uniform mat4 MatrixProjection;
@@ -106,15 +91,37 @@ int main()
         varying vec3 color;
         void main()
         {
-            color = ColorRGB;
+            color = cross(ColorRGB, Position);
             gl_Position = MatrixProjection * MatrixView * MatrixModel * vec4(Position, 1.0);
-        })");
-    shader->Compile();
-    std::cout << shader->StatusString();
+    })");
+    std::cout << shaderVertex->StatusString() << std::endl;
     
-    shader->AddUniform(Au::GFX::Uniform<Au::Math::Mat4f>::Get("MatrixModel"));
-    shader->AddUniform(Au::GFX::Uniform<Au::Math::Mat4f>::Get("MatrixView"));
-    shader->AddUniform(Au::GFX::Uniform<Au::Math::Mat4f>::Get("MatrixProjection"));
+    Au::GFX::Shader* shaderPixel = gfxDevice.CreateShader(Au::GFX::Shader::PIXEL);
+    shaderPixel->Source(R"(
+        varying vec3 color;
+        void main()
+        {
+            gl_FragColor = vec4(color, 1.0);
+    })");
+    std::cout << shaderPixel->StatusString() << std::endl;
+    
+    Au::GFX::RenderState* renderState = gfxDevice.CreateRenderState();
+    renderState->AttribFormat(Au::GFX::Position() << Au::GFX::ColorRGB());
+    renderState->SetShader(shaderVertex);
+    renderState->SetShader(shaderPixel);
+    renderState->AddUniform<Au::Math::Mat4f>("MatrixModel");
+    renderState->AddUniform<Au::Math::Mat4f>("MatrixView");
+    renderState->AddUniform<Au::Math::Mat4f>("MatrixProjection");
+    
+    std::cout << renderState->StatusString() << std::endl;
+    
+    Au::Math::Transform model;
+    Au::Math::Transform view;
+    Au::Math::Mat4f projection = Au::Math::Perspective(1.6f, 4.0f/3.0f, 0.1f, 100);
+    view.Translate(Au::Math::Vec3f(0.0f, 1.0f, 2.0f));
+    
+    gfxDevice.Bind(mesh);
+    gfxDevice.Bind(renderState);
     
     window.Name("Aurora");
     window.Resize(640, 480);
@@ -130,17 +137,12 @@ int main()
             Au::GFX::Uniform<Au::Math::Mat4f>::Get("MatrixView") = Au::Math::Inverse(view.GetTransform());
             Au::GFX::Uniform<Au::Math::Mat4f>::Get("MatrixProjection") = projection;
             
-            gfx_device.Bind(mesh);
-            gfx_device.Bind(shader);
-            
-            gfx_device.Clear();
-            gfx_device.Render();
-            gfx_device.SwapBuffers();
+            gfxDevice.Clear();
+            gfxDevice.Render();
+            gfxDevice.SwapBuffers();
         }
 
-    gfx_device.Destroy(mesh);
-    gfx_device.Destroy(shader);
-    gfx_device.Cleanup();
+    gfxDevice.Cleanup();
 
     return 0;
 }
