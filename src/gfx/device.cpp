@@ -117,6 +117,7 @@ void Device::Clear()
 
 void Device::Render()
 {
+    boundState->Bind();
     boundMesh->Render();
 }
 
@@ -139,6 +140,13 @@ Shader* Device::CreateShader(Shader::STAGE stage)
     return shader;
 }
 
+RenderState* Device::CreateRenderState()
+{
+    wglMakeCurrent(deviceContext, context);
+    RenderState* state = new RenderState();
+    return state;
+}
+
 void Device::Destroy(Mesh* mesh)
 {
     wglMakeCurrent(deviceContext, context);
@@ -155,6 +163,11 @@ void Device::Bind(Mesh* mesh)
 {
     boundMesh = mesh;
     mesh->Bind();
+}
+
+void Device::Bind(RenderState* state)
+{
+    boundState = state;
 }
 
 int Device::APIVersion()

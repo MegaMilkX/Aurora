@@ -20,10 +20,12 @@ public:
     
     Mesh* CreateMesh();
     Shader* CreateShader(Shader::STAGE stage);
+    RenderState* CreateRenderState();
     void Destroy(Mesh* mesh);
     void Destroy(Shader* shader);
     
     void Bind(Mesh* mesh);
+    void Bind(RenderState* state);
     
     int APIVersion();
 private:
@@ -33,7 +35,7 @@ private:
     int contextVersion = 0;
     
     Mesh* boundMesh;
-    Shader* boundShader;
+    RenderState* boundState;
 };
 
 }
