@@ -3,7 +3,7 @@
 
 #include "../window/window.h"
 #include "mesh.h"
-#include "shader.h"
+#include "render-state.h"
 
 namespace Au{
 namespace GFX{
@@ -19,12 +19,13 @@ public:
     void SwapBuffers();
     
     Mesh* CreateMesh();
-    Shader* CreateShader();
+    Shader* CreateShader(Shader::STAGE stage);
+    RenderState* CreateRenderState();
     void Destroy(Mesh* mesh);
     void Destroy(Shader* shader);
     
     void Bind(Mesh* mesh);
-    void Bind(Shader* shader);
+    void Bind(RenderState* state);
     
     int APIVersion();
 private:
@@ -34,7 +35,7 @@ private:
     int contextVersion = 0;
     
     Mesh* boundMesh;
-    Shader* boundShader;
+    RenderState* boundState;
 };
 
 }
