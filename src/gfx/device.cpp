@@ -132,10 +132,10 @@ Mesh* Device::CreateMesh()
     return mesh;
 }
 
-Shader* Device::CreateShader()
+Shader* Device::CreateShader(Shader::STAGE stage)
 {
     wglMakeCurrent(deviceContext, context);
-    Shader* shader = new Shader();
+    Shader* shader = new Shader(stage);
     return shader;
 }
 
@@ -155,12 +155,6 @@ void Device::Bind(Mesh* mesh)
 {
     boundMesh = mesh;
     mesh->Bind();
-}
-
-void Device::Bind(Shader* shader)
-{
-    boundShader = shader;
-    shader->Bind();
 }
 
 int Device::APIVersion()
