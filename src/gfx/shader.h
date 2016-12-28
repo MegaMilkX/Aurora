@@ -20,6 +20,10 @@ public:
     
     void Source(const std::string& source);
     std::string StatusString(){ return statusString; }
+    
+    STAGE Stage() { return stage; }
+    
+    unsigned int _uniqueIndex() { return glShader; }
 private:
     STAGE stage;
     GLuint glShader;
