@@ -4,7 +4,7 @@
 #include <vector>
 #include <string>
 
-#include "../utils/file.h"
+#include "../util/file.h"
 
 #include <fbxsdk.h>
 #include <fbxsdk\fileio\fbxiosettings.h>
