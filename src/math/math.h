@@ -519,9 +519,9 @@ typedef AABB3<float> AABB3f;
 
 inline bool Intersects(const AABB3f& a, const AABB3f& b)
 {
-    return (abs(a.center.x - b.center.x) * 2.0f < (a.size.x + b.size.x)) &&
-           (abs(a.center.y - b.center.y) * 2.0f < (a.size.y + b.size.y)) &&
-           (abs(a.center.z - b.center.z) * 2.0f < (a.size.z + b.size.z));
+    return (fabs(a.center.x - b.center.x) * 2.0f < (a.size.x + b.size.x)) &&
+           (fabs(a.center.y - b.center.y) * 2.0f < (a.size.y + b.size.y)) &&
+           (fabs(a.center.z - b.center.z) * 2.0f < (a.size.z + b.size.z));
 }
 
 ///////////////////////////////////////////////
