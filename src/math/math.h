@@ -506,6 +506,15 @@ inline Quat AngleAxis(const float &a, const Vec3f &axis)
     return Quat(axis.x * s, axis.y * s, axis.z * s, cosf(a*0.5f));
 }
 
+// Axis-aligned bounding box ====================================
+
+template<typename T>
+struct AABB3
+{
+    Vec3<T> center;
+    Vec3<T> size;
+};
+
 ///////////////////////////////////////////////
 //Conversion
 ///////////////////////////////////////////////
