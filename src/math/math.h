@@ -515,7 +515,7 @@ struct AABB3
     Vec3<T> size;
 };
 
-typedef AABB3<float> AABB3f
+typedef AABB3<float> AABB3f;
 
 inline bool Intersects(const AABB3f& a, const AABB3f& b)
 {
