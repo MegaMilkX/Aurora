@@ -32,6 +32,8 @@ GLenum GetGLType(typeindex index)
 Mesh::Mesh()
 : vertexSize(0)
 {
+    PrimitiveType(TRIANGLE);
+    
     glGenVertexArrays(1, &vao);
     Bind();
     vertexBuffer = GLBuffer::Create(GL_ARRAY_BUFFER, GL_STATIC_DRAW);
@@ -45,6 +47,16 @@ Mesh::~Mesh()
     glDeleteVertexArrays(1, &vao);
     vertexBuffer.Destroy();
     indexBuffer.Destroy();
+}
+
+void Mesh::PrimitiveType(PRIMITIVE prim)
+{
+    if(prim == POINT)
+        primitive = GL_POINTS;
+    else if(prim == LINE)
+        primitive = GL_LINES;
+    else if(prim == TRIANGLE)
+        primitive = GL_TRIANGLES;
 }
 
 void Mesh::Format(const std::vector<AttribInfo>& vertexFormat)
@@ -115,7 +127,7 @@ void Mesh::Bind()
 
 void Mesh::Render()
 {
-    glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_SHORT, 0);
+    glDrawElements(primitive, indexCount, GL_UNSIGNED_SHORT, 0);
 }
 
 void Mesh::PrintFormat()

@@ -14,6 +14,14 @@ public:
     Mesh();
     ~Mesh();
     
+    enum PRIMITIVE
+    {
+        POINT,
+        LINE,
+        TRIANGLE
+    };
+    
+    void PrimitiveType(PRIMITIVE prim);
     void Format(const std::vector<AttribInfo>& vertexFormat);
     template<typename VERTEX>
     void VertexData(const std::vector<VERTEX>& data);
@@ -33,6 +41,8 @@ private:
     GLBuffer vertexBuffer;
     GLBuffer indexBuffer;
     unsigned int indexCount;
+    
+    GLenum primitive;
 };
 
 template<typename VERTEX>
