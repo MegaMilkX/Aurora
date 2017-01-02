@@ -45,17 +45,10 @@ struct Vertex
 };
 #pragma pack(pop)
 
-int main()
+Au::GFX::Device gfxDevice;
+
+Au::GFX::Mesh* CreateCubeMesh()
 {
-    Au::Window window;
-
-    //InputHandler input_handler(window);
-
-    Au::GFX::Device gfxDevice;
-    gfxDevice.Init(window);
-    
-    // Setting up a mesh ============================================
-
     std::vector<Vertex> vertices =
     { {-0.5f, -0.5f, 0.5f, 255, 100, 0},
       {0.5f, -0.5f, 0.5f, 0, 100, 255},
@@ -79,8 +72,11 @@ int main()
     mesh->VertexData(vertices);
     mesh->IndexData(indices);
     
-    // ==============================================================
-    
+    return mesh;
+}
+
+Au::GFX::RenderState* CreateRenderState()
+{
     Au::GFX::Shader* shaderVertex = gfxDevice.CreateShader(Au::GFX::Shader::VERTEX);
     shaderVertex->Source(R"(
         uniform mat4 MatrixModel;
@@ -91,7 +87,7 @@ int main()
         varying vec3 color;
         void main()
         {
-            color = cross(ColorRGB, Position);
+            color = ColorRGB;
             gl_Position = MatrixProjection * MatrixView * MatrixModel * vec4(Position, 1.0);
     })");
     std::cout << shaderVertex->StatusString() << std::endl;
@@ -115,6 +111,29 @@ int main()
     
     std::cout << renderState->StatusString() << std::endl;
     
+    return renderState;
+}
+
+
+
+void Init(Au::Window& window)
+{
+    gfxDevice.Init(window);
+}
+
+void Cleanup()
+{
+    gfxDevice.Cleanup();
+}
+
+int main()
+{
+    Au::Window window;
+    
+    Init(window);
+    Au::GFX::Mesh* mesh = CreateCubeMesh();
+    Au::GFX::RenderState* renderState = CreateRenderState();   
+    
     Au::Math::Transform model;
     Au::Math::Transform view;
     Au::Math::Mat4f projection = Au::Math::Perspective(1.6f, 4.0f/3.0f, 0.1f, 100);
@@ -124,7 +143,7 @@ int main()
     gfxDevice.Bind(renderState);
     
     window.Name("Aurora");
-    window.Resize(640, 480);
+    //window.Resize(640, 480);
 
     if(window.Show())
         while(!window.Destroyed())
@@ -142,7 +161,7 @@ int main()
             gfxDevice.SwapBuffers();
         }
 
-    gfxDevice.Cleanup();
-
+    
+    Cleanup();
     return 0;
 }
