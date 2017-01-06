@@ -511,6 +511,12 @@ inline Quat AngleAxis(const float &a, const Vec3f &axis)
 template<typename T>
 struct AABB3
 {
+    AABB3()
+    : center(), size()
+    {}
+    AABB3(T cx, T cy, T cz, T sx, T sy, T sz)
+    : center(cx, cy, cz), size(sx, sy, sz)
+    {}
     Vec3<T> center;
     Vec3<T> size;
 };
