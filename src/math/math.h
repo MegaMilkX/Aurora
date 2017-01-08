@@ -533,9 +533,9 @@ inline bool Intersects(const AABB3f& a, const AABB3f& b)
 // Check if b is inside of a
 inline bool Contains(const AABB3f& a, const AABB3f& b)
 {
-    float xcdist = fabs(a.center.x - b.center.x);
-    float ycdist = fabs(a.center.y - b.center.y);
-    float zcdist = fabs(a.center.z - b.center.z);
+    float xcdist = fabsf(a.center.x - b.center.x);
+    float ycdist = fabsf(a.center.y - b.center.y);
+    float zcdist = fabsf(a.center.z - b.center.z);
     float xszdif = a.size.x - b.size.x;
     float yszdif = a.size.y - b.size.y;
     float zszdif = a.size.z - b.size.z;
