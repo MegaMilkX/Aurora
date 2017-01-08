@@ -1,41 +1,9 @@
 #include <aurora/window.h>
 #include <aurora/gfx.h>
-#include <aurora/timeline.h>
 #include <aurora/transform.h>
+#include <aurora/input.h>
 
 #include <iostream>
-
-//#include <aurora/gfx.h>
-//#include <aurora/sfx.h>
-//#include <aurora/input.h>
-//#include <aurora/gamestate.h>
-/*
-class InputHandler : public Au::Input::Handler
-{
-public:
-    InputHandler(const Au::Window& window)
-    : Au::Input::Handler(window)
-    {}
-    void OnKeyDown(const Au::Input::Event& e)
-    {
-
-    }
-
-    void OnKeyUp(const Au::Input::Event& e)
-    {
-
-    }
-};
-*/
-
-class InterpolatorStr
-{
-public:
-    std::string operator()(const Au::Keyframe<std::string> first, const Au::Keyframe<std::string> second, unsigned int time)
-    {
-        return first.value;
-    }
-};
 
 #pragma pack(push, 1)
 struct Vertex
@@ -128,6 +96,7 @@ void Cleanup()
 
 int main()
 {
+    Au::Input::LoadDeviceList();
     Au::Window window;
     
     Init(window);
