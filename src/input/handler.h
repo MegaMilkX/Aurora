@@ -3,12 +3,15 @@
 
 #include "../../include/aurora/window.h"
 
+#include <iostream>
+
 namespace Au{
 namespace Input{
 
 struct Event
 {
-    
+    unsigned int deviceId;
+    unsigned int keyId;
 };
 
 class Handler
