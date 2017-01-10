@@ -5,6 +5,28 @@
 
 #include <iostream>
 
+Au::Math::Transform model;
+
+class MouseHandler : public Au::Input::MouseHandler
+{
+public:
+    void KeyUp(unsigned code)
+    {
+        std::cout << "Mouse key UP" << std::endl;
+    }
+    
+    void KeyDown(unsigned code)
+    {
+        std::cout << "Mouse key DOWN" << std::endl;
+    }
+    
+    void Move(int x, int y)
+    {
+        model.Rotate(x * 0.01f, Au::Math::Vec3f(0, 1, 0));
+        model.Rotate(y * 0.01f, Au::Math::Vec3f(1, 0, 0));
+    }
+};
+
 #pragma pack(push, 1)
 struct Vertex
 {
@@ -14,6 +36,8 @@ struct Vertex
 #pragma pack(pop)
 
 Au::GFX::Device gfxDevice;
+
+MouseHandler mouseHandler;
 
 Au::GFX::Mesh* CreateCubeMesh()
 {
@@ -32,7 +56,7 @@ Au::GFX::Mesh* CreateCubeMesh()
       3, 2, 6, 6, 7, 3,
       7, 6, 5, 5, 4, 7,
       4, 0, 3, 3, 7, 4,
-      0, 1, 5, 5, 4, 0,
+      0, 5, 1, 5, 0, 4,
       1, 5, 6, 6, 2, 1 };
 
     Au::GFX::Mesh* mesh = gfxDevice.CreateMesh();
@@ -87,6 +111,7 @@ Au::GFX::RenderState* CreateRenderState()
 void Init(Au::Window& window)
 {
     gfxDevice.Init(window);
+    mouseHandler.Init(&window);
 }
 
 void Cleanup()
@@ -103,7 +128,6 @@ int main()
     Au::GFX::Mesh* mesh = CreateCubeMesh();
     Au::GFX::RenderState* renderState = CreateRenderState();   
     
-    Au::Math::Transform model;
     Au::Math::Transform view;
     Au::Math::Mat4f projection = Au::Math::Perspective(1.6f, 4.0f/3.0f, 0.1f, 100);
     view.Translate(Au::Math::Vec3f(0.0f, 1.0f, 2.0f));
@@ -118,8 +142,6 @@ int main()
         while(!window.Destroyed())
         {
             Au::Window::PollMessages();
-            
-            model.Rotate(0.0001f, Au::Math::Vec3f(0, 1, 0));
             
             Au::GFX::Uniform<Au::Math::Mat4f>::Get("MatrixModel") = model.GetTransform();
             Au::GFX::Uniform<Au::Math::Mat4f>::Get("MatrixView") = Au::Math::Inverse(view.GetTransform());
