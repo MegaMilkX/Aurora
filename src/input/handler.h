@@ -14,16 +14,14 @@ struct Event
     unsigned int keyId;
 };
 
-class Handler
+class MouseHandler
 {
 public:
-    Handler(const Au::Window& window);
-    virtual ~Handler();
+    bool Init(Au::Window* window);
     
-    virtual void OnInput(const Event& e);
-    virtual void OnDown(const Event& e);
-    virtual void OnUp(const Event& e);
-    virtual void OnMouseMove(const Event& e);
+    virtual void Move(int x, int y);
+    virtual void KeyUp();
+    virtual void KeyDown();
 };
 
 void LoadDeviceList()

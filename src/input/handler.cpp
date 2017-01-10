@@ -1,14 +1,16 @@
 #include "handler.h"
 
-#include <set>
+#include <vector>
 
 namespace Au{
 namespace Input{
     
 HWND targetWindow;
 WNDPROC OldWndProc;
-    
-std::set<Handler*> gInputHandlers;
+
+std::vector<RAWINPUTDEVICE> winapiRawInputDevices;
+
+MouseHandler* mouseHandler = 0;
 
 LRESULT CALLBACK InputWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
@@ -18,53 +20,73 @@ LRESULT CALLBACK InputWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
         break;
     case WM_INPUT:
         {
-            Event event;
-            event.deviceId = 0;
-            event.keyId = 0;
+            UINT sz = 0;
+            GetRawInputData((HRAWINPUT)lParam, RID_INPUT, NULL, &sz, sizeof(RAWINPUTHEADER));
+            
+            std::vector<BYTE> lpb;
+            lpb.resize(sz);
+            
+            if(GetRawInputData((HRAWINPUT)lParam, RID_INPUT, lpb.data(), &sz, sizeof(RAWINPUTHEADER)) != sz)
+                return 0;
+            
+            RAWINPUT* raw = (RAWINPUT*)lpb.data();
+            
+            if(raw->header.dwType == RIM_TYPEKEYBOARD)
+            {
+                
+            }
+            else if(raw->header.dwType == RIM_TYPEMOUSE)
+            {
+                if(mouseHandler)
+                {
+                    int xPosRel = raw->data.mouse.lLastX;
+                    int yPosRel = raw->data.mouse.lLastY;
+                    if(xPosRel | yPosRel)
+                        mouseHandler->Move(xPosRel, yPosRel);
+                    
+                    //raw->data.mouse.usButtonFlags;
+                }
+            }
         }
         break;
-    //default:
-        //return CallWindowProc(OldWndProc, hWnd, msg, wParam, lParam);
+    default:
+        return CallWindowProc(OldWndProc, hWnd, msg, wParam, lParam);
     }
     return 0;
 }
 
-Handler::Handler(const Au::Window& window)
+bool ReplaceWindowProc(Window* window)
 {
-    gInputHandlers.insert(this);
-}
-
-Handler::~Handler()
-{
-    gInputHandlers.erase(this);
-}
-
-void Init(Window* window)
-{/*
-    HWND hWnd = *window;
-    
-    OldWndProc = (WNDPROC)SetWindowLongPtr(hWnd, GWLP_WNDPROC, (LONG_PTR)InputWndProc);
     if(!OldWndProc)
-        return false;
-    
-    // Initizlize raw input
-    
-    rid[0].usUsagePage = 0x01;
-    rid[0].usUsage = RID_MOUSE;
-    rid[0].dwFlags = 0;//RIDEV_NOLEGACY;
-    rid[0].hwndTarget = hWnd;
-    
-    rid[1].usUsagePage = 0x01;
-    rid[1].usUsage = RID_KEYBOARD;
-    rid[1].dwFlags = 0;
-    rid[1].hwndTarget = hWnd;
-    
-    if(!RegisterRawInputDevices(rid, RID_COUNT, sizeof(RAWINPUTDEVICE)))
-        return false;
-
-    targetWindow = hWnd;
-
-	eventHandler = handler;*/
+    {
+        OldWndProc = (WNDPROC)SetWindowLongPtr(*window, GWLP_WNDPROC, (LONG_PTR)InputWndProc);
+        if(!OldWndProc)
+            return false;
+    }
+    return true;
 }
+
+bool MouseHandler::Init(Au::Window* window)
+{
+    if(!ReplaceWindowProc(window))
+        return false;
+    
+    mouseHandler = this;
+    RAWINPUTDEVICE device;
+    device.usUsagePage = 0x01;
+    device.usUsage = 0x02; //RID_MOUSE ?
+    device.dwFlags = 0;//RIDEV_NOLEGACY don't use
+    device.hwndTarget = *window;
+    winapiRawInputDevices.push_back(device);
+    
+    if(!RegisterRawInputDevices(winapiRawInputDevices.data(), winapiRawInputDevices.size(), sizeof(RAWINPUTDEVICE)))
+        return false;
+    
+    return true;
+}
+    
+void MouseHandler::Move(int x, int y){}
+void MouseHandler::KeyUp(){}
+void MouseHandler::KeyDown(){}
 
 }}
