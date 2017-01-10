@@ -24,7 +24,7 @@ public:
     virtual void KeyDown();
 };
 
-void LoadDeviceList()
+inline void LoadDeviceList()
 {
     UINT nDevices;
     PRAWINPUTDEVICELIST pRawInputDeviceList;
