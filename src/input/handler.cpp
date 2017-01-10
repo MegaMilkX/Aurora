@@ -30,7 +30,9 @@ LRESULT CALLBACK InputWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
                 return 0;
             
             RAWINPUT* raw = (RAWINPUT*)lpb.data();
-            
+
+            //raw->header.hDevice; // Unique device handle
+         
             if(raw->header.dwType == RIM_TYPEKEYBOARD)
             {
                 
