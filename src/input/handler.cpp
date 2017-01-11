@@ -94,7 +94,9 @@ bool MouseHandler::Init(Au::Window* window)
 }
     
 void MouseHandler::Move(int x, int y){}
-void MouseHandler::KeyUp(){}
-void MouseHandler::KeyDown(){}
+void MouseHandler::KeyUp(KEYCODE key){}
+void MouseHandler::KeyDown(KEYCODE key){}
+void MouseHandler::Wheel(short value){}
+
 
 }}

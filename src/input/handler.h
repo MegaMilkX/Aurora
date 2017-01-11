@@ -215,8 +215,10 @@ public:
     bool Init(Au::Window* window);
     
     virtual void Move(int x, int y);
-    virtual void KeyUp();
-    virtual void KeyDown();
+    virtual void KeyUp(KEYCODE key);
+    virtual void KeyDown(KEYCODE key);
+    virtual void Wheel(short value);
+};
 };
 
 inline void LoadDeviceList()
