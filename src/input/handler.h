@@ -199,7 +199,7 @@ enum KEYCODE
     KEY_ZOOM = 0xFB, // Zoom key
     KEY_NONAME = 0xFC, // Reserved
     KEY_PA1 = 0xFD, // PA1 key
-    KEY_OEM_CLEAR = 0xFE, // Clear key
+    KEY_OEM_CLEAR = 0xFE // Clear key
 };
 
 struct Event
