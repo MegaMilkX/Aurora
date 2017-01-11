@@ -6,16 +6,17 @@
 #include <iostream>
 
 Au::Math::Transform model;
+Au::Math::Transform view;
 
 class MouseHandler : public Au::Input::MouseHandler
 {
 public:
-    void KeyUp(unsigned code)
+    void KeyUp(Au::Input::KEYCODE key)
     {
         std::cout << "Mouse key UP" << std::endl;
     }
     
-    void KeyDown(unsigned code)
+    void KeyDown(Au::Input::KEYCODE key)
     {
         std::cout << "Mouse key DOWN" << std::endl;
     }
@@ -24,6 +25,25 @@ public:
     {
         model.Rotate(x * 0.01f, Au::Math::Vec3f(0, 1, 0));
         model.Rotate(y * 0.01f, Au::Math::Vec3f(1, 0, 0));
+    }
+    
+    void Wheel(short value)
+    {
+        std::cout << "Wheel " << value << std::endl;
+    }
+};
+
+class KeyboardHandler : public Au::Input::KeyboardHandler
+{
+public:
+    void KeyUp(Au::Input::KEYCODE key)
+    {
+        std::cout << "Keyboard UP" << std::endl;
+    }
+    
+    void KeyDown(Au::Input::KEYCODE key)
+    {
+        std::cout << "Keyboard DOWN" << std::endl;
     }
 };
 
@@ -38,6 +58,7 @@ struct Vertex
 Au::GFX::Device gfxDevice;
 
 MouseHandler mouseHandler;
+KeyboardHandler keyboardHandler;
 
 Au::GFX::Mesh* CreateCubeMesh()
 {
@@ -112,6 +133,7 @@ void Init(Au::Window& window)
 {
     gfxDevice.Init(window);
     mouseHandler.Init(&window);
+    keyboardHandler.Init(&window);
 }
 
 void Cleanup()
@@ -128,7 +150,6 @@ int main()
     Au::GFX::Mesh* mesh = CreateCubeMesh();
     Au::GFX::RenderState* renderState = CreateRenderState();   
     
-    Au::Math::Transform view;
     Au::Math::Mat4f projection = Au::Math::Perspective(1.6f, 4.0f/3.0f, 0.1f, 100);
     view.Translate(Au::Math::Vec3f(0.0f, 1.0f, 2.0f));
     
