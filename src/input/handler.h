@@ -7,6 +7,12 @@
 
 namespace Au{
 namespace Input{
+    
+enum KEYCODE
+{
+    KEY_NONE, 
+    KEY_MOUSE_LEFT, KEY_MOUSE_RIGHT, KEY_MOUSE_MIDDLE, KEY_MOUSE_X1, KEY_MOUSE_X2
+};
 
 struct Event
 {
