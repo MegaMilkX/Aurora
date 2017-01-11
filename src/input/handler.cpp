@@ -10,7 +10,10 @@ WNDPROC OldWndProc;
 
 std::vector<RAWINPUTDEVICE> winapiRawInputDevices;
 
+unsigned keyboardKeyState[0xFF]; //255
+
 MouseHandler* mouseHandler = 0;
+KeyboardHandler* keyboardHandler = 0;
 
 LRESULT CALLBACK InputWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
@@ -35,7 +38,18 @@ LRESULT CALLBACK InputWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
          
             if(raw->header.dwType == RIM_TYPEKEYBOARD)
             {
-                
+                if (raw->data.keyboard.Flags == RI_KEY_MAKE)
+                {
+                    keyboardKeyState[raw->data.keyboard.VKey]++;
+					if (keyboardHandler && keyboardKeyState[raw->data.keyboard.VKey] == 1)
+						keyboardHandler->KeyDown((KEYCODE)raw->data.keyboard.VKey);
+                }
+                else if (raw->data.keyboard.Flags & RI_KEY_BREAK)
+                {
+                    keyboardKeyState[raw->data.keyboard.VKey] = 0;
+					if (keyboardHandler)
+						keyboardHandler->KeyUp((KEYCODE)raw->data.keyboard.VKey);
+                }
             }
             else if(raw->header.dwType == RIM_TYPEMOUSE)
             {
@@ -98,5 +112,33 @@ void MouseHandler::KeyUp(KEYCODE key){}
 void MouseHandler::KeyDown(KEYCODE key){}
 void MouseHandler::Wheel(short value){}
 
+KeyboardHandler::~KeyboardHandler()
+{
+    if(keyboardHandler == this)
+        keyboardHandler = 0;
+}
+
+bool KeyboardHandler::Init(Au::Window* window)
+{
+    if(!ReplaceWindowProc(window))
+        return false;
+    
+    keyboardHandler = this;
+    
+    RAWINPUTDEVICE device;
+    device.usUsagePage = 0x01;
+    device.usUsage = 0x06; //RID_KEYBOARD ?
+    device.dwFlags = 0;//RIDEV_NOLEGACY don't use
+    device.hwndTarget = *window;
+    winapiRawInputDevices.push_back(device);
+    
+    if(!RegisterRawInputDevices(winapiRawInputDevices.data(), winapiRawInputDevices.size(), sizeof(RAWINPUTDEVICE)))
+        return false;
+    
+    return true;
+}
+    
+void KeyboardHandler::KeyUp(KEYCODE key){}
+void KeyboardHandler::KeyDown(KEYCODE key){}
 
 }}

@@ -219,6 +219,15 @@ public:
     virtual void KeyDown(KEYCODE key);
     virtual void Wheel(short value);
 };
+
+class KeyboardHandler
+{
+public:
+    virtual ~KeyboardHandler();
+    bool Init(Au::Window* window);
+    
+    virtual void KeyUp(KEYCODE key);
+    virtual void KeyDown(KEYCODE key);
 };
 
 inline void LoadDeviceList()
