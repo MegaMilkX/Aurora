@@ -68,6 +68,12 @@ bool ReplaceWindowProc(Window* window)
     return true;
 }
 
+MouseHandler::~MouseHandler()
+{
+    if(mouseHandler == this)
+        mouseHandler = 0;
+}
+
 bool MouseHandler::Init(Au::Window* window)
 {
     if(!ReplaceWindowProc(window))

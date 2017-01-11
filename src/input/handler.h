@@ -211,6 +211,7 @@ struct Event
 class MouseHandler
 {
 public:
+    virtual ~MouseHandler();
     bool Init(Au::Window* window);
     
     virtual void Move(int x, int y);
