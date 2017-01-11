@@ -60,7 +60,28 @@ LRESULT CALLBACK InputWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
                     if(xPosRel | yPosRel)
                         mouseHandler->Move(xPosRel, yPosRel);
                     
-                    //raw->data.mouse.usButtonFlags;
+                    if(raw->data.mouse.usButtonFlags & 
+                        RI_MOUSE_LEFT_BUTTON_DOWN) mouseHandler->KeyDown(KEY_LBUTTON);
+                    if(raw->data.mouse.usButtonFlags & 
+                        RI_MOUSE_LEFT_BUTTON_UP) mouseHandler->KeyUp(KEY_LBUTTON);
+                    if(raw->data.mouse.usButtonFlags & 
+                        RI_MOUSE_MIDDLE_BUTTON_DOWN) mouseHandler->KeyDown(KEY_MBUTTON);
+                    if(raw->data.mouse.usButtonFlags & 
+                        RI_MOUSE_MIDDLE_BUTTON_UP) mouseHandler->KeyUp(KEY_MBUTTON);
+                    if(raw->data.mouse.usButtonFlags & 
+                        RI_MOUSE_RIGHT_BUTTON_DOWN) mouseHandler->KeyDown(KEY_RBUTTON);
+                    if(raw->data.mouse.usButtonFlags & 
+                        RI_MOUSE_RIGHT_BUTTON_UP) mouseHandler->KeyUp(KEY_RBUTTON);
+                    if(raw->data.mouse.usButtonFlags & 
+                        RI_MOUSE_BUTTON_4_DOWN) mouseHandler->KeyDown(KEY_XBUTTON1);
+                    if(raw->data.mouse.usButtonFlags & 
+                        RI_MOUSE_BUTTON_4_UP) mouseHandler->KeyUp(KEY_XBUTTON1);
+                    if(raw->data.mouse.usButtonFlags & 
+                        RI_MOUSE_BUTTON_5_DOWN) mouseHandler->KeyDown(KEY_XBUTTON2);
+                    if(raw->data.mouse.usButtonFlags & 
+                        RI_MOUSE_BUTTON_5_UP) mouseHandler->KeyUp(KEY_XBUTTON2);
+                    if(raw->data.mouse.usButtonFlags & 
+                        RI_MOUSE_WHEEL) mouseHandler->Wheel(raw->data.mouse.usButtonData);
                 }
             }
         }
