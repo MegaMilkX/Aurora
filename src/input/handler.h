@@ -49,7 +49,7 @@ enum KEYCODE
     KEY_DOWN = 0x28, // DOWN ARROW key
     KEY_SELECT = 0x29, // SELECT key
     KEY_PRINT = 0x2A, // PRINT key
-    KEY_EXECUTE = 0x2B, // EXECUTE key
+    KEY_EXECUTE_ = 0x2B, // EXECUTE key
     KEY_SNAPSHOT = 0x2C, // PRINT SCREEN key
     KEY_INSERT = 0x2D, // INS key
     KEY_DELETE = 0x2E, // DEL key
