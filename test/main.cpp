@@ -7,6 +7,8 @@
 
 Au::Math::Transform model;
 Au::Math::Transform view;
+Au::Math::Mat4f projection;
+float fov = 1.6f;
 
 class MouseHandler : public Au::Input::MouseHandler
 {
@@ -29,7 +31,8 @@ public:
     
     void Wheel(short value)
     {
-        std::cout << "Wheel " << value << std::endl;
+        fov -= value * 0.001f;
+        projection = Au::Math::Perspective(fov, 4.0f/3.0f, 0.1f, 100);
     }
 };
 
@@ -38,12 +41,12 @@ class KeyboardHandler : public Au::Input::KeyboardHandler
 public:
     void KeyUp(Au::Input::KEYCODE key)
     {
-        std::cout << "Keyboard UP" << std::endl;
+        std::cout << "Keyboard UP" << key <<std::endl;
     }
     
     void KeyDown(Au::Input::KEYCODE key)
     {
-        std::cout << "Keyboard DOWN" << std::endl;
+        std::cout << "Keyboard DOWN" << key <<std::endl;
     }
 };
 
@@ -150,8 +153,8 @@ int main()
     Au::GFX::Mesh* mesh = CreateCubeMesh();
     Au::GFX::RenderState* renderState = CreateRenderState();   
     
-    Au::Math::Mat4f projection = Au::Math::Perspective(1.6f, 4.0f/3.0f, 0.1f, 100);
-    view.Translate(Au::Math::Vec3f(0.0f, 1.0f, 2.0f));
+    projection = Au::Math::Perspective(fov, 4.0f/3.0f, 0.1f, 100);
+    view.Translate(Au::Math::Vec3f(0.0f, 0.0f, 2.0f));
     
     gfxDevice.Bind(mesh);
     gfxDevice.Bind(renderState);
