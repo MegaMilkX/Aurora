@@ -161,6 +161,9 @@ int main()
     
     window.Name("Aurora");
     //window.Resize(640, 480);
+    
+    Au::GFX::RenderSequence renderSequence;
+    renderSequence << renderState << mesh;
 
     if(window.Show())
         while(!window.Destroyed())
@@ -171,8 +174,10 @@ int main()
             Au::GFX::Uniform<Au::Math::Mat4f>::Get("MatrixView") = Au::Math::Inverse(view.GetTransform());
             Au::GFX::Uniform<Au::Math::Mat4f>::Get("MatrixProjection") = projection;
             
-            gfxDevice.Clear();
-            gfxDevice.Render();
+            renderSequence.Execute(&gfxDevice);
+            
+            //gfxDevice.Clear();
+            //gfxDevice.Render();
             gfxDevice.SwapBuffers();
         }
 
