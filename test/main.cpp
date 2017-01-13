@@ -1,5 +1,6 @@
 #include <aurora/window.h>
 #include <aurora/gfx.h>
+#include <aurora/render-sequence.h>
 #include <aurora/transform.h>
 #include <aurora/input.h>
 
@@ -156,9 +157,6 @@ int main()
     projection = Au::Math::Perspective(fov, 4.0f/3.0f, 0.1f, 100);
     view.Translate(Au::Math::Vec3f(0.0f, 0.0f, 2.0f));
     
-    gfxDevice.Bind(mesh);
-    gfxDevice.Bind(renderState);
-    
     window.Name("Aurora");
     //window.Resize(640, 480);
     
@@ -174,10 +172,8 @@ int main()
             Au::GFX::Uniform<Au::Math::Mat4f>::Get("MatrixView") = Au::Math::Inverse(view.GetTransform());
             Au::GFX::Uniform<Au::Math::Mat4f>::Get("MatrixProjection") = projection;
             
+            gfxDevice.Clear();
             renderSequence.Execute(&gfxDevice);
-            
-            //gfxDevice.Clear();
-            //gfxDevice.Render();
             gfxDevice.SwapBuffers();
         }
 
