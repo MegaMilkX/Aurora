@@ -30,6 +30,16 @@ public:
     RenderState* BoundState() { return boundState; }
     
     int APIVersion();
+    
+    // Render sequence operators
+    template<typename T>
+    Device& operator<<(T* data) { return *this; }
+    template<typename T>
+    Device& operator<<(const T& data)
+    {
+        currentUniform = data;
+        return *this;
+    }
 private:
     HDC deviceContext;
     HGLRC context;
@@ -38,7 +48,22 @@ private:
     
     Mesh* boundMesh;
     RenderState* boundState;
+    Uniform currentUniform;
 };
+
+template<>
+inline Device& Device::operator<<(RenderState* state)
+{
+    Bind(state);
+    return *this;
+}
+template<>
+inline Device& Device::operator<<(Mesh* mesh)
+{
+    Bind(mesh);
+    Render();
+    return *this;
+}
 
 }
 }
