@@ -27,6 +27,8 @@ public:
     void Bind(Mesh* mesh);
     void Bind(RenderState* state);
     
+    RenderState* BoundState() { return boundState; }
+    
     int APIVersion();
 private:
     HDC deviceContext;
