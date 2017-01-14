@@ -160,6 +160,10 @@ int main()
     window.Name("Aurora");
     //window.Resize(640, 480);
     
+    Au::GFX::Uniform uniModelMat4f = Au::GFX::GetUniform<Au::Math::Mat4f>("MatrixModel");
+    Au::GFX::Uniform uniViewMat4f = Au::GFX::GetUniform<Au::Math::Mat4f>("MatrixView");
+    Au::GFX::Uniform uniProjMat4f = Au::GFX::GetUniform<Au::Math::Mat4f>("MatrixProjection");
+    
     Au::GFX::RenderSequence renderSequence;
     renderSequence << renderState << mesh;
 
@@ -168,9 +172,9 @@ int main()
         {
             Au::Window::PollMessages();
             
-            Au::GFX::Uniform<Au::Math::Mat4f>::Get("MatrixModel") = model.GetTransform();
-            Au::GFX::Uniform<Au::Math::Mat4f>::Get("MatrixView") = Au::Math::Inverse(view.GetTransform());
-            Au::GFX::Uniform<Au::Math::Mat4f>::Get("MatrixProjection") = projection;
+            uniModelMat4f = model.GetTransform();
+            uniViewMat4f = Au::Math::Inverse(view.GetTransform());
+            uniProjMat4f = projection;
             
             gfxDevice.Clear();
             renderSequence.Execute(&gfxDevice);
