@@ -47,8 +47,6 @@ public:
     
     RenderSequence& operator<<(RenderState* state);
     RenderSequence& operator<<(Mesh* mesh);
-    RenderSequence& operator<<(const char* uniformName);
-    RenderSequence& operator<<(const std::string& uniformName);
     RenderSequence& operator<<(float uniform);
     RenderSequence& operator<<(const Math::Vec2f& uniform);
     RenderSequence& operator<<(const Math::Vec3f& uniform);
@@ -65,7 +63,6 @@ public:
     RenderSequence& operator<<(const Math::Mat4f& uniform);
 private:
     std::vector<Step> steps;
-    std::string cachedUniformName;
 };
 
 }

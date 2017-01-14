@@ -19,6 +19,20 @@ void RenderSequence::Execute(Device* device)
         case RENDER:
             device->Render();
             break;
+        case UNIFORM_FLOAT:break;
+        case UNIFORM_FLOAT2:break;
+        case UNIFORM_FLOAT3:break;
+        case UNIFORM_FLOAT4:break;
+        case UNIFORM_INT:break;
+        case UNIFORM_INT2:break;
+        case UNIFORM_INT3:break;
+        case UNIFORM_INT4:break;
+        case UNIFORM_UINT:break;
+        case UNIFORM_UINT2:break;
+        case UNIFORM_UINT3:break;
+        case UNIFORM_UINT4:break;
+        case UNIFORM_MAT3F:break;
+        case UNIFORM_MAT4F:break;
         }
     }
 }
@@ -36,36 +50,63 @@ RenderSequence& RenderSequence::operator<<(Mesh* mesh)
     return *this;
 }
 
-RenderSequence& operator<<(const char* uniformName)
-{
-    cachedUniformName = std::string(uniformName);
-    return *this;
-}
-
-RenderSequence& operator<<(const std::string& uniformName)
-{
-    cachedUniformName = uniformName;
-    return *this;
-}
-
-RenderSequence& operator<<(float uniform)
+RenderSequence& RenderSequence::operator<<(float uniform)
 {
     
 }
 
-RenderSequence& operator<<(const Math::Vec2f& uniform);
-RenderSequence& operator<<(const Math::Vec3f& uniform);
-RenderSequence& operator<<(const Math::Vec4f& uniform);
-RenderSequence& operator<<(int uniform);
-RenderSequence& operator<<(const Math::Vec2i& uniform);
-RenderSequence& operator<<(const Math::Vec3i& uniform);
-RenderSequence& operator<<(const Math::Vec4i& uniform);
-RenderSequence& operator<<(unsigned int uniform);
-RenderSequence& operator<<(const Math::Vec2ui& uniform);
-RenderSequence& operator<<(const Math::Vec3ui& uniform);
-RenderSequence& operator<<(const Math::Vec4ui& uniform);
-RenderSequence& operator<<(const Math::Mat3f& uniform);
-RenderSequence& operator<<(const Math::Mat4f& uniform);
+RenderSequence& RenderSequence::operator<<(const Math::Vec2f& uniform)
+{
+    
+}
+RenderSequence& RenderSequence::operator<<(const Math::Vec3f& uniform)
+{
+    
+}
+RenderSequence& RenderSequence::operator<<(const Math::Vec4f& uniform)
+{
+    
+}
+RenderSequence& RenderSequence::operator<<(int uniform)
+{
+    
+}
+RenderSequence& RenderSequence::operator<<(const Math::Vec2i& uniform)
+{
+    
+}
+RenderSequence& RenderSequence::operator<<(const Math::Vec3i& uniform)
+{
+    
+}
+RenderSequence& RenderSequence::operator<<(const Math::Vec4i& uniform)
+{
+    
+}
+RenderSequence& RenderSequence::operator<<(unsigned int uniform)
+{
+    
+}
+RenderSequence& RenderSequence::operator<<(const Math::Vec2ui& uniform)
+{
+    
+}
+RenderSequence& RenderSequence::operator<<(const Math::Vec3ui& uniform)
+{
+    
+}
+RenderSequence& RenderSequence::operator<<(const Math::Vec4ui& uniform)
+{
+    
+}
+RenderSequence& RenderSequence::operator<<(const Math::Mat3f& uniform)
+{
+    
+}
+RenderSequence& RenderSequence::operator<<(const Math::Mat4f& uniform)
+{
+    
+}
    
 }
 }
