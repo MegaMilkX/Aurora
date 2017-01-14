@@ -163,8 +163,6 @@ int main()
     Au::GFX::Uniform uniModelMat4f = Au::GFX::GetUniform<Au::Math::Mat4f>("MatrixModel");
     Au::GFX::Uniform uniViewMat4f = Au::GFX::GetUniform<Au::Math::Mat4f>("MatrixView");
     Au::GFX::Uniform uniProjMat4f = Au::GFX::GetUniform<Au::Math::Mat4f>("MatrixProjection");
-    
-    Au::GFX::RenderSequence renderSequence(&gfxDevice);
 
     if(window.Show())
         while(!window.Destroyed())
@@ -172,7 +170,7 @@ int main()
             Au::Window::PollMessages();
             
             gfxDevice.Clear();
-            renderSequence << 
+            gfxDevice << 
                 renderState << 
                 uniModelMat4f << 
                 model.GetTransform() <<
