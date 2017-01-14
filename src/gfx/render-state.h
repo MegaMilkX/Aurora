@@ -29,7 +29,7 @@ private:
     std::vector<AttribInfo> vertexFormat;
     
     std::vector<unsigned int> uniformLocations;
-    std::vector<IUniform*> uniforms;
+    std::vector<Uniform> uniforms;
     
     std::string statusString;
     
@@ -39,10 +39,10 @@ private:
 template<typename T>
 void RenderState::AddUniform(const std::string& name)
 {
-    Au::GFX::Uniform<T> uniform = Au::GFX::Uniform<T>::Get(name);
+    Uniform uniform = GetUniform<T>(name);
     
-    uniformLocations.push_back(glGetUniformLocation(shaderProgram, uniform.Name().c_str()));
-    uniforms.push_back(uniform.Copy());
+    uniformLocations.push_back(glGetUniformLocation(shaderProgram, name.c_str()));
+    uniforms.push_back(uniform);
 }
    
 }

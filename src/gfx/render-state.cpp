@@ -13,11 +13,6 @@ RenderState::~RenderState()
 {
     if(shaderProgram)
         glDeleteProgram(shaderProgram);
-    
-    for(unsigned int i = 0; i < uniforms.size(); ++i)
-    {
-        delete uniforms[i];
-    }
 }
 
 void RenderState::AttribFormat(const std::vector<AttribInfo>& vertexFormat)
@@ -83,7 +78,7 @@ void RenderState::Bind()
     glUseProgram(shaderProgram);
     for(unsigned int i = 0; i < uniforms.size(); ++i)
     {
-        uniforms[i]->Upload(uniformLocations[i]);
+        uniforms[i].Upload(uniformLocations[i]);
     }
 }
 

@@ -10,118 +10,220 @@
 namespace Au{
 namespace GFX{
 
-class IUniform
+template<typename T>
+struct UniformStorage
 {
-public:
-    IUniform() : dataIndex(0) {}
-    virtual ~IUniform() {};
-    virtual void Upload(unsigned int location) = 0;
-    unsigned int DataIndex() { return dataIndex; }
-    virtual std::string Name() const = 0;
-    virtual IUniform* Copy() const = 0;
-protected:
-    unsigned int dataIndex;
+    static std::vector<T> data;
+    static std::map<std::string, unsigned int> name_index;
 };
 
-template<typename TYPE>
-class Uniform : public IUniform
+template<typename T>
+std::vector<T> UniformStorage<T>::data;
+template<typename T>
+std::map<std::string, unsigned int> UniformStorage<T>::name_index;
+
+class IUniformInterface
 {
 public:
-    Uniform() {}
-    Uniform(unsigned int idx) 
-    {
-        dataIndex = idx;
-    }
-    static Uniform Get(const std::string& name)
-    {
-        std::map<std::string, unsigned int>::iterator it;
-        it = name_index.find(name);
-        if (it != name_index.end())
-            return Uniform<TYPE>(it->second);
-        else
-        {
-            unsigned int id = data.size();
-            name_index.insert(std::make_pair(name, id));
-            data.push_back(TYPE());
-            names.push_back(name);
-            Uniform<TYPE> glob(id);
-            return glob;
-        }
-    }
+    virtual ~IUniformInterface() {}
+    virtual void Upload(unsigned int location, unsigned int dataIndex) = 0;
+};
 
-    void operator=(const TYPE& value)
-    {
-        Uniform<TYPE>::data[dataIndex] = value;
-    }
+template<typename T>
+class UniformInterface : public IUniformInterface
+{
+public:
+    void Upload(unsigned int location, unsigned int dataIndex);
+};
 
-    operator TYPE()
-    {
-        return Uniform<TYPE>::data[dataIndex];
-    }
+template<>
+inline void UniformInterface<float>::Upload(unsigned int location, unsigned int dataIndex) 
+{ 
+    glUniform1f(location, UniformStorage<float>::data[dataIndex]); 
+}
+template<>
+inline void UniformInterface<Math::Vec2f>::Upload(unsigned int location, unsigned int dataIndex) 
+{ 
+    glUniform2f(
+        location, 
+        UniformStorage<Math::Vec2f>::data[dataIndex].x, 
+        UniformStorage<Math::Vec2f>::data[dataIndex].y
+    ); 
+}
+template<>
+inline void UniformInterface<Math::Vec3f>::Upload(unsigned int location, unsigned int dataIndex) 
+{ 
+    glUniform3f(
+        location, 
+        UniformStorage<Math::Vec3f>::data[dataIndex].x, 
+        UniformStorage<Math::Vec3f>::data[dataIndex].y, 
+        UniformStorage<Math::Vec3f>::data[dataIndex].z
+    );
+}
+template<>
+inline void UniformInterface<Math::Vec4f>::Upload(unsigned int location, unsigned int dataIndex) 
+{
+    glUniform4f(
+        location, 
+        UniformStorage<Math::Vec4f>::data[dataIndex].x, 
+        UniformStorage<Math::Vec4f>::data[dataIndex].y, 
+        UniformStorage<Math::Vec4f>::data[dataIndex].z, 
+        UniformStorage<Math::Vec4f>::data[dataIndex].w
+    );
+}
+template<>
+inline void UniformInterface<int>::Upload(unsigned int location, unsigned int dataIndex) 
+{
+    glUniform1i(
+        location, 
+        UniformStorage<int>::data[dataIndex]
+    );
+}
+template<>
+inline void UniformInterface<Math::Vec2i>::Upload(unsigned int location, unsigned int dataIndex) 
+{
+    glUniform2i(
+        location,
+        UniformStorage<Math::Vec2i>::data[dataIndex].x,
+        UniformStorage<Math::Vec2i>::data[dataIndex].y
+    );
+}
+template<>
+inline void UniformInterface<Math::Vec3i>::Upload(unsigned int location, unsigned int dataIndex) 
+{
+    glUniform3i(
+        location,
+        UniformStorage<Math::Vec3i>::data[dataIndex].x,
+        UniformStorage<Math::Vec3i>::data[dataIndex].y,
+        UniformStorage<Math::Vec3i>::data[dataIndex].z
+    );
+}
+template<>
+inline void UniformInterface<Math::Vec4i>::Upload(unsigned int location, unsigned int dataIndex) 
+{
+    glUniform4i(
+        location,
+        UniformStorage<Math::Vec4i>::data[dataIndex].x,
+        UniformStorage<Math::Vec4i>::data[dataIndex].y,
+        UniformStorage<Math::Vec4i>::data[dataIndex].z,
+        UniformStorage<Math::Vec4i>::data[dataIndex].w
+    );
+}
+template<>
+inline void UniformInterface<unsigned int>::Upload(unsigned int location, unsigned int dataIndex)
+{
+    glUniform1ui(
+        location, 
+        UniformStorage<unsigned int>::data[dataIndex]
+    );
+}
+template<>
+inline void UniformInterface<Math::Vec2ui>::Upload(unsigned int location, unsigned int dataIndex) 
+{
+    glUniform2ui(
+        location,
+        UniformStorage<Math::Vec2ui>::data[dataIndex].x,
+        UniformStorage<Math::Vec2ui>::data[dataIndex].y
+    );
+}
+template<>
+inline void UniformInterface<Math::Vec3ui>::Upload(unsigned int location, unsigned int dataIndex) 
+{
+    glUniform3ui(
+        location,
+        UniformStorage<Math::Vec3ui>::data[dataIndex].x,
+        UniformStorage<Math::Vec3ui>::data[dataIndex].y,
+        UniformStorage<Math::Vec3ui>::data[dataIndex].z
+    );
+}
+template<>
+inline void UniformInterface<Math::Vec4ui>::Upload(unsigned int location, unsigned int dataIndex) 
+{
+    glUniform4ui(
+        location,
+        UniformStorage<Math::Vec4ui>::data[dataIndex].x,
+        UniformStorage<Math::Vec4ui>::data[dataIndex].y,
+        UniformStorage<Math::Vec4ui>::data[dataIndex].z,
+        UniformStorage<Math::Vec4ui>::data[dataIndex].w
+    );
+}
+template<>
+inline void UniformInterface<Math::Mat3f>::Upload(unsigned int location, unsigned int dataIndex) 
+{
+    glUniformMatrix3fv(
+        location,
+        1,
+        GL_FALSE,
+        (float*)&(UniformStorage<Math::Mat3f>::data[dataIndex])
+    );
+}
+template<>
+inline void UniformInterface<Math::Mat4f>::Upload(unsigned int location, unsigned int dataIndex) 
+{
+    glUniformMatrix4fv(
+        location, 
+        1, 
+        GL_FALSE, 
+        (float*)&(UniformStorage<Math::Mat4f>::data[dataIndex])
+    );
+}
 
-    void Upload(unsigned int location) {}
+// ======================================================
+
+template<typename T>
+class UniformInterfaceStorage
+{
+public:
+    static UniformInterface<T> impl;
+};
+
+template<typename T>
+UniformInterface<T> UniformInterfaceStorage<T>::impl;
+
+// ======================================================
+
+class Uniform
+{
+public:
+    Uniform()
+    : dataIndex(0), impl(0) {}
+    Uniform(unsigned dataIndex, IUniformInterface* impl)
+    : dataIndex(dataIndex), impl(impl) {}
+    template<typename T>
+    Uniform& operator=(const T& value);
     
-    std::string Name() const { return names[dataIndex]; }
-
-    IUniform* Copy() const
+    void Upload(unsigned int location)
     {
-        return new Uniform<TYPE>(dataIndex);
+        impl->Upload(location, dataIndex);
     }
 private:
-    static std::map<std::string, unsigned int> name_index;
-    static std::vector<TYPE> data;
-    static std::vector<std::string> names;
+    unsigned dataIndex;
+    IUniformInterface* impl;
 };
 
-template<typename TYPE>
-std::map<std::string, unsigned int> Uniform<TYPE>::name_index;
-template<typename TYPE>
-std::vector<TYPE> Uniform<TYPE>::data;
-template<typename TYPE>
-std::vector<std::string> Uniform<TYPE>::names;
+template<typename T>
+Uniform& Uniform::operator=(const T& value)
+{
+    UniformStorage<T>::data[dataIndex] = value;
+    return *this;
+}
 
-template<>
-void Uniform<float>::Upload(unsigned int location) 
-{ glUniform1f(location, data[dataIndex]); }
-template<>
-void Uniform<Math::Vec2f>::Upload(unsigned int location) 
-{ glUniform2f(location, data[dataIndex].x, data[dataIndex].y); }
-template<>
-void Uniform<Math::Vec3f>::Upload(unsigned int location) 
-{ glUniform3f(location, data[dataIndex].x, data[dataIndex].y, data[dataIndex].z); }
-template<>
-void Uniform<Math::Vec4f>::Upload(unsigned int location) 
-{ glUniform4f(location, data[dataIndex].x, data[dataIndex].y, data[dataIndex].z, data[dataIndex].w); }
-template<>
-void Uniform<int>::Upload(unsigned int location) 
-{ glUniform1i(location, data[dataIndex]); }
-template<>
-void Uniform<Math::Vec2i>::Upload(unsigned int location) 
-{ glUniform2i(location, data[dataIndex].x, data[dataIndex].y); }
-template<>
-void Uniform<Math::Vec3i>::Upload(unsigned int location) 
-{ glUniform3i(location, data[dataIndex].x, data[dataIndex].y, data[dataIndex].z); }
-template<>
-void Uniform<Math::Vec4i>::Upload(unsigned int location) 
-{ glUniform4i(location, data[dataIndex].x, data[dataIndex].y, data[dataIndex].z, data[dataIndex].w); }
-template<>
-void Uniform<unsigned int>::Upload(unsigned int location) { glUniform1ui(location, data[dataIndex]); }
-template<>
-void Uniform<Math::Vec2ui>::Upload(unsigned int location) 
-{ glUniform2ui(location, data[dataIndex].x, data[dataIndex].y); }
-template<>
-void Uniform<Math::Vec3ui>::Upload(unsigned int location) 
-{ glUniform3ui(location, data[dataIndex].x, data[dataIndex].y, data[dataIndex].z); }
-template<>
-void Uniform<Math::Vec4ui>::Upload(unsigned int location) 
-{ glUniform4ui(location, data[dataIndex].x, data[dataIndex].y, data[dataIndex].z, data[dataIndex].w); }
-template<>
-void Uniform<Math::Mat3f>::Upload(unsigned int location) 
-{ glUniformMatrix3fv(location, 1, GL_FALSE, (float*)&(data[dataIndex])); }
-template<>
-void Uniform<Math::Mat4f>::Upload(unsigned int location) 
-{ glUniformMatrix4fv(location, 1, GL_FALSE, (float*)&(data[dataIndex])); }
-
+template<typename T>
+Uniform GetUniform(const std::string& name)
+{
+    std::map<std::string, unsigned int>::iterator it;
+    it = UniformStorage<T>::name_index.find(name);
+    if (it != UniformStorage<T>::name_index.end())
+        return Uniform(it->second, &UniformInterfaceStorage<T>::impl);
+    else
+    {
+        unsigned int id = UniformStorage<T>::data.size();
+        UniformStorage<T>::name_index.insert(std::make_pair(name, id));
+        UniformStorage<T>::data.push_back(T());
+        //names.push_back(name);
+        return Uniform(id, &UniformInterfaceStorage<T>::impl);
+    }
+}
 
 }
 }
