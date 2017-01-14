@@ -1,6 +1,5 @@
 #include <aurora/window.h>
 #include <aurora/gfx.h>
-#include <aurora/render-sequence.h>
 #include <aurora/transform.h>
 #include <aurora/input.h>
 
