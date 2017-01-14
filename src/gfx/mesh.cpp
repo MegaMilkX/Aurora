@@ -97,6 +97,11 @@ void Mesh::Format(const std::vector<AttribInfo>& vertexFormat)
     }
 }
 
+std::vector<AttribInfo>& Mesh::Format()
+{
+    return vertexFormat;
+}
+
 void Mesh::VertexData(void* data, unsigned int count)
 {
     if(vertexSize == 0)

@@ -23,6 +23,7 @@ public:
     
     void PrimitiveType(PRIMITIVE prim);
     void Format(const std::vector<AttribInfo>& vertexFormat);
+    std::vector<AttribInfo>& Format();
     template<typename VERTEX>
     void VertexData(const std::vector<VERTEX>& data);
     void VertexData(void* data, unsigned int count);
