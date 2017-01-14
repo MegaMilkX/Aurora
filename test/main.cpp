@@ -3,6 +3,9 @@
 #include <aurora/transform.h>
 #include <aurora/input.h>
 
+#include <aurora/media/fbx.h>
+
+#include <fstream>
 #include <iostream>
 
 Au::Math::Transform model;
@@ -146,6 +149,18 @@ void Cleanup()
 
 int main()
 {
+    // FBX Loading WIP =========================
+    
+    std::ifstream file("test.fbx", std::ios::binary | std::ios::ate);
+    std::streamsize size = file.tellg();
+    file.seekg(0, std::ios::beg);
+    std::vector<char> buffer(size);
+    if(file.read(buffer.data(), size))
+    {
+        Au::Media::FBX::Read(buffer.data(), buffer.size());
+    }
+    // =========================================
+    
     Au::Input::LoadDeviceList();
     Au::Window window;
     
