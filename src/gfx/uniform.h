@@ -192,6 +192,8 @@ public:
     template<typename T>
     Uniform& operator=(const T& value);
     
+    unsigned DataIndex() { return dataIndex; }
+    
     void Upload(unsigned int location)
     {
         impl->Upload(location, dataIndex);
@@ -206,6 +208,13 @@ Uniform& Uniform::operator=(const T& value)
 {
     UniformStorage<T>::data[dataIndex] = value;
     return *this;
+}
+
+template<>
+inline Uniform& Uniform::operator=(const Uniform& value)
+{
+    dataIndex = value.dataIndex;
+    impl = value.impl;
 }
 
 template<typename T>
