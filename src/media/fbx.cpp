@@ -58,7 +58,7 @@ void ReadData(std::vector<char>& out, const char* data, const char*& cursor, con
     }
     
     const char type = *cursor;
-    const char* sbegin = cursor++;
+    const char* sbegin = ++cursor;
     
     switch(type)
     {
@@ -103,7 +103,7 @@ void ReadData(std::vector<char>& out, const char* data, const char*& cursor, con
         const Word length = Read<Word>(data, cursor, end);
         const Word encoding = Read<Word>(data, cursor, end);
         const Word comp_len = Read<Word>(data, cursor, end);
-        
+        sbegin = cursor;
         if(encoding == 0)
         {
             Word stride = 0;
