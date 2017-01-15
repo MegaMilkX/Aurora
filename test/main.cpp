@@ -151,7 +151,7 @@ int main()
 {
     // FBX Loading WIP =========================
     
-    std::ifstream file("test.fbx", std::ios::binary | std::ios::ate);
+    std::ifstream file("miku.fbx", std::ios::binary | std::ios::ate);
     std::streamsize size = file.tellg();
     file.seekg(0, std::ios::beg);
     std::vector<char> buffer(size);
