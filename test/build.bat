@@ -81,7 +81,7 @@ REM =============================================
 
 REM Collect all source files
 set SOURCES=
-for /F %%A in ('dir /b *.cpp *.res *.def') do set SOURCES=!SOURCES! "%~dp0\%%A"
+for /F %%A in ('dir /b *.c *.cpp *.res *.def') do set SOURCES=!SOURCES! "%~dp0\%%A"
 for /F %%A in ('dir /b /S %~dp0\src\*.cpp %~dp0\src\*.res %~dp0\src\*.def') do set SOURCES=!SOURCES! "%%A"
 
 if exist build.txt (
