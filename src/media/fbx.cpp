@@ -3,6 +3,9 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <fstream>
+
+#include "../util/deflate.h"
 
 namespace Au{
 namespace Media{
@@ -51,12 +54,16 @@ bool ReadString(std::string& out, const char* data, const char*& cursor, const c
 
 void ReadData(std::vector<char>& out, const char* data, const char*& cursor, const char* end)
 {
+    bool is_encoded = false;
+    Word uncomp_len;
+    
     if(Offset(cursor, end) < 1)
     {
         std::cout << "out of bounds while reading data length" << std::endl;
         return;
     }
     
+    Word stride = 0; // For arrays
     const char type = *cursor;
     const char* sbegin = ++cursor;
     
@@ -96,33 +103,38 @@ void ReadData(std::vector<char>& out, const char* data, const char*& cursor, con
         cursor = end;
         break;
     case 'f':
+    case 'i':
     case 'd':
     case 'l':
-    case 'i':
     {
         const Word length = Read<Word>(data, cursor, end);
         const Word encoding = Read<Word>(data, cursor, end);
         const Word comp_len = Read<Word>(data, cursor, end);
+        std::cout << "LEN: " << length << "|" << "ENC: " << encoding << "|" << "COMP_LEN: " << comp_len << std::endl;
         sbegin = cursor;
+        
+        switch(type)
+        {
+        case 'f':
+            std::cout << "float array, size: " << length << std::endl;
+            stride = 4;
+            break;
+        case 'i':
+            std::cout << "int array, size: " << length << std::endl;
+            stride = 4;
+            break;
+        case 'd':
+            std::cout << "double array, size: " << length << std::endl;
+            stride = 8;
+            break;
+        case 'l':
+            std::cout << "long array, size: " << length << std::endl;
+            stride = 8;
+            break;
+        }
+        
         if(encoding == 0)
         {
-            Word stride = 0;
-            switch(type)
-            {
-            case 'f':
-                std::cout << "float array, size: " << length << std::endl;
-            case 'i':
-                std::cout << "int array, size: " << length << std::endl;
-                stride = 4;
-                break;
-            case 'd':
-                std::cout << "double array, size: " << length << std::endl;
-            case 'l':
-                std::cout << "long array, size: " << length << std::endl;
-                stride = 8;
-                break;
-            }
-            
             if(length * stride != comp_len)
             {
                 std::cout << "Failed to ReadData, calculated data stride differs from what the file claims" << std::endl;
@@ -132,6 +144,7 @@ void ReadData(std::vector<char>& out, const char* data, const char*& cursor, con
         else if(encoding == 1)
         {
             std::cout << "This shit is encoded" << std::endl;
+            is_encoded = true;
         }
         else if(encoding != 1)
         {
@@ -139,6 +152,8 @@ void ReadData(std::vector<char>& out, const char* data, const char*& cursor, con
             return;
         }
         cursor += comp_len;
+        uncomp_len = length * stride;
+        std::cout << "Uncomp len: " << uncomp_len << std::endl;
         break;
     }
     case 'S':
@@ -161,6 +176,11 @@ void ReadData(std::vector<char>& out, const char* data, const char*& cursor, con
     
     const char* send = cursor;
     out = std::vector<char>(sbegin, send);
+    
+    if(is_encoded)
+    {
+        out = Au::Inflate(out, uncomp_len);
+    }
     std::cout << "Data read: " << out.size() << std::endl;
 }
 
