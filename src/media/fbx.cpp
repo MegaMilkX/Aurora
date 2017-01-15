@@ -129,6 +129,10 @@ void ReadData(std::vector<char>& out, const char* data, const char*& cursor, con
                 return;
             }
         }
+        else if(encoding == 1)
+        {
+            std::cout << "This shit is encoded" << std::endl;
+        }
         else if(encoding != 1)
         {
             std::cout << "ReadData failed, unknown encoding" << std::endl;
@@ -157,6 +161,7 @@ void ReadData(std::vector<char>& out, const char* data, const char*& cursor, con
     
     const char* send = cursor;
     out = std::vector<char>(sbegin, send);
+    std::cout << "Data read: " << out.size() << std::endl;
 }
 
 bool ReadBlock(const char* data, const char*& cursor, const char* end, Word flags)
