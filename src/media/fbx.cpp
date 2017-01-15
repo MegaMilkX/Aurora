@@ -110,11 +110,15 @@ void ReadData(std::vector<char>& out, const char* data, const char*& cursor, con
             switch(type)
             {
             case 'f':
+                std::cout << "float array, size: " << length << std::endl;
             case 'i':
+                std::cout << "int array, size: " << length << std::endl;
                 stride = 4;
                 break;
             case 'd':
+                std::cout << "double array, size: " << length << std::endl;
             case 'l':
+                std::cout << "long array, size: " << length << std::endl;
                 stride = 8;
                 break;
             }
