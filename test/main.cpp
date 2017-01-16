@@ -159,6 +159,13 @@ int main()
     {
         Au::Media::FBX::Read(buffer.data(), buffer.size());
     }
+    
+    Au::Media::FBXReader fbxReader;
+    fbxReader.Read(buffer.data(), buffer.size());
+    std::vector<Au::Math::Vec3f> position = fbxReader.GetData<Au::GFX::Position>();
+    std::vector<Au::Math::Vec3f> normal = fbxReader.GetData<Au::GFX::Normal>();
+    std::vector<Au::Math::Vec2f> uv = fbxReader.GetData<Au::GFX::UV>();
+    
     // =========================================
     
     Au::Input::LoadDeviceList();
