@@ -3,7 +3,7 @@
 
 #include <set>
 
-#include "attribute.h"
+#include "../util/attribute.h"
 #include "shader.h"
 #include "uniform.h"
 

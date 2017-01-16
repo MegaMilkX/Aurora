@@ -1,7 +1,8 @@
 #include "attribute.h"
 
+#include <map>
+
 namespace Au{
-namespace GFX{
 
 std::map<std::pair<typeindex, AttribInstance>, AttribIndex> globalAttribIndexMap;
 AttribIndex GetGlobalAttribIndex(typeindex type, unsigned int instance)
@@ -21,5 +22,4 @@ AttribIndex GetGlobalAttribIndex(typeindex type, unsigned int instance)
     }
 }
 
-}
 }

@@ -3,7 +3,7 @@
 
 #include "gl/glbuffer.h"
 
-#include "attribute.h"
+#include "../util/attribute.h"
 
 namespace Au{
 namespace GFX{
