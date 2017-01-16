@@ -160,11 +160,11 @@ int main()
         Au::Media::FBX::Read(buffer.data(), buffer.size());
     }
     /*
-    Au::Media::FBXReader fbxReader;
+    Au::Media::FBX::Reader fbxReader;
     fbxReader.Read(buffer.data(), buffer.size());
-    std::vector<Au::Math::Vec3f> position = fbxReader.GetData<Au::GFX::Position>();
-    std::vector<Au::Math::Vec3f> normal = fbxReader.GetData<Au::GFX::Normal>();
-    std::vector<Au::Math::Vec2f> uv = fbxReader.GetData<Au::GFX::UV>();
+    std::vector<Au::Math::Vec3f> position = fbxReader.GetArray<Au::Math::Vec3f>(Au::Position());
+    std::vector<Au::Math::Vec3f> normal = fbxReader.GetData<Au::Normal>();
+    std::vector<Au::Math::Vec2f> uv = fbxReader.GetData<Au::UV>();
     */
     // =========================================
     
