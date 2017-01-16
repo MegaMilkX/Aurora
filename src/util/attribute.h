@@ -10,7 +10,7 @@
 #define AU_DEF_ATTRIB(NAME, ELEMTYPE, ELEMCOUNT) \
     class NAME{ \
     public: \
-        operator int() const { return GetAttribIndex<NAME>(); } \
+        operator unsigned int() const { return GetAttribIndex<NAME>(); } \
         operator AttribInfo() const \
         { \
             AttribInfo info; \
@@ -32,16 +32,16 @@
 
 namespace Au{
 
-inline int NextAttribIndex()
+inline unsigned int NextAttribIndex()
 {
-    static int index = 0;
+    static unsigned int index = 0;
     return index++;
 }
 
 template<typename A>
 int GetAttribIndex()
 {
-    static int index = NextAttribIndex();
+    static unsigned int index = NextAttribIndex();
     return index;
 }
 
