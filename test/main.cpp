@@ -87,7 +87,7 @@ Au::GFX::Mesh* CreateCubeMesh()
       1, 5, 6, 6, 2, 1 };
 
     Au::GFX::Mesh* mesh = gfxDevice.CreateMesh();
-    mesh->Format(Au::GFX::Position() << Au::GFX::ColorRGB());
+    mesh->Format(Au::Position() << Au::ColorRGB());
     mesh->VertexData(vertices);
     mesh->IndexData(indices);
     
@@ -121,7 +121,7 @@ Au::GFX::RenderState* CreateRenderState()
     std::cout << shaderPixel->StatusString() << std::endl;
     
     Au::GFX::RenderState* renderState = gfxDevice.CreateRenderState();
-    renderState->AttribFormat(Au::GFX::Position() << Au::GFX::ColorRGB());
+    renderState->AttribFormat(Au::Position() << Au::ColorRGB());
     renderState->SetShader(shaderVertex);
     renderState->SetShader(shaderPixel);
     renderState->AddUniform<Au::Math::Mat4f>("MatrixModel");
@@ -159,13 +159,13 @@ int main()
     {
         Au::Media::FBX::Read(buffer.data(), buffer.size());
     }
-    
+    /*
     Au::Media::FBXReader fbxReader;
     fbxReader.Read(buffer.data(), buffer.size());
     std::vector<Au::Math::Vec3f> position = fbxReader.GetData<Au::GFX::Position>();
     std::vector<Au::Math::Vec3f> normal = fbxReader.GetData<Au::GFX::Normal>();
     std::vector<Au::Math::Vec2f> uv = fbxReader.GetData<Au::GFX::UV>();
-    
+    */
     // =========================================
     
     Au::Input::LoadDeviceList();
