@@ -1,3 +1,5 @@
+#include "fbx.h"
+
 #include <stdint.h>
 #include <string.h>
 #include <string>
@@ -52,7 +54,7 @@ bool ReadString(std::string& out, const char* data, const char*& cursor, const c
     return true;
 }
 
-void ReadData(std::vector<char>& out, const char* data, const char*& cursor, const char* end)
+void Reader::ReadData(std::vector<char>& out, const char* data, const char*& cursor, const char* end)
 {
     bool is_encoded = false;
     Word uncomp_len;
@@ -184,7 +186,7 @@ void ReadData(std::vector<char>& out, const char* data, const char*& cursor, con
     std::cout << "Data read: " << out.size() << std::endl;
 }
 
-bool ReadBlock(const char* data, const char*& cursor, const char* end, Word flags)
+bool Reader::ReadBlock(const char* data, const char*& cursor, const char* end, Word flags)
 {
     const Word end_offset = Read<Word>(data, cursor, end);
     
@@ -256,7 +258,7 @@ bool ReadBlock(const char* data, const char*& cursor, const char* end, Word flag
     return true;
 }
 
-bool Read(const char* data, unsigned size)
+bool Reader::ReadFile(const char* data, unsigned size)
 {
     std::cout << "Reading FBX file..." << std::endl;
     if(!data)
