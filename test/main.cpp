@@ -157,11 +157,10 @@ int main()
     std::vector<char> buffer(size);
     if(file.read(buffer.data(), size))
     {
-        Au::Media::FBX::Read(buffer.data(), buffer.size());
+        Au::Media::FBX::Reader fbxReader;
+        fbxReader.ReadFile(buffer.data(), buffer.size());
     }
     /*
-    Au::Media::FBX::Reader fbxReader;
-    fbxReader.Read(buffer.data(), buffer.size());
     std::vector<Au::Math::Vec3f> position = fbxReader.GetArray<Au::Math::Vec3f>(Au::Position());
     std::vector<Au::Math::Vec3f> normal = fbxReader.GetData<Au::Normal>();
     std::vector<Au::Math::Vec2f> uv = fbxReader.GetData<Au::UV>();
