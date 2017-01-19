@@ -82,10 +82,14 @@ private:
 class Node
 {
 public:    
-    Node* Add(const Node& node)
+    void Add(const Node& node)
     {
         children.push_back(node);
-        return &(children[children.size()-1]);
+    }
+    
+    void Add(const Prop& prop)
+    {
+        props.push_back(prop);
     }
     
     void Name(const std::string& name)
@@ -93,8 +97,27 @@ public:
         this->name = name;
     }
     
+    void PropCount(unsigned count)
+    {
+        propCount = count;
+    }
+    
+    void Print(unsigned level = 0)
+    {
+        for(unsigned i = 0; i < level; ++i)
+            std::cout << "  ";
+        std::cout << name << " | " << "Prop count: " << propCount << std::endl;
+        ++level;
+        for(unsigned i = 0; i < props.size(); ++i)
+            props[i].Print(level);
+        for(unsigned i = 0; i < children.size(); ++i)
+            children[i].Print(level);
+    }
+    
 private:
     std::string name;
+    unsigned propCount;
+    std::vector<Prop> props;
     std::vector<Node> children;
 };
 
@@ -102,14 +125,17 @@ class Reader
 {
 public:
     Reader()
-    : currentNode(&rootNode) {}
+    {}
     bool ReadFile(const char* data, unsigned size);
+    void Print()
+    {
+        rootNode.Print();
+    }
 private:
-    void ReadData(std::vector<char>& out, const char* data, const char*& cursor, const char* end);
-    bool ReadBlock(const char* data, const char*& cursor, const char* end, Word flags);
+    void ReadData(Prop& prop, std::vector<char>& out, const char* data, const char*& cursor, const char* end);
+    bool ReadBlock(Node& node, const char* data, const char*& cursor, const char* end, Word flags);
     
     Node rootNode;
-    Node* currentNode;
 };
 
 }

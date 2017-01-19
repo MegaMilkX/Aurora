@@ -50,20 +50,22 @@ bool ReadString(std::string& out, const char* data, const char*& cursor, const c
     return true;
 }
 
-void Reader::ReadData(std::vector<char>& out, const char* data, const char*& cursor, const char* end)
+void Reader::ReadData(Prop& prop, std::vector<char>& out, const char* data, const char*& cursor, const char* end)
 {
     bool is_encoded = false;
     Word uncomp_len;
     
     if(Offset(cursor, end) < 1)
     {
-        std::cout << "out of bounds while reading data length" << std::endl;
+        //std::cout << "out of bounds while reading data length" << std::endl;
         return;
     }
     
     Word stride = 0; // For arrays
     const char type = *cursor;
     const char* sbegin = ++cursor;
+    
+    prop.Type(type);
     
     switch(type)
     {
@@ -108,25 +110,25 @@ void Reader::ReadData(std::vector<char>& out, const char* data, const char*& cur
         const Word length = Read<Word>(data, cursor, end);
         const Word encoding = Read<Word>(data, cursor, end);
         const Word comp_len = Read<Word>(data, cursor, end);
-        std::cout << "LEN: " << length << "|" << "ENC: " << encoding << "|" << "COMP_LEN: " << comp_len << std::endl;
+        //std::cout << "LEN: " << length << "|" << "ENC: " << encoding << "|" << "COMP_LEN: " << comp_len << std::endl;
         sbegin = cursor;
         
         switch(type)
         {
         case 'f':
-            std::cout << "float array, size: " << length << std::endl;
+            //std::cout << "float array, size: " << length << std::endl;
             stride = 4;
             break;
         case 'i':
-            std::cout << "int array, size: " << length << std::endl;
+            //std::cout << "int array, size: " << length << std::endl;
             stride = 4;
             break;
         case 'd':
-            std::cout << "double array, size: " << length << std::endl;
+            //std::cout << "double array, size: " << length << std::endl;
             stride = 8;
             break;
         case 'l':
-            std::cout << "long array, size: " << length << std::endl;
+            //std::cout << "long array, size: " << length << std::endl;
             stride = 8;
             break;
         }
@@ -135,40 +137,41 @@ void Reader::ReadData(std::vector<char>& out, const char* data, const char*& cur
         {
             if(length * stride != comp_len)
             {
-                std::cout << "Failed to ReadData, calculated data stride differs from what the file claims" << std::endl;
+                //std::cout << "Failed to ReadData, calculated data stride differs from what the file claims" << std::endl;
                 return;
             }
         }
         else if(encoding == 1)
         {
-            std::cout << "This shit is encoded" << std::endl;
+            //std::cout << "This shit is encoded" << std::endl;
             is_encoded = true;
         }
         else if(encoding != 1)
         {
-            std::cout << "ReadData failed, unknown encoding" << std::endl;
+            //std::cout << "ReadData failed, unknown encoding" << std::endl;
             return;
         }
         cursor += comp_len;
         uncomp_len = length * stride;
-        std::cout << "Uncomp len: " << uncomp_len << std::endl;
+        //std::cout << "Uncomp len: " << uncomp_len << std::endl;
         break;
     }
     case 'S':
     {
         std::string str;
         ReadString(str, data, cursor, end, true);
-        std::cout << "data str: " << str << std::endl;
+        sbegin = cursor - str.size();
+        //std::cout << "data str: " << str << std::endl;
         break;
     }
     default:
-        std::cout << "ReadData failed, unexpected type code: " << std::string(&type, 1) << std::endl;
+        //std::cout << "ReadData failed, unexpected type code: " << std::string(&type, 1) << std::endl;
         return;
     }
     
     if(cursor > end)
     {
-        std::cout << "ReadData failed, remaining size too small" << std::endl;
+        //std::cout << "ReadData failed, remaining size too small" << std::endl;
         return;
     }
     
@@ -179,26 +182,27 @@ void Reader::ReadData(std::vector<char>& out, const char* data, const char*& cur
     {
         out = Au::Inflate(out, uncomp_len);
     }
-    std::cout << "Data read: " << out.size() << std::endl;
+    prop.Data(out);
+    //std::cout << "Data read: " << out.size() << std::endl;
 }
 
-bool Reader::ReadBlock(const char* data, const char*& cursor, const char* end, Word flags)
+bool Reader::ReadBlock(Node& node, const char* data, const char*& cursor, const char* end, Word flags)
 {
     const Word end_offset = Read<Word>(data, cursor, end);
     
     if(end_offset == 0)
     {
-        std::cout << "end_offset is 0" << std::endl;
+        //std::cout << "end_offset is 0" << std::endl;
         return false;
     }
     if(end_offset > Offset(data, end))
     {
-        std::cout << "end_offset > Offset(data, end)" << std::endl;
+        //std::cout << "end_offset > Offset(data, end)" << std::endl;
         return false;
     }
     else if(end_offset < Offset(data, cursor))
     {
-        std::cout << "end_offset < Offset(data, end)" << std::endl;
+        //std::cout << "end_offset < Offset(data, end)" << std::endl;
         return false;
     }
     const Word prop_count = Read<Word>(data, cursor, end);
@@ -206,18 +210,22 @@ bool Reader::ReadBlock(const char* data, const char*& cursor, const char* end, W
     
     std::string block_name;
     ReadString(block_name, data, cursor, end);
-    std::cout << "BLOCK: [" << block_name << "]" << std::endl;
+    //std::cout << "BLOCK: [" << block_name << "]" << std::endl;
+    node.Name(block_name);
+    node.PropCount(prop_count);
     
     const char* begin_cur = cursor;
     for(unsigned i = 0; i < prop_count; ++i)
     {
+        Prop prop;
         std::vector<char> actual_data;
-        ReadData(actual_data, data, cursor, begin_cur + prop_len);
+        ReadData(prop, actual_data, data, cursor, begin_cur + prop_len);
+        node.Add(prop);
     }
     
     if(Offset(begin_cur, cursor) != prop_len)
     {
-        std::cout << "Property length was not reached" << std::endl;
+        //std::cout << "Property length was not reached" << std::endl;
         return false;
     }
     
@@ -227,18 +235,22 @@ bool Reader::ReadBlock(const char* data, const char*& cursor, const char* end, W
     {
         if(end_offset - Offset(data, cursor) < sentinel_block_length)
         {
-            std::cout << "Insufficient padding bytes at block end" << std::endl;
+            //std::cout << "Insufficient padding bytes at block end" << std::endl;
             return false;
         }
         
         while(Offset(data, cursor) < end_offset - sentinel_block_length)
-            ReadBlock(data, cursor, data + end_offset - sentinel_block_length, flags);
+        {
+            Node new_node;
+            ReadBlock(new_node, data, cursor, data + end_offset - sentinel_block_length, flags);
+            node.Add(new_node);
+        }
         
         for(unsigned i = 0; i < sentinel_block_length; ++i)
         {
             if(cursor[i] != '\0')
             {
-                std::cout << "13 zero bytes expected" << std::endl;
+                //std::cout << "13 zero bytes expected" << std::endl;
                 return 0;
             }
         }
@@ -247,7 +259,7 @@ bool Reader::ReadBlock(const char* data, const char*& cursor, const char* end, W
     
     if(Offset(data, cursor) != end_offset)
     {
-        std::cout << "scope length not reached" << std::endl;
+        //std::cout << "scope length not reached" << std::endl;
         return false;
     }
     
@@ -259,12 +271,12 @@ bool Reader::ReadFile(const char* data, unsigned size)
     std::cout << "Reading FBX file..." << std::endl;
     if(!data)
     {
-        std::cout << "data is null" << std::endl;
+        //std::cout << "data is null" << std::endl;
         return false;
     }
     if(size < 0x1b)
     {
-        std::cout << "size is to small" << std::endl;
+        //std::cout << "size is to small" << std::endl;
         return false;
     }
     if(strncmp(data, "Kaydara FBX Binary", 18))
@@ -272,7 +284,7 @@ bool Reader::ReadFile(const char* data, unsigned size)
         std::cout << "Invalid FBX header" << std::endl;
         return false;
     }
-    std::cout << "Found FBX header" << std::endl;
+    //std::cout << "Found FBX header" << std::endl;
     
     const char* cursor = data + 0x15;
     
@@ -282,7 +294,7 @@ bool Reader::ReadFile(const char* data, unsigned size)
     
     while(cursor < data + size)
     {
-        if(!ReadBlock(data, cursor, data + size, flags))
+        if(!ReadBlock(rootNode, data, cursor, data + size, flags))
             return false;
     }
     
