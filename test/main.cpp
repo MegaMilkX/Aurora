@@ -159,6 +159,7 @@ int main()
     {
         Au::Media::FBX::Reader fbxReader;
         fbxReader.ReadFile(buffer.data(), buffer.size());
+        fbxReader.Print();
     }
     /*
     std::vector<Au::Math::Vec3f> position = fbxReader.GetArray<Au::Math::Vec3f>(Au::Position());
