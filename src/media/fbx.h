@@ -8,7 +8,10 @@ namespace Au{
 namespace Media{
 namespace FBX{
 
-//bool Read(const char* data, unsigned size);
+typedef uint8_t Byte;
+typedef uint32_t Word;
+typedef uint64_t DoubleWord;
+
 
 class Node
 {

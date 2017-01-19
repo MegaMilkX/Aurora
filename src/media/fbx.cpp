@@ -13,10 +13,6 @@ namespace Au{
 namespace Media{
 namespace FBX{
     
-typedef uint8_t Byte;
-typedef uint32_t Word;
-typedef uint64_t DoubleWord;
-    
 uint32_t Offset(const char* begin, const char* cursor)
 {
     return static_cast<unsigned int>(cursor - begin);
