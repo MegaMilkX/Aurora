@@ -226,6 +226,8 @@ public:
     template<typename T>
     std::vector<T> GetNormals(unsigned object = 0);
     template<typename T>
+    std::vector<T> GetUV(unsigned object = 0);
+    template<typename T>
     std::vector<T> GetIndices(unsigned object = 0);
     
     void Print()
@@ -316,6 +318,13 @@ std::vector<T> Reader::GetNormals(unsigned object)
     }
     */
     return result;
+}
+
+template<typename T>
+std::vector<T> Reader::GetUV(unsigned object = 0)
+{
+    // TODO
+    return std::vector<T>();
 }
 
 template<typename T>
