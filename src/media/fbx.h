@@ -22,7 +22,7 @@ public:
     {
         for(unsigned i = 0; i < level; ++i)
             std::cout << "  ";
-        
+        int stride = 0;
         switch(type)
         {
         // 16 bit int
@@ -55,11 +55,14 @@ public:
         case 'b':
             break;
         case 'f':
-            
         case 'i':
+            stride = 4;
+            std::cout << "Some array, size: " << data.size() / stride;
+            break;
         case 'd':
         case 'l':
-            std::cout << "Some array";
+            stride = 8;
+            std::cout << "Some array, size: " << data.size() / stride;
             break;
         case 'S':
             std::cout << std::string(data.data(), data.data() + data.size());
@@ -79,6 +82,11 @@ public:
     void Data(const std::vector<char>& data)
     {
         this->data = data;
+    }
+    
+    std::string GetString()
+    {
+        return std::string(data.data(), data.data() + data.size());
     }
     
     template<typename T>
@@ -216,6 +224,8 @@ public:
     template<typename T>
     std::vector<T> GetVertices(unsigned object = 0);
     template<typename T>
+    std::vector<T> GetNormals(unsigned object = 0);
+    template<typename T>
     std::vector<T> GetIndices(unsigned object = 0);
     
     void Print()
@@ -233,6 +243,79 @@ template<typename T>
 std::vector<T> Reader::GetVertices(unsigned object)
 {
     return rootNode.Get("Geometry", object).Get("Vertices")[0].GetArray<T>();
+}
+
+template<typename T>
+std::vector<T> Reader::GetNormals(unsigned object)
+{
+    std::vector<float> temp = 
+        rootNode.Get("Geometry", object).Get("LayerElementNormal").Get("Normals")[0].GetArray<float>();
+    std::string mapping = 
+        rootNode.Get("Geometry", object).Get("LayerElementNormal").Get("MappingInformationType")[0].GetString();
+    std::vector<float> vertices = GetVertices<float>(object);
+    
+    std::vector<T> result(vertices.size());
+    if(mapping == "ByVertex" || mapping == "ByVertice")
+    {
+        for(unsigned i = 0; i < temp.size(); ++i)
+        {
+            result[i] = ((T)temp[i]);
+        }
+    }
+    else if(mapping == "ByPolygon")
+    {
+        std::vector<int32_t> indices = rootNode.Get("Geometry", object).Get("PolygonVertexIndex")[0].GetArray<int32_t>();
+        unsigned index = 0;
+        for(unsigned i = 0; i < temp.size() / 3; ++i)
+        {
+            std::vector<unsigned> polyIndices;
+            for(unsigned j = index; j < indices.size(); ++j)
+            {
+                index = j + 1;
+                int32_t idx = indices[j];
+                if(idx < 0)
+                {
+                    idx = -idx - 1;
+                    polyIndices.push_back(idx);
+                    break;
+                }
+                polyIndices.push_back(idx);
+            }
+            
+            for(unsigned j = 0; j < polyIndices.size(); ++j)
+            {
+                result[polyIndices[j] * 3] = temp[i * 3];
+                result[polyIndices[j] * 3 + 1] = temp[i * 3 + 1];
+                result[polyIndices[j] * 3 + 2] = temp[i * 3 + 2];
+            }
+        }
+    }
+    else if(mapping == "ByPolygonVertex")
+    {
+        std::vector<int32_t> indices = rootNode.Get("Geometry", object).Get("PolygonVertexIndex")[0].GetArray<int32_t>();
+        for(unsigned i = 0; i < indices.size(); ++i)
+        {
+            int32_t index = indices[i];
+            if(index < 0)
+                index = -index - 1;
+            
+            result[index * 3] = temp[i * 3];
+            result[index * 3 + 1] = temp[i * 3 + 1];
+            result[index * 3 + 2] = temp[i * 3 + 2];
+        }
+    }
+    /*
+    // TODO
+    else if(mapping == "ByEdge")
+    {
+        
+    }
+    else if(mapping == "AllSame")
+    {
+        
+    }
+    */
+    return result;
 }
 
 template<typename T>
