@@ -59,6 +59,11 @@ struct AttribInfo
     unsigned char elemSize;
     unsigned char elemCount;
     
+    bool operator==(const AttribInfo& other) const
+    {
+        return typeIndex == other.typeIndex;
+    }
+    
     void Print() const
     {
         std::cout << name << ": " << std::endl;
