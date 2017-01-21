@@ -5,6 +5,8 @@
 #include <string>
 #include <vector>
 
+#include "../math/math.h"
+
 namespace Au{
 namespace Media{
 namespace FBX{
@@ -70,12 +72,70 @@ public:
     {
         this->type = type;
     }
+    void ArraySize(unsigned arraySize)
+    {
+        this->arraySize = arraySize;
+    }
     void Data(const std::vector<char>& data)
     {
         this->data = data;
     }
+    
+    template<typename T>
+    std::vector<T> GetArray()
+    {
+        std::vector<T> result;
+        
+        unsigned byteLength = data.size();
+        unsigned arrayLength = 0;
+        unsigned targetElementSize = sizeof(T);
+        
+        switch(type)
+        {
+        case 'f': case 'i': arrayLength = byteLength / 4; break;
+        case 'd': case 'l': arrayLength = byteLength / 8; break;
+        }
+        
+        if(arrayLength == 0)
+            return result;
+        
+        switch(type)
+        {
+        case 'f':
+            {
+                float* dataptr = (float*)(data.data());
+                for(unsigned i = 0; i < arrayLength; ++i)
+                    result.push_back((T)(dataptr[i]));
+            }
+            break;
+        case 'i':
+            {
+                int32_t* dataptr = (int32_t*)(data.data());
+                for(unsigned i = 0; i < arrayLength; ++i)
+                    result.push_back((T)(dataptr[i]));
+            }
+            break;
+        case 'd':
+            {
+                double* dataptr = (double*)(data.data());
+                for(unsigned i = 0; i < arrayLength; ++i)
+                    result.push_back((T)(dataptr[i]));
+            }
+            break;
+        case 'l':
+            {
+                int64_t* dataptr = (int64_t*)(data.data());
+                for(unsigned i = 0; i < arrayLength; ++i)
+                    result.push_back((T)(dataptr[i]));
+            }
+            break;
+        }
+        
+        return result;
+    }
 private:
     char type;
+    unsigned arraySize;
     std::vector<char> data;
 };
 
@@ -102,11 +162,12 @@ public:
         propCount = count;
     }
     
-    Node& Get(const std::string& name)
+    Node& Get(const std::string& name, unsigned instance = 0)
     {
+        unsigned instanceCounter = 0;
         for(unsigned i = 0; i < children.size(); ++i)
         {
-            if(children[i].name == name)
+            if(children[i].name == name && instance == instanceCounter++)
             {
                 return children[i];
             }
@@ -151,6 +212,12 @@ public:
     Reader()
     {}
     bool ReadFile(const char* data, unsigned size);
+    
+    template<typename T>
+    std::vector<T> GetVertices(unsigned object = 0);
+    template<typename T>
+    std::vector<T> GetIndices(unsigned object = 0);
+    
     void Print()
     {
         rootNode.Print();
@@ -161,6 +228,26 @@ private:
     
     Node rootNode;
 };
+
+template<typename T>
+std::vector<T> Reader::GetVertices(unsigned object)
+{
+    return rootNode.Get("Geometry", object).Get("Vertices")[0].GetArray<T>();
+}
+
+template<typename T>
+std::vector<T> Reader::GetIndices(unsigned object)
+{
+    std::vector<int32_t> temp = rootNode.Get("Geometry", object).Get("PolygonVertexIndex")[0].GetArray<int32_t>();
+    std::vector<T> result;
+    for(unsigned i = 0; i < temp.size(); ++i)
+    {
+        if(temp[i] < 0)
+            temp[i] = -temp[i] - 1;
+        result.push_back((T)temp[i]);
+    }
+    return result;
+}
 
 }
 }
