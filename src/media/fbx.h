@@ -102,6 +102,30 @@ public:
         propCount = count;
     }
     
+    Node& Get(const std::string& name)
+    {
+        for(unsigned i = 0; i < children.size(); ++i)
+        {
+            if(children[i].name == name)
+            {
+                return children[i];
+            }
+        }
+        
+        Node node;
+        node.Name(name);
+        children.push_back(node);
+        return children[children.size()-1];
+    }
+    
+    Prop& operator[](unsigned index)
+    {
+        if(index >= props.size())
+            props.resize(index+1);
+        
+        return props[index];
+    }
+    
     void Print(unsigned level = 0)
     {
         for(unsigned i = 0; i < level; ++i)
