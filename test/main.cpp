@@ -12,6 +12,7 @@ Au::Math::Transform model;
 Au::Math::Transform view;
 Au::Math::Mat4f projection;
 float fov = 1.6f;
+float zfar = 10.0f;
 
 class MouseHandler : public Au::Input::MouseHandler
 {
@@ -35,7 +36,7 @@ public:
     void Wheel(short value)
     {
         fov -= value * 0.001f;
-        projection = Au::Math::Perspective(fov, 4.0f/3.0f, 0.1f, 100);
+        projection = Au::Math::Perspective(fov, 4.0f/3.0f, 0.1f, zfar);
     }
 };
 
@@ -65,6 +66,34 @@ Au::GFX::Device gfxDevice;
 
 MouseHandler mouseHandler;
 KeyboardHandler keyboardHandler;
+
+Au::GFX::Mesh* LoadMesh(const std::string& path)
+{
+    Au::GFX::Mesh* mesh = gfxDevice.CreateMesh();
+    mesh->Format(Au::Position() << Au::ColorRGB());
+    
+    // FBX Loading WIP =========================
+    
+    std::ifstream file(path, std::ios::binary | std::ios::ate);
+    std::streamsize size = file.tellg();
+    file.seekg(0, std::ios::beg);
+    std::vector<char> buffer(size);
+    if(file.read(buffer.data(), size))
+    {
+        Au::Media::FBX::Reader fbxReader;
+        fbxReader.ReadFile(buffer.data(), buffer.size());
+        fbxReader.Print();
+        
+        std::vector<float> vertices = fbxReader.GetVertices<float>(0);
+        mesh->VertexAttrib<Au::Position>(vertices);
+        
+        std::vector<unsigned short> indices = fbxReader.GetIndices<unsigned short>(0);
+        mesh->IndexData(indices);
+    }
+    // =========================================
+    
+    return mesh;
+}
 
 Au::GFX::Mesh* CreateCubeMesh()
 {
@@ -104,9 +133,11 @@ Au::GFX::RenderState* CreateRenderState()
         in vec3 Position;
         in vec3 ColorRGB;
         varying vec3 color;
+        varying vec4 pos_color;
         void main()
         {
             color = ColorRGB;
+            pos_color = MatrixModel * vec4(Position, 1.0);
             gl_Position = MatrixProjection * MatrixView * MatrixModel * vec4(Position, 1.0);
     })");
     std::cout << shaderVertex->StatusString() << std::endl;
@@ -114,9 +145,10 @@ Au::GFX::RenderState* CreateRenderState()
     Au::GFX::Shader* shaderPixel = gfxDevice.CreateShader(Au::GFX::Shader::PIXEL);
     shaderPixel->Source(R"(
         varying vec3 color;
+        varying vec4 pos_color;
         void main()
         {
-            gl_FragColor = vec4(color, 1.0);
+            gl_FragColor = vec4(pos_color.xyz, 1.0);
     })");
     std::cout << shaderPixel->StatusString() << std::endl;
     
@@ -148,35 +180,16 @@ void Cleanup()
 }
 
 int main()
-{
-    // FBX Loading WIP =========================
-    
-    std::ifstream file("miku.fbx", std::ios::binary | std::ios::ate);
-    std::streamsize size = file.tellg();
-    file.seekg(0, std::ios::beg);
-    std::vector<char> buffer(size);
-    if(file.read(buffer.data(), size))
-    {
-        Au::Media::FBX::Reader fbxReader;
-        fbxReader.ReadFile(buffer.data(), buffer.size());
-        fbxReader.Print();
-    }
-    /*
-    std::vector<Au::Math::Vec3f> position = fbxReader.GetArray<Au::Math::Vec3f>(Au::Position());
-    std::vector<Au::Math::Vec3f> normal = fbxReader.GetData<Au::Normal>();
-    std::vector<Au::Math::Vec2f> uv = fbxReader.GetData<Au::UV>();
-    */
-    // =========================================
-    
+{    
     Au::Input::LoadDeviceList();
     Au::Window window;
     
     Init(window);
-    Au::GFX::Mesh* mesh = CreateCubeMesh();
+    Au::GFX::Mesh* mesh = LoadMesh("miku.fbx");
     Au::GFX::RenderState* renderState = CreateRenderState();   
     
-    projection = Au::Math::Perspective(fov, 4.0f/3.0f, 0.1f, 100);
-    view.Translate(Au::Math::Vec3f(0.0f, 0.0f, 2.0f));
+    projection = Au::Math::Perspective(fov, 4.0f/3.0f, 0.1f, zfar);
+    view.Translate(Au::Math::Vec3f(0.0f, 1.5f, 7.0f));
     
     window.Name("Aurora");
     //window.Resize(640, 480);
