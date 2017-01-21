@@ -21,7 +21,18 @@ bool GLBuffer::Data(void* data, size_t sz)
 {
     glBindBuffer(target, buffer);
     glBufferData(target, sz, data, usage);
+    size = sz;
     return true;
+}
+
+std::vector<char> GLBuffer::Data()
+{
+    std::vector<char> result(size);
+    if(!Valid())
+        return result;
+    glBindBuffer(target, buffer);
+    glGetBufferSubData(target, 0, size, &(result[0]));
+    return result;
 }
 
 bool GLBuffer::Valid()
