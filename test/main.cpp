@@ -13,6 +13,7 @@ Au::Math::Transform view;
 Au::Math::Mat4f projection;
 float fov = 1.6f;
 float zfar = 10.0f;
+bool mouseDown = false;
 
 class MouseHandler : public Au::Input::MouseHandler
 {
@@ -20,17 +21,21 @@ public:
     void KeyUp(Au::Input::KEYCODE key)
     {
         std::cout << "Mouse key UP" << std::endl;
+        mouseDown = false;
     }
     
     void KeyDown(Au::Input::KEYCODE key)
     {
         std::cout << "Mouse key DOWN" << std::endl;
+        mouseDown = true;
     }
     
     void Move(int x, int y)
     {
+        if(!mouseDown)
+            return;
         model.Rotate(x * 0.01f, Au::Math::Vec3f(0, 1, 0));
-        model.Rotate(y * 0.01f, Au::Math::Vec3f(1, 0, 0));
+        model.Rotate(y * 0.01f, model.GetTransform() * Au::Math::Vec3f(1, 0, 0));
     }
     
     void Wheel(short value)
@@ -70,7 +75,7 @@ KeyboardHandler keyboardHandler;
 Au::GFX::Mesh* LoadMesh(const std::string& path)
 {
     Au::GFX::Mesh* mesh = gfxDevice.CreateMesh();
-    mesh->Format(Au::Position() << Au::ColorRGB());
+    mesh->Format(Au::Position() << Au::Normal() << Au::ColorRGB());
     
     // FBX Loading WIP =========================
     
@@ -86,6 +91,9 @@ Au::GFX::Mesh* LoadMesh(const std::string& path)
         
         std::vector<float> vertices = fbxReader.GetVertices<float>(0);
         mesh->VertexAttrib<Au::Position>(vertices);
+        
+        std::vector<float> normals = fbxReader.GetNormals<float>(0);
+        mesh->VertexAttrib<Au::Normal>(normals);
         
         std::vector<unsigned short> indices = fbxReader.GetIndices<unsigned short>(0);
         mesh->IndexData(indices);
@@ -131,13 +139,14 @@ Au::GFX::RenderState* CreateRenderState()
         uniform mat4 MatrixView;
         uniform mat4 MatrixProjection;
         in vec3 Position;
+        in vec3 Normal;
         in vec3 ColorRGB;
         varying vec3 color;
-        varying vec4 pos_color;
+        varying vec3 normal;
         void main()
         {
             color = ColorRGB;
-            pos_color = MatrixModel * vec4(Position, 1.0);
+            normal = (MatrixModel * vec4(Normal, 1.0)).xyz;
             gl_Position = MatrixProjection * MatrixView * MatrixModel * vec4(Position, 1.0);
     })");
     std::cout << shaderVertex->StatusString() << std::endl;
@@ -145,15 +154,23 @@ Au::GFX::RenderState* CreateRenderState()
     Au::GFX::Shader* shaderPixel = gfxDevice.CreateShader(Au::GFX::Shader::PIXEL);
     shaderPixel->Source(R"(
         varying vec3 color;
-        varying vec4 pos_color;
+        varying vec3 normal;
         void main()
         {
-            gl_FragColor = vec4(pos_color.xyz, 1.0);
+            vec3 surface_color = vec3(1.0, 1.0, 1.0);
+            vec3 omni_light2 = vec3(0.0, 1.0, 0.0);
+            vec3 omni_light = vec3(0.0, -1.0, 0.0);
+            vec3 light_col = vec3(0.8, 0.2, 0.2);
+            vec3 light_col2 = vec3(0.2, 0.8, 0.6);
+            vec3 l0 = light_col * dot(normal, omni_light);
+            vec3 l1 = light_col2 * dot(normal, omni_light2);
+            
+            gl_FragColor = vec4(surface_color * (l0 + l1), 1.0);
     })");
     std::cout << shaderPixel->StatusString() << std::endl;
     
     Au::GFX::RenderState* renderState = gfxDevice.CreateRenderState();
-    renderState->AttribFormat(Au::Position() << Au::ColorRGB());
+    renderState->AttribFormat(Au::Position() << Au::Normal() << Au::ColorRGB());
     renderState->SetShader(shaderVertex);
     renderState->SetShader(shaderPixel);
     renderState->AddUniform<Au::Math::Mat4f>("MatrixModel");
