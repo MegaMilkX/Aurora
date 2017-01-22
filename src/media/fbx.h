@@ -321,7 +321,7 @@ std::vector<T> Reader::GetNormals(unsigned object)
 }
 
 template<typename T>
-std::vector<T> Reader::GetUV(unsigned object = 0)
+std::vector<T> Reader::GetUV(unsigned object)
 {
     // TODO
     return std::vector<T>();
