@@ -180,6 +180,14 @@ public:
         return children.size();
     }
     
+    Node& Get(unsigned index)
+    {
+        if(index >= children.size())
+            children.resize(index + 1);
+        
+        return children[index];
+    }
+    
     Node& Get(const std::string& name, unsigned instance = 0)
     {
         unsigned instanceCounter = 0;
