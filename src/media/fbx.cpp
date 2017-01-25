@@ -301,6 +301,25 @@ bool Reader::ReadFile(const char* data, unsigned size)
     return true;
 }
 
+std::vector<Bone> Reader::GetBones()
+{
+    std::vector<Bone> result;
+    
+    for(unsigned i = 0; i < rootNode.ChildCount(); ++i)
+    {
+        Node node = rootNode.Get(i);
+        if(node.Name() == "Mesh")
+        {
+            if(node[2].GetString() == "LimbNode")
+            {
+                // TODO
+            }
+        }
+    }
+    
+    return result;
+}
+
 }
 }
 }

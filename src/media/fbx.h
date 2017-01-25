@@ -232,6 +232,9 @@ private:
     std::vector<Node> children;
 };
 
+class Bone
+{};
+
 class Reader
 {
 public:
@@ -247,6 +250,8 @@ public:
     std::vector<T> GetUV(unsigned object = 0);
     template<typename T>
     std::vector<T> GetIndices(unsigned object = 0);
+    
+    std::vector<Bone> GetBones();
     
     void Print()
     {
