@@ -165,6 +165,11 @@ public:
         this->name = name;
     }
     
+    void Name()
+    {
+        return name;
+    }
+    
     void PropCount(unsigned count)
     {
         propCount = count;
