@@ -175,6 +175,11 @@ public:
         propCount = count;
     }
     
+    unsigned ChildCount()
+    {
+        return children.size();
+    }
+    
     Node& Get(const std::string& name, unsigned instance = 0)
     {
         unsigned instanceCounter = 0;
