@@ -97,6 +97,14 @@ Au::GFX::Mesh* LoadMesh(const std::string& path)
         
         std::vector<unsigned short> indices = fbxReader.GetIndices<unsigned short>(0);
         mesh->IndexData(indices);
+        
+        //fbxReader.GetWeights<unsigned char>(0);
+        //fbxReader.GetBoneIndices<unsigned char>(0);
+        std::vector<Au::Media::FBX::Bone> bones = fbxReader.GetBones();
+        for(unsigned i = 0; i < bones.size(); ++i)
+        {
+            std::cout << bones[i].name << std::endl;
+        }
     }
     // =========================================
     
@@ -202,7 +210,7 @@ int main()
     Au::Window window;
     
     Init(window);
-    Au::GFX::Mesh* mesh = LoadMesh("miku.fbx");
+    Au::GFX::Mesh* mesh = LoadMesh("skin.fbx");
     Au::GFX::RenderState* renderState = CreateRenderState();   
     
     projection = Au::Math::Perspective(fov, 4.0f/3.0f, 0.1f, zfar);
