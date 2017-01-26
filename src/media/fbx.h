@@ -86,7 +86,14 @@ public:
     
     std::string GetString()
     {
-        return std::string(data.data(), data.data() + data.size());
+        unsigned strLen = 0;
+        for(unsigned i = 0; i < data.size(); ++i)
+        {
+            if(data[i] == '\0')
+                break;
+            strLen++;
+        }
+        return std::string(data.data(), data.data() + strLen);
     }
     
     template<typename T>
