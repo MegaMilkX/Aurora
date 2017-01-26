@@ -96,6 +96,13 @@ public:
         return std::string(data.data(), data.data() + strLen);
     }
     
+    int64_t GetInt64()
+    {
+        if(data.size() != sizeof(int64_t))
+            return 0;
+        return *(int64_t*)(data.data());
+    }
+    
     template<typename T>
     std::vector<T> GetArray()
     {
