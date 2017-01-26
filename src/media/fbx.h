@@ -205,6 +205,17 @@ public:
         return children[children.size()-1];
     }
     
+    std::vector<Node> GetAll(const std::string& name)
+    {
+        std::vector<Node> result;
+        for(unsigned i = 0; i < children.size(); ++i)
+        {
+            if(children[i].name == name)
+                result.push_back(children[i]);
+        }
+        return result;
+    }
+    
     Prop& operator[](unsigned index)
     {
         if(index >= props.size())
