@@ -233,7 +233,11 @@ private:
 };
 
 class Bone
-{};
+{
+public:
+    int64_t uid;
+    std::string name;
+};
 
 class Reader
 {
