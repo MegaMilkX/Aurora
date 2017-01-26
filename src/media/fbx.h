@@ -165,7 +165,7 @@ public:
         this->name = name;
     }
     
-    void Name()
+    std::string Name()
     {
         return name;
     }
