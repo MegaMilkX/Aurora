@@ -308,11 +308,23 @@ std::vector<Bone> Reader::GetBones()
     for(unsigned i = 0; i < rootNode.ChildCount(); ++i)
     {
         Node node = rootNode.Get(i);
-        if(node.Name() == "Mesh")
+        std::vector<Node> poseNodes = rootNode.Get("Pose").GetAll("PoseNode");
+        if(node.Name() == "Model")
         {
             if(node[2].GetString() == "LimbNode")
             {
-                // TODO
+                Bone bone;
+                bone.name = node[1].GetString();
+                bone.uid = node[0].GetInt64();
+                
+                for(unsigned j = 0; j < poseNodes.size(); ++j)
+                {
+                    // TODO
+                    //if(poseNodes[j].Get("Matrix")[0].GetArray<
+                }
+                
+                
+                result.push_back(bone);
             }
         }
     }
