@@ -55,14 +55,20 @@ public:
         case 'b':
             break;
         case 'f':
+            stride = 4;
+            std::cout << "Float array, size: " << data.size() / stride;
+            break;
         case 'i':
             stride = 4;
-            std::cout << "Some array, size: " << data.size() / stride;
+            std::cout << "Int32 array, size: " << data.size() / stride;
             break;
         case 'd':
+            stride = 8;
+            std::cout << "Double array, size: " << data.size() / stride;
+            break;
         case 'l':
             stride = 8;
-            std::cout << "Some array, size: " << data.size() / stride;
+            std::cout << "Int64 array, size: " << data.size() / stride;
             break;
         case 'S':
             std::cout << std::string(data.data(), data.data() + data.size());
