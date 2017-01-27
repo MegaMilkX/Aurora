@@ -12,7 +12,7 @@ Au::Math::Transform model;
 Au::Math::Transform view;
 Au::Math::Mat4f projection;
 float fov = 1.6f;
-float zfar = 10.0f;
+float zfar = 100.0f;
 bool mouseDown = false;
 
 class MouseHandler : public Au::Input::MouseHandler
@@ -100,17 +100,25 @@ Au::GFX::Mesh* LoadMesh(const std::string& path)
         
         //fbxReader.GetWeights<unsigned char>(0);
         //fbxReader.GetBoneIndices<unsigned char>(0);
+        Au::GFX::Armature armature;
         std::vector<Au::Media::FBX::Bone> bones = fbxReader.GetBones();
+        //std::map<int64_t, unsigned> uid_to_index;
         for(unsigned i = 0; i < bones.size(); ++i)
         {
-            std::cout << bones[i].name << std::endl;
+            //uid_to_index.insert(std::make_pair(bones[i].uid, armature.size()));
+            //armature.AddBone();
         }
     }
     // =========================================
     
     return mesh;
 }
-
+/*
+Au::GFX::Armature LoadArmature(const std::string& path)
+{
+    
+}
+*/
 Au::GFX::Mesh* CreateCubeMesh()
 {
     std::vector<Vertex> vertices =
