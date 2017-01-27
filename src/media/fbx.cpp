@@ -319,8 +319,13 @@ std::vector<Bone> Reader::GetBones()
                 
                 for(unsigned j = 0; j < poseNodes.size(); ++j)
                 {
-                    // TODO
-                    //if(poseNodes[j].Get("Matrix")[0].GetArray<
+                    int64_t node_uid = poseNodes[j].Get("Node")[0].GetInt64();
+                    
+                    if(bone.uid == node_uid)
+                    {
+                        std::vector<float> mat = poseNodes[j].Get("Matrix")[0].GetArray<float>();
+                        bone.bindTransform = *(Math::Mat4f*)mat.data();
+                    }
                 }
                 
                 
