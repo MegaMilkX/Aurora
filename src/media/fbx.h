@@ -267,7 +267,9 @@ class Bone
 {
 public:
     int64_t uid;
+    int64_t parentUID;
     std::string name;
+    Math::Mat4f bindTransform;
 };
 
 class Reader
