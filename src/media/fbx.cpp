@@ -328,6 +328,15 @@ std::vector<Bone> Reader::GetBones()
                     }
                 }
                 
+                std::vector<Node> connections = rootNode.GetAll("C");
+                for(unsigned j = 0; j < connections.size(); ++j)
+                {
+                    if(connections[j][0].GetString() == "OO" &&
+                        connections[j][1].GetInt64() == bone.uid)
+                    {
+                        bone.parentUID = connections[j][2].GetInt64();
+                    }
+                }
                 
                 result.push_back(bone);
             }
