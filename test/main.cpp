@@ -1,5 +1,6 @@
 #include <aurora/window.h>
 #include <aurora/gfx.h>
+#include <aurora/gfx/armature.h>
 #include <aurora/transform.h>
 #include <aurora/input.h>
 
@@ -102,11 +103,12 @@ Au::GFX::Mesh* LoadMesh(const std::string& path)
         //fbxReader.GetBoneIndices<unsigned char>(0);
         Au::GFX::Armature armature;
         std::vector<Au::Media::FBX::Bone> bones = fbxReader.GetBones();
-        //std::map<int64_t, unsigned> uid_to_index;
+        
         for(unsigned i = 0; i < bones.size(); ++i)
-        {
-            //uid_to_index.insert(std::make_pair(bones[i].uid, armature.size()));
-            //armature.AddBone();
+        {    
+            armature.GetBone(bones[i].uid)->parentUID = bones[i].parentUID;
+            armature.GetBone(bones[i].uid)->bindTransform = bones[i].bindTransform;
+            armature.GetBone(bones[i].uid)->name = bones[i].name;
         }
     }
     // =========================================
