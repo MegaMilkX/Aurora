@@ -4,17 +4,19 @@
 #include <string>
 #include <vector>
 
+#include <stdint.h>
+
 #include "../math/math.h"
 
 namespace Au{
 namespace GFX{
 
-class Bone
+struct Bone
 {
-public:
-private:
-    unsigned parent;
-    std::vector<unsigned> children;
+    int64_t uid;
+    int64_t parentUID;
+    Math::Mat4f bindTransform;
+    std::string name;
 };
 
 class Armature
