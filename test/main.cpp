@@ -21,13 +21,11 @@ class MouseHandler : public Au::Input::MouseHandler
 public:
     void KeyUp(Au::Input::KEYCODE key)
     {
-        std::cout << "Mouse key UP" << std::endl;
         mouseDown = false;
     }
     
     void KeyDown(Au::Input::KEYCODE key)
     {
-        std::cout << "Mouse key DOWN" << std::endl;
         mouseDown = true;
     }
     
@@ -100,8 +98,26 @@ Au::GFX::Mesh* LoadMesh(const std::string& path)
         mesh->IndexData(indices);
         
         //fbxReader.GetWeights<unsigned char>(0);
-        //fbxReader.GetBoneIndices<unsigned char>(0);
-        Au::GFX::Armature armature;
+        //fbxReader.GetBoneIndices<unsigned char>(0);        
+    }
+    // =========================================
+    
+    return mesh;
+}
+
+Au::GFX::Armature LoadArmature(const std::string& path)
+{
+    Au::GFX::Armature armature;
+    
+    std::ifstream file(path, std::ios::binary | std::ios::ate);
+    std::streamsize size = file.tellg();
+    file.seekg(0, std::ios::beg);
+    std::vector<char> buffer(size);
+    if(file.read(buffer.data(), size))
+    {
+        Au::Media::FBX::Reader fbxReader;
+        fbxReader.ReadFile(buffer.data(), buffer.size());
+        
         std::vector<Au::Media::FBX::Bone> bones = fbxReader.GetBones();
         
         for(unsigned i = 0; i < bones.size(); ++i)
@@ -111,16 +127,10 @@ Au::GFX::Mesh* LoadMesh(const std::string& path)
             armature.GetBone(bones[i].uid)->name = bones[i].name;
         }
     }
-    // =========================================
     
-    return mesh;
+    return armature;
 }
-/*
-Au::GFX::Armature LoadArmature(const std::string& path)
-{
-    
-}
-*/
+
 Au::GFX::Mesh* CreateCubeMesh()
 {
     std::vector<Vertex> vertices =
@@ -144,6 +154,28 @@ Au::GFX::Mesh* CreateCubeMesh()
     Au::GFX::Mesh* mesh = gfxDevice.CreateMesh();
     mesh->Format(Au::Position() << Au::ColorRGB());
     mesh->VertexData(vertices);
+    mesh->IndexData(indices);
+    
+    return mesh;
+}
+
+Au::GFX::Mesh* Create3DCrossMesh()
+{
+    std::vector<float> vertices =
+    { -1.0f, 0.0f, 0.0f,
+      1.0f, 0.0f, 0.0f,
+      0.0f, -1.0f, 0.0f,
+      0.0f, 1.0f, 0.0f,
+      0.0f, 0.0f, -1.0f,
+      0.0f, 0.0f, 1.0f };
+
+    std::vector<unsigned short> indices =
+    { 0, 1, 2, 3, 4, 5 };
+
+    Au::GFX::Mesh* mesh = gfxDevice.CreateMesh();
+    mesh->PrimitiveType(Au::GFX::Mesh::LINE);
+    mesh->Format(Au::Position());
+    mesh->VertexData(vertices.data(), vertices.size()/3);
     mesh->IndexData(indices);
     
     return mesh;
@@ -200,6 +232,44 @@ Au::GFX::RenderState* CreateRenderState()
     return renderState;
 }
 
+Au::GFX::RenderState* CreateLinesRenderState()
+{
+    Au::GFX::Shader* shaderVertex = gfxDevice.CreateShader(Au::GFX::Shader::VERTEX);
+    shaderVertex->Source(R"(
+        uniform mat4 MatrixModel;
+        uniform mat4 MatrixView;
+        uniform mat4 MatrixProjection;
+        in vec3 Position;
+        void main()
+        {
+            gl_Position = MatrixProjection * MatrixView * MatrixModel * vec4(Position, 1.0);
+        })");
+    std::cout << shaderVertex->StatusString() << std::endl;
+    
+    Au::GFX::Shader* shaderPixel = gfxDevice.CreateShader(Au::GFX::Shader::PIXEL);
+    shaderPixel->Source(R"(
+        varying vec3 color;
+        varying vec3 normal;
+        void main()
+        {            
+            gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+        })");
+    std::cout << shaderPixel->StatusString() << std::endl;
+    
+    Au::GFX::RenderState* renderState = gfxDevice.CreateRenderState();
+    renderState->AttribFormat(Au::Position());
+    renderState->SetShader(shaderVertex);
+    renderState->SetShader(shaderPixel);
+    renderState->AddUniform<Au::Math::Mat4f>("MatrixModel");
+    renderState->AddUniform<Au::Math::Mat4f>("MatrixView");
+    renderState->AddUniform<Au::Math::Mat4f>("MatrixProjection");
+    renderState->DepthTest(false);
+    
+    std::cout << renderState->StatusString() << std::endl;
+    
+    return renderState;
+}
+
 
 
 void Init(Au::Window& window)
@@ -221,7 +291,10 @@ int main()
     
     Init(window);
     Au::GFX::Mesh* mesh = LoadMesh("skin.fbx");
-    Au::GFX::RenderState* renderState = CreateRenderState();   
+    Au::GFX::RenderState* renderState = CreateRenderState();
+    Au::GFX::Armature armature = LoadArmature("skin.fbx");
+    Au::GFX::Mesh* cross = Create3DCrossMesh();
+    Au::GFX::RenderState* renderStateLines = CreateLinesRenderState();
     
     projection = Au::Math::Perspective(fov, 4.0f/3.0f, 0.1f, zfar);
     view.Translate(Au::Math::Vec3f(0.0f, 1.5f, 7.0f));
@@ -248,6 +321,21 @@ int main()
                 uniProjMat4f << 
                 projection <<
                 mesh;
+                
+            Au::GFX::Bone* bones = armature.GetBones();
+            unsigned boneCount = armature.BoneCount();
+            for(unsigned i = 0; i < boneCount; ++i)
+            {
+                gfxDevice <<
+                    renderStateLines <<
+                    uniModelMat4f <<
+                    model.GetTransform() * bones[i].bindTransform <<
+                    uniViewMat4f <<
+                    Au::Math::Inverse(view.GetTransform()) <<
+                    uniProjMat4f << 
+                    projection <<
+                    cross;
+            }
             gfxDevice.SwapBuffers();
         }
 
