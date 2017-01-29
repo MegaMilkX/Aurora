@@ -28,6 +28,12 @@
             result.push_back(other); \
             return result; \
         } \
+        operator std::vector<AttribInfo>() const \
+        { \
+            std::vector<AttribInfo> result; \
+            result.push_back(*this); \
+            return result; \
+        } \
     }
 
 namespace Au{
