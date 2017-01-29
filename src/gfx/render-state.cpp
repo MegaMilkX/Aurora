@@ -4,7 +4,8 @@ namespace Au{
 namespace GFX{
 
 RenderState::RenderState()
-: shaderProgram(0)
+: shaderProgram(0),
+depthTest(true)
 {
     
 }
@@ -73,8 +74,18 @@ void RenderState::SetShader(Shader* shaderStage)
     }
 }
 
+void RenderState::DepthTest(bool flag)
+{
+    depthTest = flag;
+}
+
 void RenderState::Bind()
 {
+    if(depthTest)
+        glEnable(GL_DEPTH_TEST);
+    else
+        glDisable(GL_DEPTH_TEST);
+    
     glUseProgram(shaderProgram);
     for(unsigned int i = 0; i < uniforms.size(); ++i)
     {

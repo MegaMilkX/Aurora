@@ -20,6 +20,8 @@ public:
     template<typename T>
     void AddUniform(const std::string& name);
     
+    void DepthTest(bool);
+    
     void Bind();
     
     std::string StatusString() { return statusString; }
@@ -32,6 +34,8 @@ private:
     std::vector<Uniform> uniforms;
     
     std::string statusString;
+    
+    bool depthTest;
     
     void _createProgramIfNotExists();
 };
