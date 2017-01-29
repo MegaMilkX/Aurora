@@ -33,6 +33,8 @@ public:
         bones.push_back(bone);
         return &(bones[bones.size() - 1]);
     }
+    Bone* GetBones() { return bones.data(); }
+    unsigned BoneCount() { return bones.size(); }
 private:
     std::vector<Bone> bones;
     std::vector<std::string> boneNames;
