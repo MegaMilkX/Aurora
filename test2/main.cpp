@@ -1,3 +1,4 @@
+
 #include <aurora/gfx/gfx_macro.h>
 
 AU_GFX_DEFINE_RENDER_SYSTEM(
@@ -11,5 +12,16 @@ AU_GFX_DEFINE_RENDER_SYSTEM(
 
 int main()
 {
+    Au::Window window;
+    AuGFXInit(&window);
     
+    if(window.Show())
+        while(!window.Destroyed())
+        {
+            Au::Window::PollMessages();
+            
+            AuGFXRender();
+        }
+        
+    AuGFXCleanup();
 }

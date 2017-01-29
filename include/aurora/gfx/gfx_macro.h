@@ -1,6 +1,8 @@
 #ifndef AU_GFX_MACRO_H
 #define AU_GFX_MACRO_H
 
+#include <aurora/window.h>
+#include <aurora/gfx.h>
 #include <iostream>
 
 #define EXPAND(x) x
@@ -87,6 +89,19 @@
 #define EACHARG2(DO, ARG, ...) DO(1, ARG) EXPAND(EACHARG1(DO, __VA_ARGS__))
 #define EACHARG1(DO, ARG, ...) DO(0, ARG)
 
+#define LAYER_MESH_TYPE_IMPL(NAME) \
+    struct NAME ## _Vertex \
+    { \
+    }; \
+    class NAME ## _Mesh \
+    { \
+    public: \
+     \
+    };
+
+#define LAYER_MESH_TYPE(I, ARG) \
+    LAYER_MESH_TYPE_IMPL ARG
+
 #define RENDER_FUNC_IMPL(NAME) \
     void NAME ## _Render() \
     { \
@@ -103,10 +118,23 @@
     RENDER_CALL_IMPL ARG
 
 #define AU_GFX_DEFINE_RENDER_SYSTEM(...) \
+    Au::GFX::Device gfxDevice; \
+    FOR_EACH_ARG(LAYER_MESH_TYPE, __VA_ARGS__) \
     FOR_EACH_ARG(RENDER_FUNC, __VA_ARGS__) \
+    bool AuGFXInit(Au::Window* window) \
+    { \
+        gfxDevice.Init(*window); \
+        return true; \
+    } \
+    void AuGFXCleanup() \
+    { \
+         \
+    } \
     void AuGFXRender() \
     { \
+        gfxDevice.Clear(); \
         FOR_EACH_ARG(RENDER_CALL, __VA_ARGS__) \
+        gfxDevice.SwapBuffers(); \
     }
 
 #endif
