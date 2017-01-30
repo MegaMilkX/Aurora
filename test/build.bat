@@ -3,8 +3,8 @@
 REM What's your project name?
 set EXENAME=test
 
-set INCLUDE_PATHS=/I F:\milk\projects\Aurora\include 
-set LIB_PATHS=/LIBPATH:"F:\milk\projects\Aurora\lib"
+set INCLUDE_PATHS=/I "%~dp0\..\include"
+set LIB_PATHS=/LIBPATH:"%~dp0\..\lib"
 set LIBRARIES=kernel32.lib ^
 user32.lib ^
 gdi32.lib ^
@@ -81,8 +81,8 @@ REM =============================================
 
 REM Collect all source files
 set SOURCES=
-for /F %%A in ('dir /b *.c *.cpp *.res *.def') do set SOURCES=!SOURCES! "%~dp0\%%A"
-for /F %%A in ('dir /b /S %~dp0\src\*.c %~dp0\src\*.cpp %~dp0\src\*.res %~dp0\src\*.def') do set SOURCES=!SOURCES! "%%A"
+for /F "delims=" %%A in ('dir /b *.c *.cpp *.res *.def') do set SOURCES=!SOURCES! "%~dp0\%%A"
+for /F "delims=" %%A in ('dir /b /S "%~dp0\src\*.c" "%~dp0\src\*.cpp" "%~dp0\src\*.res" "%~dp0\src\*.def"') do set SOURCES=!SOURCES! "%%A"
 
 if exist build.txt (
     set /p BUILDINDEX=<build.txt
@@ -103,7 +103,7 @@ cl %INCLUDE_PATHS% ^
 
 REM Collect all obj files
 set OBJS=
-for /F %%A in ('dir /b /S *.obj') do set OBJS=!OBJS! "%%A"
+for /F "delims=" %%A in ('dir /b /S *.obj') do set OBJS=!OBJS! "%%A"
 
 if %BUILD_TYPE% EQU exe (
     link /OUT:"..\%BUILDDIR%\%EXENAME%.exe" ^
