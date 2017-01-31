@@ -1,0 +1,2327 @@
+Input device count: 10
+\\?\HID#VID_056A&PID_00B8&Col04#6&b77274a&0&0003#{4d1e55b2-f16f-11cf-88cb-001111000030}
+\\?\HID#VID_056A&PID_00B8&Col03#6&b77274a&0&0002#{4d1e55b2-f16f-11cf-88cb-001111000030}
+\\?\HID#VID_056A&PID_00B8&Col02#6&b77274a&0&0001#{4d1e55b2-f16f-11cf-88cb-001111000030}
+\\?\HID#VID_04F3&PID_0103&MI_01&Col01#8&2b3f8ea1&0&0000#{4d1e55b2-f16f-11cf-88cb-001111000030}
+\\?\HID#VID_09DA&PID_9090&MI_00&Col04#8&1110c5c5&0&0003#{4d1e55b2-f16f-11cf-88cb-001111000030}
+\\?\HID#VID_09DA&PID_9090&MI_00&Col03#8&1110c5c5&0&0002#{4d1e55b2-f16f-11cf-88cb-001111000030}
+\\?\HID#VID_09DA&PID_9090&MI_00&Col01#8&1110c5c5&0&0000#{884b96c3-56ef-11d1-bc8c-00a0c91405dd}
+\\?\HID#VID_04F3&PID_0103&MI_00#8&76850df&0&0000#{884b96c3-56ef-11d1-bc8c-00a0c91405dd}
+\\?\HID#VID_09DA&PID_9090&MI_01#8&34e80387&0&0000#{378de44c-56ef-11d1-bc8c-00a0c91405dd}
+\\?\HID#VID_056A&PID_00B8&Col01#6&b77274a&0&0000#{378de44c-56ef-11d1-bc8c-00a0c91405dd}
+OpenGL v450 ready.
+GLSL v4.50 NVIDIA
+Formatting mesh data
+Position:
+typeIndex: 5
+elemType: 4
+elemSize: 4
+elemCount: 3
+globalAttribIndex: 0
+Normal:
+typeIndex: 3
+elemType: 4
+elemSize: 4
+elemCount: 3
+globalAttribIndex: 1
+ColorRGB:
+typeIndex: 1
+elemType: 2
+elemSize: 1
+elemCount: 3
+globalAttribIndex: 2
+Reading FBX file...
+OUT: 1152
+IN: 298
+OUT: 1104
+IN: 420
+OUT: 6624
+IN: 775
+OUT: 2208
+IN: 32
+OUT: 1088
+IN: 273
+OUT: 1104
+IN: 314
+Takes | Prop count: 0
+  Just binary data
+  2017-01-22 14:59:08:187
+  FBX SDK/FBX Plugins version 2016.0 build=20150119
+  FBXHeaderVersion | Prop count: 1
+    1003
+  FBXVersion | Prop count: 1
+    7400
+  EncryptionType | Prop count: 1
+    0
+  CreationTimeStamp | Prop count: 0
+    Version | Prop count: 1
+      1000
+    Year | Prop count: 1
+      2017
+    Month | Prop count: 1
+      1
+    Day | Prop count: 1
+      22
+    Hour | Prop count: 1
+      14
+    Minute | Prop count: 1
+      59
+    Second | Prop count: 1
+      8
+    Millisecond | Prop count: 1
+      187
+  Creator | Prop count: 1
+    FBX SDK/FBX Plugins version 2016.0
+  SceneInfo | Prop count: 2
+    GlobalInfo SceneInfo
+    UserData
+    Type | Prop count: 1
+      UserData
+    Version | Prop count: 1
+      100
+    MetaData | Prop count: 0
+      Version | Prop count: 1
+        100
+      Title | Prop count: 1
+
+      Subject | Prop count: 1
+
+      Author | Prop count: 1
+
+      Keywords | Prop count: 1
+
+      Revision | Prop count: 1
+
+      Comment | Prop count: 1
+
+    Properties70 | Prop count: 0
+      P | Prop count: 5
+        DocumentUrl
+        KString
+        Url
+
+        C:\MyDocuments\Projects\Aurora\test\build\skin.FBX
+      P | Prop count: 5
+        SrcDocumentUrl
+        KString
+        Url
+
+        C:\MyDocuments\Projects\Aurora\test\build\skin.FBX
+      P | Prop count: 4
+        Original
+        Compound
+
+
+      P | Prop count: 5
+        Original|ApplicationVendor
+        KString
+
+
+        Autodesk
+      P | Prop count: 5
+        Original|ApplicationName
+        KString
+
+
+        3ds Max
+      P | Prop count: 5
+        Original|ApplicationVersion
+        KString
+
+
+        2014
+      P | Prop count: 5
+        Original|DateTime_GMT
+        DateTime
+
+
+        22/01/2017 11:59:08.187
+      P | Prop count: 5
+        Original|FileName
+        KString
+
+
+        C:\MyDocuments\Projects\Aurora\test\build\skin.FBX
+      P | Prop count: 4
+        LastSaved
+        Compound
+
+
+      P | Prop count: 5
+        LastSaved|ApplicationVendor
+        KString
+
+
+        Autodesk
+      P | Prop count: 5
+        LastSaved|ApplicationName
+        KString
+
+
+        3ds Max
+      P | Prop count: 5
+        LastSaved|ApplicationVersion
+        KString
+
+
+        2014
+      P | Prop count: 5
+        LastSaved|DateTime_GMT
+        DateTime
+
+
+        22/01/2017 11:59:08.187
+  Version | Prop count: 1
+    1000
+  Properties70 | Prop count: 0
+    P | Prop count: 5
+      UpAxis
+      int
+      Integer
+
+      1
+    P | Prop count: 5
+      UpAxisSign
+      int
+      Integer
+
+      1
+    P | Prop count: 5
+      FrontAxis
+      int
+      Integer
+
+      2
+    P | Prop count: 5
+      FrontAxisSign
+      int
+      Integer
+
+      1
+    P | Prop count: 5
+      CoordAxis
+      int
+      Integer
+
+      0
+    P | Prop count: 5
+      CoordAxisSign
+      int
+      Integer
+
+      1
+    P | Prop count: 5
+      OriginalUpAxis
+      int
+      Integer
+
+      2
+    P | Prop count: 5
+      OriginalUpAxisSign
+      int
+      Integer
+
+      1
+    P | Prop count: 5
+      UnitScaleFactor
+      double
+      Number
+
+      2.54
+    P | Prop count: 5
+      OriginalUnitScaleFactor
+      double
+      Number
+
+      2.54
+    P | Prop count: 7
+      AmbientColor
+      ColorRGB
+      Color
+
+      0
+      0
+      0
+    P | Prop count: 5
+      DefaultCamera
+      KString
+
+
+      Producer Perspective
+    P | Prop count: 5
+      TimeMode
+      enum
+
+
+      6
+    P | Prop count: 5
+      TimeProtocol
+      enum
+
+
+      2
+    P | Prop count: 5
+      SnapOnFrameMode
+      enum
+
+
+      0
+    P | Prop count: 5
+      TimeSpanStart
+      KTime
+      Time
+
+      0
+    P | Prop count: 5
+      TimeSpanStop
+      KTime
+      Time
+
+      153953860000
+    P | Prop count: 5
+      CustomFrameRate
+      double
+      Number
+
+      -1
+    P | Prop count: 4
+      TimeMarker
+      Compound
+
+
+    P | Prop count: 5
+      CurrentTimeMarker
+      int
+      Integer
+
+      -1
+  Count | Prop count: 1
+    1
+  Document | Prop count: 3
+    1965963104
+
+    Scene
+    Properties70 | Prop count: 0
+      P | Prop count: 4
+        SourceObject
+        object
+
+
+      P | Prop count: 5
+        ActiveAnimStackName
+        KString
+
+
+
+    RootNode | Prop count: 1
+      0
+  Version | Prop count: 1
+    100
+  Count | Prop count: 1
+    39
+  ObjectType | Prop count: 1
+    GlobalSettings
+    Count | Prop count: 1
+      1
+  ObjectType | Prop count: 1
+    AnimationStack
+    Count | Prop count: 1
+      1
+    PropertyTemplate | Prop count: 1
+      FbxAnimStack
+      Properties70 | Prop count: 0
+        P | Prop count: 5
+          Description
+          KString
+
+
+
+        P | Prop count: 5
+          LocalStart
+          KTime
+          Time
+
+          0
+        P | Prop count: 5
+          LocalStop
+          KTime
+          Time
+
+          0
+        P | Prop count: 5
+          ReferenceStart
+          KTime
+          Time
+
+          0
+        P | Prop count: 5
+          ReferenceStop
+          KTime
+          Time
+
+          0
+  ObjectType | Prop count: 1
+    AnimationLayer
+    Count | Prop count: 1
+      1
+    PropertyTemplate | Prop count: 1
+      FbxAnimLayer
+      Properties70 | Prop count: 0
+        P | Prop count: 5
+          Weight
+          Number
+
+          A
+          100
+        P | Prop count: 5
+          Mute
+          bool
+
+
+          0
+        P | Prop count: 5
+          Solo
+          bool
+
+
+          0
+        P | Prop count: 5
+          Lock
+          bool
+
+
+          0
+        P | Prop count: 7
+          Color
+          ColorRGB
+          Color
+
+          0.8
+          0.8
+          0.8
+        P | Prop count: 5
+          BlendMode
+          enum
+
+
+          0
+        P | Prop count: 5
+          RotationAccumulationMode
+          enum
+
+
+          0
+        P | Prop count: 5
+          ScaleAccumulationMode
+          enum
+
+
+          0
+        P | Prop count: 5
+          BlendModeBypass
+          ULongLong
+
+
+          0
+  ObjectType | Prop count: 1
+    Model
+    Count | Prop count: 1
+      4
+    PropertyTemplate | Prop count: 1
+      FbxNode
+      Properties70 | Prop count: 0
+        P | Prop count: 5
+          QuaternionInterpolate
+          enum
+
+
+          0
+        P | Prop count: 7
+          RotationOffset
+          Vector3D
+          Vector
+
+          0
+          0
+          0
+        P | Prop count: 7
+          RotationPivot
+          Vector3D
+          Vector
+
+          0
+          0
+          0
+        P | Prop count: 7
+          ScalingOffset
+          Vector3D
+          Vector
+
+          0
+          0
+          0
+        P | Prop count: 7
+          ScalingPivot
+          Vector3D
+          Vector
+
+          0
+          0
+          0
+        P | Prop count: 5
+          TranslationActive
+          bool
+
+
+          0
+        P | Prop count: 7
+          TranslationMin
+          Vector3D
+          Vector
+
+          0
+          0
+          0
+        P | Prop count: 7
+          TranslationMax
+          Vector3D
+          Vector
+
+          0
+          0
+          0
+        P | Prop count: 5
+          TranslationMinX
+          bool
+
+
+          0
+        P | Prop count: 5
+          TranslationMinY
+          bool
+
+
+          0
+        P | Prop count: 5
+          TranslationMinZ
+          bool
+
+
+          0
+        P | Prop count: 5
+          TranslationMaxX
+          bool
+
+
+          0
+        P | Prop count: 5
+          TranslationMaxY
+          bool
+
+
+          0
+        P | Prop count: 5
+          TranslationMaxZ
+          bool
+
+
+          0
+        P | Prop count: 5
+          RotationOrder
+          enum
+
+
+          0
+        P | Prop count: 5
+          RotationSpaceForLimitOnly
+          bool
+
+
+          0
+        P | Prop count: 5
+          RotationStiffnessX
+          double
+          Number
+
+          0
+        P | Prop count: 5
+          RotationStiffnessY
+          double
+          Number
+
+          0
+        P | Prop count: 5
+          RotationStiffnessZ
+          double
+          Number
+
+          0
+        P | Prop count: 5
+          AxisLen
+          double
+          Number
+
+          10
+        P | Prop count: 7
+          PreRotation
+          Vector3D
+          Vector
+
+          0
+          0
+          0
+        P | Prop count: 7
+          PostRotation
+          Vector3D
+          Vector
+
+          0
+          0
+          0
+        P | Prop count: 5
+          RotationActive
+          bool
+
+
+          0
+        P | Prop count: 7
+          RotationMin
+          Vector3D
+          Vector
+
+          0
+          0
+          0
+        P | Prop count: 7
+          RotationMax
+          Vector3D
+          Vector
+
+          0
+          0
+          0
+        P | Prop count: 5
+          RotationMinX
+          bool
+
+
+          0
+        P | Prop count: 5
+          RotationMinY
+          bool
+
+
+          0
+        P | Prop count: 5
+          RotationMinZ
+          bool
+
+
+          0
+        P | Prop count: 5
+          RotationMaxX
+          bool
+
+
+          0
+        P | Prop count: 5
+          RotationMaxY
+          bool
+
+
+          0
+        P | Prop count: 5
+          RotationMaxZ
+          bool
+
+
+          0
+        P | Prop count: 5
+          InheritType
+          enum
+
+
+          0
+        P | Prop count: 5
+          ScalingActive
+          bool
+
+
+          0
+        P | Prop count: 7
+          ScalingMin
+          Vector3D
+          Vector
+
+          0
+          0
+          0
+        P | Prop count: 7
+          ScalingMax
+          Vector3D
+          Vector
+
+          1
+          1
+          1
+        P | Prop count: 5
+          ScalingMinX
+          bool
+
+
+          0
+        P | Prop count: 5
+          ScalingMinY
+          bool
+
+
+          0
+        P | Prop count: 5
+          ScalingMinZ
+          bool
+
+
+          0
+        P | Prop count: 5
+          ScalingMaxX
+          bool
+
+
+          0
+        P | Prop count: 5
+          ScalingMaxY
+          bool
+
+
+          0
+        P | Prop count: 5
+          ScalingMaxZ
+          bool
+
+
+          0
+        P | Prop count: 7
+          GeometricTranslation
+          Vector3D
+          Vector
+
+          0
+          0
+          0
+        P | Prop count: 7
+          GeometricRotation
+          Vector3D
+          Vector
+
+          0
+          0
+          0
+        P | Prop count: 7
+          GeometricScaling
+          Vector3D
+          Vector
+
+          1
+          1
+          1
+        P | Prop count: 5
+          MinDampRangeX
+          double
+          Number
+
+          0
+        P | Prop count: 5
+          MinDampRangeY
+          double
+          Number
+
+          0
+        P | Prop count: 5
+          MinDampRangeZ
+          double
+          Number
+
+          0
+        P | Prop count: 5
+          MaxDampRangeX
+          double
+          Number
+
+          0
+        P | Prop count: 5
+          MaxDampRangeY
+          double
+          Number
+
+          0
+        P | Prop count: 5
+          MaxDampRangeZ
+          double
+          Number
+
+          0
+        P | Prop count: 5
+          MinDampStrengthX
+          double
+          Number
+
+          0
+        P | Prop count: 5
+          MinDampStrengthY
+          double
+          Number
+
+          0
+        P | Prop count: 5
+          MinDampStrengthZ
+          double
+          Number
+
+          0
+        P | Prop count: 5
+          MaxDampStrengthX
+          double
+          Number
+
+          0
+        P | Prop count: 5
+          MaxDampStrengthY
+          double
+          Number
+
+          0
+        P | Prop count: 5
+          MaxDampStrengthZ
+          double
+          Number
+
+          0
+        P | Prop count: 5
+          PreferedAngleX
+          double
+          Number
+
+          0
+        P | Prop count: 5
+          PreferedAngleY
+          double
+          Number
+
+          0
+        P | Prop count: 5
+          PreferedAngleZ
+          double
+          Number
+
+          0
+        P | Prop count: 4
+          LookAtProperty
+          object
+
+
+        P | Prop count: 4
+          UpVectorProperty
+          object
+
+
+        P | Prop count: 5
+          Show
+          bool
+
+
+          1
+        P | Prop count: 5
+          NegativePercentShapeSupport
+          bool
+
+
+          1
+        P | Prop count: 5
+          DefaultAttributeIndex
+          int
+          Integer
+
+          -1
+        P | Prop count: 5
+          Freeze
+          bool
+
+
+          0
+        P | Prop count: 5
+          LODBox
+          bool
+
+
+          0
+        P | Prop count: 7
+          Lcl Translation
+          Lcl Translation
+
+          A
+          0
+          0
+          0
+        P | Prop count: 7
+          Lcl Rotation
+          Lcl Rotation
+
+          A
+          0
+          0
+          0
+        P | Prop count: 7
+          Lcl Scaling
+          Lcl Scaling
+
+          A
+          1
+          1
+          1
+        P | Prop count: 5
+          Visibility
+          Visibility
+
+          A
+          1
+        P | Prop count: 5
+          Visibility Inheritance
+          Visibility Inheritance
+
+
+          1
+  ObjectType | Prop count: 1
+    Geometry
+    Count | Prop count: 1
+      1
+    PropertyTemplate | Prop count: 1
+      FbxMesh
+      Properties70 | Prop count: 0
+        P | Prop count: 7
+          Color
+          ColorRGB
+          Color
+
+          0.8
+          0.8
+          0.8
+        P | Prop count: 7
+          BBoxMin
+          Vector3D
+          Vector
+
+          0
+          0
+          0
+        P | Prop count: 7
+          BBoxMax
+          Vector3D
+          Vector
+
+          0
+          0
+          0
+        P | Prop count: 5
+          Primary Visibility
+          bool
+
+
+          1
+        P | Prop count: 5
+          Casts Shadows
+          bool
+
+
+          1
+        P | Prop count: 5
+          Receive Shadows
+          bool
+
+
+          1
+  ObjectType | Prop count: 1
+    NodeAttribute
+    Count | Prop count: 1
+      3
+    PropertyTemplate | Prop count: 1
+      FbxSkeleton
+      Properties70 | Prop count: 0
+        P | Prop count: 7
+          Color
+          ColorRGB
+          Color
+
+          0.8
+          0.8
+          0.8
+        P | Prop count: 5
+          Size
+          double
+          Number
+
+          100
+        P | Prop count: 5
+          LimbLength
+          double
+          Number
+          H
+          1
+  ObjectType | Prop count: 1
+    AnimationCurve
+    Count | Prop count: 1
+      18
+  ObjectType | Prop count: 1
+    AnimationCurveNode
+    Count | Prop count: 1
+      6
+    PropertyTemplate | Prop count: 1
+      FbxAnimCurveNode
+      Properties70 | Prop count: 0
+        P | Prop count: 4
+          d
+          Compound
+
+
+  ObjectType | Prop count: 1
+    Deformer
+    Count | Prop count: 1
+      3
+  ObjectType | Prop count: 1
+    Pose
+    Count | Prop count: 1
+      1
+  Geometry | Prop count: 3
+    1965724272
+     Geometry
+    Mesh
+    Properties70 | Prop count: 0
+      P | Prop count: 7
+        Color
+        ColorRGB
+        Color
+
+        0.890196
+        0.6
+        0.6
+    Vertices | Prop count: 1
+      Double array, size: 144
+    PolygonVertexIndex | Prop count: 1
+      Int32 array, size: 276
+    Edges | Prop count: 1
+      Int32 array, size: 138
+    GeometryVersion | Prop count: 1
+      124
+    LayerElementNormal | Prop count: 1
+      0
+      Version | Prop count: 1
+        102
+      Name | Prop count: 1
+
+      MappingInformationType | Prop count: 1
+        ByPolygonVertex
+      ReferenceInformationType | Prop count: 1
+        Direct
+      Normals | Prop count: 1
+        Double array, size: 828
+      NormalsW | Prop count: 1
+        Double array, size: 276
+    LayerElementUV | Prop count: 1
+      0
+      Version | Prop count: 1
+        101
+      Name | Prop count: 1
+        UVChannel_1
+      MappingInformationType | Prop count: 1
+        ByPolygonVertex
+      ReferenceInformationType | Prop count: 1
+        IndexToDirect
+      UV | Prop count: 1
+        Double array, size: 136
+      UVIndex | Prop count: 1
+        Int32 array, size: 276
+    LayerElementVisibility | Prop count: 1
+      0
+      Version | Prop count: 1
+        101
+      Name | Prop count: 1
+
+      MappingInformationType | Prop count: 1
+        ByEdge
+      ReferenceInformationType | Prop count: 1
+        Direct
+      Visibility | Prop count: 1
+
+    Layer | Prop count: 1
+      0
+      Version | Prop count: 1
+        100
+      LayerElement | Prop count: 0
+        Type | Prop count: 1
+          LayerElementNormal
+        TypedIndex | Prop count: 1
+          0
+      LayerElement | Prop count: 0
+        Type | Prop count: 1
+          LayerElementVisibility
+        TypedIndex | Prop count: 1
+          0
+      LayerElement | Prop count: 0
+        Type | Prop count: 1
+          LayerElementUV
+        TypedIndex | Prop count: 1
+          0
+  NodeAttribute | Prop count: 3
+    1964185136
+     NodeAttribute
+    LimbNode
+    Properties70 | Prop count: 0
+      P | Prop count: 5
+        Size
+        double
+        Number
+
+        40.8368
+    TypeFlags | Prop count: 1
+      Skeleton
+  NodeAttribute | Prop count: 3
+    1964183984
+     NodeAttribute
+    LimbNode
+    Properties70 | Prop count: 0
+      P | Prop count: 5
+        Size
+        double
+        Number
+
+        41.7373
+    TypeFlags | Prop count: 1
+      Skeleton
+  NodeAttribute | Prop count: 3
+    1964181680
+     NodeAttribute
+    LimbNode
+    Properties70 | Prop count: 0
+      P | Prop count: 5
+        Size
+        double
+        Number
+
+        41.7373
+    TypeFlags | Prop count: 1
+      Skeleton
+  Model | Prop count: 3
+    2098406912
+    Cylinder001 Model
+    Mesh
+    Version | Prop count: 1
+      232
+    Properties70 | Prop count: 0
+      P | Prop count: 7
+        PreRotation
+        Vector3D
+        Vector
+
+        -90
+        -0
+        0
+      P | Prop count: 5
+        RotationActive
+        bool
+
+
+        1
+      P | Prop count: 5
+        InheritType
+        enum
+
+
+        1
+      P | Prop count: 7
+        ScalingMax
+        Vector3D
+        Vector
+
+        0
+        0
+        0
+      P | Prop count: 5
+        DefaultAttributeIndex
+        int
+        Integer
+
+        0
+      P | Prop count: 5
+        mr displacement use global settings
+        Bool
+
+        AU
+        1
+      P | Prop count: 5
+        mr displacement view dependent
+        Bool
+
+        AU
+        1
+      P | Prop count: 7
+        mr displacement method
+        Integer
+
+        AU
+        6
+        6
+        6
+      P | Prop count: 5
+        mr displacement smoothing on
+        Bool
+
+        AU
+        1
+      P | Prop count: 7
+        mr displacement edge length
+        Number
+
+        AU
+        2
+        2
+        2
+      P | Prop count: 7
+        mr displacement max displace
+        Number
+
+        AU
+        20
+        20
+        20
+      P | Prop count: 7
+        mr displacement parametric subdivision level
+        Integer
+
+        AU
+        5
+        5
+        5
+      P | Prop count: 5
+        MaxHandle
+        int
+        Integer
+        UH
+        1
+    Shading | Prop count: 1
+      1 bit bool
+    Culling | Prop count: 1
+      CullingOff
+  Model | Prop count: 3
+    2098387184
+    Bone001 Model
+    LimbNode
+    Version | Prop count: 1
+      232
+    Properties70 | Prop count: 0
+      P | Prop count: 7
+        PreRotation
+        Vector3D
+        Vector
+
+        -90
+        -0
+        0
+      P | Prop count: 5
+        RotationActive
+        bool
+
+
+        1
+      P | Prop count: 5
+        InheritType
+        enum
+
+
+        1
+      P | Prop count: 7
+        ScalingMax
+        Vector3D
+        Vector
+
+        0
+        0
+        0
+      P | Prop count: 5
+        DefaultAttributeIndex
+        int
+        Integer
+
+        0
+      P | Prop count: 7
+        Lcl Translation
+        Lcl Translation
+
+        A+
+        0.0387358
+        -0.034614
+        -1.51303e-09
+      P | Prop count: 7
+        Lcl Rotation
+        Lcl Rotation
+
+        A+
+        -90.0006
+        -69.057
+        -179.999
+      P | Prop count: 5
+        mr displacement use global settings
+        Bool
+
+        AU
+        1
+      P | Prop count: 5
+        mr displacement view dependent
+        Bool
+
+        AU
+        1
+      P | Prop count: 7
+        mr displacement method
+        Integer
+
+        AU
+        6
+        6
+        6
+      P | Prop count: 5
+        mr displacement smoothing on
+        Bool
+
+        AU
+        1
+      P | Prop count: 7
+        mr displacement edge length
+        Number
+
+        AU
+        2
+        2
+        2
+      P | Prop count: 7
+        mr displacement max displace
+        Number
+
+        AU
+        20
+        20
+        20
+      P | Prop count: 7
+        mr displacement parametric subdivision level
+        Integer
+
+        AU
+        5
+        5
+        5
+      P | Prop count: 5
+        MaxHandle
+        int
+        Integer
+        UH
+        2
+    Shading | Prop count: 1
+      1 bit bool
+    Culling | Prop count: 1
+      CullingOff
+  Model | Prop count: 3
+    2098398144
+    Bone002 Model
+    LimbNode
+    Version | Prop count: 1
+      232
+    Properties70 | Prop count: 0
+      P | Prop count: 5
+        InheritType
+        enum
+
+
+        1
+      P | Prop count: 7
+        ScalingMax
+        Vector3D
+        Vector
+
+        0
+        0
+        0
+      P | Prop count: 5
+        DefaultAttributeIndex
+        int
+        Integer
+
+        0
+      P | Prop count: 7
+        Lcl Translation
+        Lcl Translation
+
+        A+
+        5.83383
+        -1.07288e-06
+        -2.67544e-07
+      P | Prop count: 7
+        Lcl Rotation
+        Lcl Rotation
+
+        A+
+        -0.000163925
+        6.64425e-06
+        -44.1294
+      P | Prop count: 5
+        mr displacement use global settings
+        Bool
+
+        AU
+        1
+      P | Prop count: 5
+        mr displacement view dependent
+        Bool
+
+        AU
+        1
+      P | Prop count: 7
+        mr displacement method
+        Integer
+
+        AU
+        6
+        6
+        6
+      P | Prop count: 5
+        mr displacement smoothing on
+        Bool
+
+        AU
+        1
+      P | Prop count: 7
+        mr displacement edge length
+        Number
+
+        AU
+        2
+        2
+        2
+      P | Prop count: 7
+        mr displacement max displace
+        Number
+
+        AU
+        20
+        20
+        20
+      P | Prop count: 7
+        mr displacement parametric subdivision level
+        Integer
+
+        AU
+        5
+        5
+        5
+      P | Prop count: 5
+        MaxHandle
+        int
+        Integer
+        UH
+        3
+    Shading | Prop count: 1
+      1 bit bool
+    Culling | Prop count: 1
+      CullingOff
+  Model | Prop count: 3
+    2098384992
+    Bone003 Model
+    LimbNode
+    Version | Prop count: 1
+      232
+    Properties70 | Prop count: 0
+      P | Prop count: 5
+        InheritType
+        enum
+
+
+        1
+      P | Prop count: 7
+        ScalingMax
+        Vector3D
+        Vector
+
+        0
+        0
+        0
+      P | Prop count: 5
+        DefaultAttributeIndex
+        int
+        Integer
+
+        0
+      P | Prop count: 7
+        Lcl Translation
+        Lcl Translation
+
+        A
+        5.96247
+        -9.53674e-07
+        1.81899e-12
+      P | Prop count: 7
+        Lcl Rotation
+        Lcl Rotation
+
+        A
+        -3.25689e-11
+        -0
+        0
+      P | Prop count: 5
+        mr displacement use global settings
+        Bool
+
+        AU
+        1
+      P | Prop count: 5
+        mr displacement view dependent
+        Bool
+
+        AU
+        1
+      P | Prop count: 7
+        mr displacement method
+        Integer
+
+        AU
+        6
+        6
+        6
+      P | Prop count: 5
+        mr displacement smoothing on
+        Bool
+
+        AU
+        1
+      P | Prop count: 7
+        mr displacement edge length
+        Number
+
+        AU
+        2
+        2
+        2
+      P | Prop count: 7
+        mr displacement max displace
+        Number
+
+        AU
+        20
+        20
+        20
+      P | Prop count: 7
+        mr displacement parametric subdivision level
+        Integer
+
+        AU
+        5
+        5
+        5
+      P | Prop count: 5
+        MaxHandle
+        int
+        Integer
+        UH
+        4
+    Shading | Prop count: 1
+      1 bit bool
+    Culling | Prop count: 1
+      CullingOff
+  Pose | Prop count: 3
+    1251482128
+    BIND_POSES Pose
+    BindPose
+    Type | Prop count: 1
+      BindPose
+    Version | Prop count: 1
+      100
+    NbPoseNodes | Prop count: 1
+      3
+    PoseNode | Prop count: 0
+      Node | Prop count: 1
+        2098406912
+      Matrix | Prop count: 1
+        Double array, size: 16
+    PoseNode | Prop count: 0
+      Node | Prop count: 1
+        2098387184
+      Matrix | Prop count: 1
+        Double array, size: 16
+    PoseNode | Prop count: 0
+      Node | Prop count: 1
+        2098398144
+      Matrix | Prop count: 1
+        Double array, size: 16
+  Deformer | Prop count: 3
+    1964178032
+     Deformer
+    Skin
+    Version | Prop count: 1
+      101
+    Link_DeformAcuracy | Prop count: 1
+      50
+  Deformer | Prop count: 3
+    1919599424
+     SubDeformer
+    Cluster
+    Version | Prop count: 1
+      100
+    UserData | Prop count: 2
+
+
+    Indexes | Prop count: 1
+      Int32 array, size: 42
+    Weights | Prop count: 1
+      Double array, size: 42
+    Transform | Prop count: 1
+      Double array, size: 16
+    TransformLink | Prop count: 1
+      Double array, size: 16
+  Deformer | Prop count: 3
+    1919593408
+     SubDeformer
+    Cluster
+    Version | Prop count: 1
+      100
+    UserData | Prop count: 2
+
+
+    Indexes | Prop count: 1
+      Int32 array, size: 42
+    Weights | Prop count: 1
+      Double array, size: 42
+    Transform | Prop count: 1
+      Double array, size: 16
+    TransformLink | Prop count: 1
+      Double array, size: 16
+  AnimationStack | Prop count: 3
+    1955311072
+    Take 001 AnimStack
+
+    Properties70 | Prop count: 0
+      P | Prop count: 5
+        LocalStop
+        KTime
+        Time
+
+        153953860000
+      P | Prop count: 5
+        ReferenceStop
+        KTime
+        Time
+
+        153953860000
+  AnimationLayer | Prop count: 3
+    1912318240
+    BaseLayer AnimLayer
+
+  AnimationCurveNode | Prop count: 3
+    1955314816
+    T AnimCurveNode
+
+    Properties70 | Prop count: 0
+      P | Prop count: 5
+        d|X
+        Number
+
+        A
+        0.0387358
+      P | Prop count: 5
+        d|Y
+        Number
+
+        A
+        -0.034614
+      P | Prop count: 5
+        d|Z
+        Number
+
+        A
+        -1.51303e-09
+  AnimationCurveNode | Prop count: 3
+    1955321472
+    R AnimCurveNode
+
+    Properties70 | Prop count: 0
+      P | Prop count: 5
+        d|X
+        Number
+
+        A
+        -90.0006
+      P | Prop count: 5
+        d|Y
+        Number
+
+        A
+        -69.057
+      P | Prop count: 5
+        d|Z
+        Number
+
+        A
+        -179.999
+  AnimationCurveNode | Prop count: 3
+    1955312736
+    S AnimCurveNode
+
+    Properties70 | Prop count: 0
+      P | Prop count: 5
+        d|X
+        Number
+
+        A
+        1
+      P | Prop count: 5
+        d|Y
+        Number
+
+        A
+        1
+      P | Prop count: 5
+        d|Z
+        Number
+
+        A
+        1
+  AnimationCurveNode | Prop count: 3
+    1955319392
+    T AnimCurveNode
+
+    Properties70 | Prop count: 0
+      P | Prop count: 5
+        d|X
+        Number
+
+        A
+        5.83383
+      P | Prop count: 5
+        d|Y
+        Number
+
+        A
+        -1.07288e-06
+      P | Prop count: 5
+        d|Z
+        Number
+
+        A
+        -2.67544e-07
+  AnimationCurveNode | Prop count: 3
+    1955315440
+    R AnimCurveNode
+
+    Properties70 | Prop count: 0
+      P | Prop count: 5
+        d|X
+        Number
+
+        A
+        -0.000163925
+      P | Prop count: 5
+        d|Y
+        Number
+
+        A
+        6.64425e-06
+      P | Prop count: 5
+        d|Z
+        Number
+
+        A
+        -44.1294
+  AnimationCurveNode | Prop count: 3
+    1955322512
+    S AnimCurveNode
+
+    Properties70 | Prop count: 0
+      P | Prop count: 5
+        d|X
+        Number
+
+        A
+        1
+      P | Prop count: 5
+        d|Y
+        Number
+
+        A
+        1
+      P | Prop count: 5
+        d|Z
+        Number
+
+        A
+        1
+  AnimationCurve | Prop count: 3
+    2097346080
+     AnimCurve
+
+    Default | Prop count: 1
+      0
+    KeyVer | Prop count: 1
+      4008
+    KeyTime | Prop count: 1
+      Int64 array, size: 1
+    KeyValueFloat | Prop count: 1
+      Float array, size: 1
+    KeyAttrFlags | Prop count: 1
+      Int32 array, size: 1
+    KeyAttrDataFloat | Prop count: 1
+      Float array, size: 4
+    KeyAttrRefCount | Prop count: 1
+      Int32 array, size: 1
+  AnimationCurve | Prop count: 3
+    2097342400
+     AnimCurve
+
+    Default | Prop count: 1
+      0
+    KeyVer | Prop count: 1
+      4008
+    KeyTime | Prop count: 1
+      Int64 array, size: 1
+    KeyValueFloat | Prop count: 1
+      Float array, size: 1
+    KeyAttrFlags | Prop count: 1
+      Int32 array, size: 1
+    KeyAttrDataFloat | Prop count: 1
+      Float array, size: 4
+    KeyAttrRefCount | Prop count: 1
+      Int32 array, size: 1
+  AnimationCurve | Prop count: 3
+    2097340160
+     AnimCurve
+
+    Default | Prop count: 1
+      0
+    KeyVer | Prop count: 1
+      4008
+    KeyTime | Prop count: 1
+      Int64 array, size: 1
+    KeyValueFloat | Prop count: 1
+      Float array, size: 1
+    KeyAttrFlags | Prop count: 1
+      Int32 array, size: 1
+    KeyAttrDataFloat | Prop count: 1
+      Float array, size: 4
+    KeyAttrRefCount | Prop count: 1
+      Int32 array, size: 1
+  AnimationCurve | Prop count: 3
+    2097338560
+     AnimCurve
+
+    Default | Prop count: 1
+      0
+    KeyVer | Prop count: 1
+      4008
+    KeyTime | Prop count: 1
+      Int64 array, size: 3
+    KeyValueFloat | Prop count: 1
+      Float array, size: 3
+    KeyAttrFlags | Prop count: 1
+      Int32 array, size: 3
+    KeyAttrDataFloat | Prop count: 1
+      Float array, size: 12
+    KeyAttrRefCount | Prop count: 1
+      Int32 array, size: 3
+  AnimationCurve | Prop count: 3
+    2097347200
+     AnimCurve
+
+    Default | Prop count: 1
+      0
+    KeyVer | Prop count: 1
+      4008
+    KeyTime | Prop count: 1
+      Int64 array, size: 3
+    KeyValueFloat | Prop count: 1
+      Float array, size: 3
+    KeyAttrFlags | Prop count: 1
+      Int32 array, size: 3
+    KeyAttrDataFloat | Prop count: 1
+      Float array, size: 12
+    KeyAttrRefCount | Prop count: 1
+      Int32 array, size: 3
+  AnimationCurve | Prop count: 3
+    2097347840
+     AnimCurve
+
+    Default | Prop count: 1
+      0
+    KeyVer | Prop count: 1
+      4008
+    KeyTime | Prop count: 1
+      Int64 array, size: 3
+    KeyValueFloat | Prop count: 1
+      Float array, size: 3
+    KeyAttrFlags | Prop count: 1
+      Int32 array, size: 3
+    KeyAttrDataFloat | Prop count: 1
+      Float array, size: 12
+    KeyAttrRefCount | Prop count: 1
+      Int32 array, size: 3
+  AnimationCurve | Prop count: 3
+    2097347360
+     AnimCurve
+
+    Default | Prop count: 1
+      0
+    KeyVer | Prop count: 1
+      4008
+    KeyTime | Prop count: 1
+      Int64 array, size: 1
+    KeyValueFloat | Prop count: 1
+      Float array, size: 1
+    KeyAttrFlags | Prop count: 1
+      Int32 array, size: 1
+    KeyAttrDataFloat | Prop count: 1
+      Float array, size: 4
+    KeyAttrRefCount | Prop count: 1
+      Int32 array, size: 1
+  AnimationCurve | Prop count: 3
+    2097344800
+     AnimCurve
+
+    Default | Prop count: 1
+      0
+    KeyVer | Prop count: 1
+      4008
+    KeyTime | Prop count: 1
+      Int64 array, size: 1
+    KeyValueFloat | Prop count: 1
+      Float array, size: 1
+    KeyAttrFlags | Prop count: 1
+      Int32 array, size: 1
+    KeyAttrDataFloat | Prop count: 1
+      Float array, size: 4
+    KeyAttrRefCount | Prop count: 1
+      Int32 array, size: 1
+  AnimationCurve | Prop count: 3
+    2097339520
+     AnimCurve
+
+    Default | Prop count: 1
+      0
+    KeyVer | Prop count: 1
+      4008
+    KeyTime | Prop count: 1
+      Int64 array, size: 1
+    KeyValueFloat | Prop count: 1
+      Float array, size: 1
+    KeyAttrFlags | Prop count: 1
+      Int32 array, size: 1
+    KeyAttrDataFloat | Prop count: 1
+      Float array, size: 4
+    KeyAttrRefCount | Prop count: 1
+      Int32 array, size: 1
+  AnimationCurve | Prop count: 3
+    2097340480
+     AnimCurve
+
+    Default | Prop count: 1
+      0
+    KeyVer | Prop count: 1
+      4008
+    KeyTime | Prop count: 1
+      Int64 array, size: 1
+    KeyValueFloat | Prop count: 1
+      Float array, size: 1
+    KeyAttrFlags | Prop count: 1
+      Int32 array, size: 1
+    KeyAttrDataFloat | Prop count: 1
+      Float array, size: 4
+    KeyAttrRefCount | Prop count: 1
+      Int32 array, size: 1
+  AnimationCurve | Prop count: 3
+    2097343360
+     AnimCurve
+
+    Default | Prop count: 1
+      0
+    KeyVer | Prop count: 1
+      4008
+    KeyTime | Prop count: 1
+      Int64 array, size: 1
+    KeyValueFloat | Prop count: 1
+      Float array, size: 1
+    KeyAttrFlags | Prop count: 1
+      Int32 array, size: 1
+    KeyAttrDataFloat | Prop count: 1
+      Float array, size: 4
+    KeyAttrRefCount | Prop count: 1
+      Int32 array, size: 1
+  AnimationCurve | Prop count: 3
+    2097340640
+     AnimCurve
+
+    Default | Prop count: 1
+      0
+    KeyVer | Prop count: 1
+      4008
+    KeyTime | Prop count: 1
+      Int64 array, size: 1
+    KeyValueFloat | Prop count: 1
+      Float array, size: 1
+    KeyAttrFlags | Prop count: 1
+      Int32 array, size: 1
+    KeyAttrDataFloat | Prop count: 1
+      Float array, size: 4
+    KeyAttrRefCount | Prop count: 1
+      Int32 array, size: 1
+  AnimationCurve | Prop count: 3
+    2097342720
+     AnimCurve
+
+    Default | Prop count: 1
+      0
+    KeyVer | Prop count: 1
+      4008
+    KeyTime | Prop count: 1
+      Int64 array, size: 3
+    KeyValueFloat | Prop count: 1
+      Float array, size: 3
+    KeyAttrFlags | Prop count: 1
+      Int32 array, size: 3
+    KeyAttrDataFloat | Prop count: 1
+      Float array, size: 12
+    KeyAttrRefCount | Prop count: 1
+      Int32 array, size: 3
+  AnimationCurve | Prop count: 3
+    2097343520
+     AnimCurve
+
+    Default | Prop count: 1
+      0
+    KeyVer | Prop count: 1
+      4008
+    KeyTime | Prop count: 1
+      Int64 array, size: 3
+    KeyValueFloat | Prop count: 1
+      Float array, size: 3
+    KeyAttrFlags | Prop count: 1
+      Int32 array, size: 3
+    KeyAttrDataFloat | Prop count: 1
+      Float array, size: 12
+    KeyAttrRefCount | Prop count: 1
+      Int32 array, size: 3
+  AnimationCurve | Prop count: 3
+    2097338880
+     AnimCurve
+
+    Default | Prop count: 1
+      0
+    KeyVer | Prop count: 1
+      4008
+    KeyTime | Prop count: 1
+      Int64 array, size: 3
+    KeyValueFloat | Prop count: 1
+      Float array, size: 3
+    KeyAttrFlags | Prop count: 1
+      Int32 array, size: 3
+    KeyAttrDataFloat | Prop count: 1
+      Float array, size: 12
+    KeyAttrRefCount | Prop count: 1
+      Int32 array, size: 3
+  AnimationCurve | Prop count: 3
+    2097346560
+     AnimCurve
+
+    Default | Prop count: 1
+      0
+    KeyVer | Prop count: 1
+      4008
+    KeyTime | Prop count: 1
+      Int64 array, size: 1
+    KeyValueFloat | Prop count: 1
+      Float array, size: 1
+    KeyAttrFlags | Prop count: 1
+      Int32 array, size: 1
+    KeyAttrDataFloat | Prop count: 1
+      Float array, size: 4
+    KeyAttrRefCount | Prop count: 1
+      Int32 array, size: 1
+  AnimationCurve | Prop count: 3
+    2097347680
+     AnimCurve
+
+    Default | Prop count: 1
+      0
+    KeyVer | Prop count: 1
+      4008
+    KeyTime | Prop count: 1
+      Int64 array, size: 1
+    KeyValueFloat | Prop count: 1
+      Float array, size: 1
+    KeyAttrFlags | Prop count: 1
+      Int32 array, size: 1
+    KeyAttrDataFloat | Prop count: 1
+      Float array, size: 4
+    KeyAttrRefCount | Prop count: 1
+      Int32 array, size: 1
+  AnimationCurve | Prop count: 3
+    2097345920
+     AnimCurve
+
+    Default | Prop count: 1
+      0
+    KeyVer | Prop count: 1
+      4008
+    KeyTime | Prop count: 1
+      Int64 array, size: 1
+    KeyValueFloat | Prop count: 1
+      Float array, size: 1
+    KeyAttrFlags | Prop count: 1
+      Int32 array, size: 1
+    KeyAttrDataFloat | Prop count: 1
+      Float array, size: 4
+    KeyAttrRefCount | Prop count: 1
+      Int32 array, size: 1
+  C | Prop count: 3
+    OO
+    2098406912
+    0
+  C | Prop count: 3
+    OO
+    2098387184
+    0
+  C | Prop count: 3
+    OO
+    1912318240
+    1955311072
+  C | Prop count: 3
+    OO
+    1955314816
+    1912318240
+  C | Prop count: 3
+    OO
+    1955321472
+    1912318240
+  C | Prop count: 3
+    OO
+    1955312736
+    1912318240
+  C | Prop count: 3
+    OO
+    1955319392
+    1912318240
+  C | Prop count: 3
+    OO
+    1955315440
+    1912318240
+  C | Prop count: 3
+    OO
+    1955322512
+    1912318240
+  C | Prop count: 3
+    OO
+    1965724272
+    2098406912
+  C | Prop count: 3
+    OO
+    2098398144
+    2098387184
+  C | Prop count: 3
+    OO
+    1964185136
+    2098387184
+  C | Prop count: 4
+    OP
+    1955314816
+    2098387184
+    Lcl Translation
+  C | Prop count: 4
+    OP
+    1955321472
+    2098387184
+    Lcl Rotation
+  C | Prop count: 4
+    OP
+    1955312736
+    2098387184
+    Lcl Scaling
+  C | Prop count: 3
+    OO
+    2098384992
+    2098398144
+  C | Prop count: 3
+    OO
+    1964183984
+    2098398144
+  C | Prop count: 4
+    OP
+    1955319392
+    2098398144
+    Lcl Translation
+  C | Prop count: 4
+    OP
+    1955315440
+    2098398144
+    Lcl Rotation
+  C | Prop count: 4
+    OP
+    1955322512
+    2098398144
+    Lcl Scaling
+  C | Prop count: 3
+    OO
+    1964181680
+    2098384992
+  C | Prop count: 3
+    OO
+    1964178032
+    1965724272
+  C | Prop count: 4
+    OP
+    2097346080
+    1955314816
+    d|X
+  C | Prop count: 4
+    OP
+    2097340160
+    1955314816
+    d|Y
+  C | Prop count: 4
+    OP
+    2097342400
+    1955314816
+    d|Z
+  C | Prop count: 4
+    OP
+    2097338560
+    1955321472
+    d|X
+  C | Prop count: 4
+    OP
+    2097347200
+    1955321472
+    d|Y
+  C | Prop count: 4
+    OP
+    2097347840
+    1955321472
+    d|Z
+  C | Prop count: 4
+    OP
+    2097347360
+    1955312736
+    d|X
+  C | Prop count: 4
+    OP
+    2097344800
+    1955312736
+    d|Y
+  C | Prop count: 4
+    OP
+    2097339520
+    1955312736
+    d|Z
+  C | Prop count: 4
+    OP
+    2097340480
+    1955319392
+    d|X
+  C | Prop count: 4
+    OP
+    2097343360
+    1955319392
+    d|Y
+  C | Prop count: 4
+    OP
+    2097340640
+    1955319392
+    d|Z
+  C | Prop count: 4
+    OP
+    2097342720
+    1955315440
+    d|X
+  C | Prop count: 4
+    OP
+    2097343520
+    1955315440
+    d|Y
+  C | Prop count: 4
+    OP
+    2097338880
+    1955315440
+    d|Z
+  C | Prop count: 4
+    OP
+    2097346560
+    1955322512
+    d|X
+  C | Prop count: 4
+    OP
+    2097347680
+    1955322512
+    d|Y
+  C | Prop count: 4
+    OP
+    2097345920
+    1955322512
+    d|Z
+  C | Prop count: 3
+    OO
+    1919599424
+    1964178032
+  C | Prop count: 3
+    OO
+    1919593408
+    1964178032
+  C | Prop count: 3
+    OO
+    2098387184
+    1919599424
+  C | Prop count: 3
+    OO
+    2098398144
+    1919593408
+  Current | Prop count: 1
+
+  Take | Prop count: 1
+    Take 001
+    FileName | Prop count: 1
+      Take_001.tak
+    LocalTime | Prop count: 2
+      0
+      153953860000
+    ReferenceTime | Prop count: 2
+      0
+      153953860000
+Bone001
+Bone002
+Bone003
+
+
+Formatting shader attribs
+Position:
+typeIndex: 5
+elemType: 4
+elemSize: 4
+elemCount: 3
+globalAttribIndex: 0
+Normal:
+typeIndex: 3
+elemType: 4
+elemSize: 4
+elemCount: 3
+globalAttribIndex: 1
+ColorRGB:
+typeIndex: 1
+elemType: 2
+elemSize: 1
+elemCount: 3
+globalAttribIndex: 2
+
+Mouse key DOWN
+Mouse key UP
+Mouse key DOWN
+Mouse key UP
+Mouse key DOWN
