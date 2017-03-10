@@ -232,6 +232,18 @@ public:
         return children[children.size()-1];
     }
     
+    Node& GetWhere(unsigned propId, const std::string& value)
+    {
+        for(unsigned i = 0; i < children.size(); ++i)
+        {
+            if(children[i][propId].GetString() == value)
+            {
+                return children[i];
+            }
+        }
+        return children[0];
+    }
+    
     std::vector<Node> GetAll(const std::string& name)
     {
         std::vector<Node> result;
