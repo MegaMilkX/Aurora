@@ -26,6 +26,11 @@ public:
     
     void Bind(Mesh* mesh);
     void Bind(RenderState* state);
+    template<typename T>
+    void Set(Uniform uniform, const T& data)
+    {
+        uniform = data;
+    }
     
     RenderState* BoundState() { return boundState; }
     
