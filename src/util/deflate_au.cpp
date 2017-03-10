@@ -9,8 +9,8 @@ std::vector<char> Inflate(const std::vector<char>& data, size_t size_guess)
     uLongf dest_size = result.size();
     uLongf source_size = data.size();
 
-    std::cout << "OUT: "<< dest_size << std::endl;
-    std::cout << "IN: "<< source_size << std::endl;
+    //std::cout << "OUT: "<< dest_size << std::endl;
+    //std::cout << "IN: "<< source_size << std::endl;
  
     z_stream zstream;
     zstream.opaque = Z_NULL;
