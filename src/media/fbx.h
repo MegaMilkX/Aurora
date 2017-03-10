@@ -255,6 +255,17 @@ public:
         return result;
     }
     
+    int Count(const std::string& name)
+    {
+        int result = 0;
+        for(unsigned i = 0; i < children.size(); ++i)
+        {
+            if(children[i].name == name)
+                result++;
+        }
+        return result;
+    }
+    
     Prop& operator[](unsigned index)
     {
         if(index >= props.size())
