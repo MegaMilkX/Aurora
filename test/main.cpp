@@ -86,12 +86,13 @@ Au::GFX::Mesh* LoadMesh(const std::string& path)
     {
         Au::Media::FBX::Reader fbxReader;
         fbxReader.ReadFile(buffer.data(), buffer.size());
-        fbxReader.Print();
+        fbxReader.ConvertCoordSys(Au::Media::FBX::OPENGL);
+        //fbxReader.Print();
         
-        std::vector<float> vertices = fbxReader.GetVertices<float>(0);
+        std::vector<float> vertices = fbxReader.GetVertices(0);
         mesh->VertexAttrib<Au::Position>(vertices);
         
-        std::vector<float> normals = fbxReader.GetNormals<float>(0);
+        std::vector<float> normals = fbxReader.GetNormals(0, 0);
         mesh->VertexAttrib<Au::Normal>(normals);
         
         std::vector<unsigned short> indices = fbxReader.GetIndices<unsigned short>(0);
@@ -193,8 +194,13 @@ Au::GFX::RenderState* CreateRenderState()
         in vec3 ColorRGB;
         varying vec3 color;
         varying vec3 normal;
+        
+        varying vec3 fragPos;
+        
         void main()
         {
+            fragPos = vec3(MatrixModel * vec4(Position, 1.0));
+            
             color = ColorRGB;
             normal = (MatrixModel * vec4(Normal, 1.0)).xyz;
             gl_Position = MatrixProjection * MatrixView * MatrixModel * vec4(Position, 1.0);
@@ -205,17 +211,28 @@ Au::GFX::RenderState* CreateRenderState()
     shaderPixel->Source(R"(
         varying vec3 color;
         varying vec3 normal;
+        varying vec3 fragPos;
         void main()
         {
+            vec3 ambient_color = vec3(0.4, 0.4, 0.4);
+            
             vec3 surface_color = vec3(1.0, 1.0, 1.0);
-            vec3 omni_light2 = vec3(0.0, 1.0, 0.0);
+            vec3 omni_light2 = vec3(0.0, 1.5, 7.0);
             vec3 omni_light = vec3(0.0, -1.0, 0.0);
             vec3 light_col = vec3(0.8, 0.2, 0.2);
             vec3 light_col2 = vec3(0.2, 0.8, 0.6);
             vec3 l0 = light_col * dot(normal, omni_light);
             vec3 l1 = light_col2 * dot(normal, omni_light2);
             
-            gl_FragColor = vec4(surface_color * (l0 + l1), 1.0);
+            vec3 lightDir = normalize(omni_light2 - fragPos);
+            vec3 lightColor = vec3(0.8, 0.6, 0.2);
+            vec3 lightColor2 = vec3(0.8, 0.2, 0.2);
+            
+            float diff = max(dot(normal, lightDir), 0.0);
+            vec3 diffuse = diff * lightColor;
+            vec3 result = (ambient_color + diffuse);
+            
+            gl_FragColor = vec4(result, 1.0);
     })");
     std::cout << shaderPixel->StatusString() << std::endl;
     
@@ -284,9 +301,25 @@ void Cleanup()
     gfxDevice.Cleanup();
 }
 
+class Game
+{
+public:
+};
+
+//class GameState01 : public Au::StateStack<Game>::State
+//{
+//public:
+//    
+//};
+
 int main()
-{    
-    Au::Input::LoadDeviceList();
+{
+    //Game game;
+    //StateStack<Game> stateStack(&game);
+    //stateStack.Push<GameState01>();
+    //stateStack.Tick();
+
+    //Au::Input::LoadDeviceList();
     Au::Window window;
     
     Init(window);
@@ -312,29 +345,23 @@ int main()
             Au::Window::PollMessages();
             
             gfxDevice.Clear();
-            gfxDevice << 
-                renderState << 
-                uniModelMat4f << 
-                model.GetTransform() <<
-                uniViewMat4f << 
-                Au::Math::Inverse(view.GetTransform()) <<
-                uniProjMat4f << 
-                projection <<
-                mesh;
-                
+            gfxDevice.Bind(renderState);
+            gfxDevice.Set(uniModelMat4f, model.GetTransform());
+            gfxDevice.Set(uniViewMat4f, Au::Math::Inverse(view.GetTransform()));
+            gfxDevice.Set(uniProjMat4f, projection);
+            gfxDevice.Bind(mesh);
+            gfxDevice.Render();
+
+            gfxDevice.Bind(renderStateLines);
             Au::GFX::Bone* bones = armature.GetBones();
             unsigned boneCount = armature.BoneCount();
             for(unsigned i = 0; i < boneCount; ++i)
             {
-                gfxDevice <<
-                    renderStateLines <<
-                    uniModelMat4f <<
-                    model.GetTransform() * bones[i].bindTransform <<
-                    uniViewMat4f <<
-                    Au::Math::Inverse(view.GetTransform()) <<
-                    uniProjMat4f << 
-                    projection <<
-                    cross;
+                gfxDevice.Set(uniModelMat4f, model.GetTransform() * bones[i].bindTransform);
+                gfxDevice.Set(uniViewMat4f, Au::Math::Inverse(view.GetTransform()));
+                gfxDevice.Set(uniProjMat4f, projection);
+                gfxDevice.Bind(cross);
+                gfxDevice.Render();
             }
             gfxDevice.SwapBuffers();
         }
