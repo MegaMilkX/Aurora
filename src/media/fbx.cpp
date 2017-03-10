@@ -268,7 +268,109 @@ bool Reader::ReadBlock(Node& node, const char* data, const char*& cursor, const 
 
 bool Reader::ReadFile(const char* data, unsigned size)
 {
-    std::cout << "Reading FBX file..." << std::endl;
+    if(!ReadFileFBX(data, size))
+        return false;
+    
+    int meshCount = rootNode.Count("Geometry");
+
+    for(int i = 0; i < meshCount; ++i)
+    {
+        Mesh mesh;
+        std::vector<int32_t> fbxIndices = 
+            rootNode.Get("Geometry", i).Get("PolygonVertexIndex")[0].GetArray<int32_t>();
+        std::vector<float> fbxVertices =
+            rootNode.Get("Geometry", i).Get("Vertices")[0].GetArray<float>();
+        
+        for(unsigned j = 0; j < fbxIndices.size(); ++j)
+        {
+            int32_t idx = fbxIndices[j] < 0 ? -fbxIndices[j] - 1 : fbxIndices[j];
+            mesh.vertices.push_back(fbxVertices[idx * 3]);
+            mesh.vertices.push_back(fbxVertices[idx * 3 + 1]);
+            mesh.vertices.push_back(fbxVertices[idx * 3 + 2]);
+            mesh.indices.push_back(j);
+        }
+        
+        // Normals
+        int normalLayerCount = rootNode.Get("Geometry", i).Count("LayerElementNormal");
+        for(int j = 0; j < normalLayerCount; ++j)
+        {
+            std::vector<float> fbxNormals = 
+                rootNode.Get("Geometry", j).Get("LayerElementNormal").Get("Normals")[0].GetArray<float>();
+            std::string normalsMapping = 
+                rootNode.Get("Geometry", j).Get("LayerElementNormal").Get("MappingInformationType")[0].GetString();
+            
+            std::vector<float> normals;
+            
+            if(normalsMapping == "ByVertex" || normalsMapping == "ByVertice")
+            {
+                for(unsigned l = 0; l < fbxIndices.size(); ++l)
+                {
+                    int32_t idx = fbxIndices[l] < 0 ? -fbxIndices[l] - 1 : fbxIndices[l];
+                    normals.push_back(fbxNormals[idx * 3]);
+                    normals.push_back(fbxNormals[idx * 3 + 1]);
+                    normals.push_back(fbxNormals[idx * 3 + 2]);
+                }
+            }
+            else if(normalsMapping == "ByPolygon")
+            {
+                normals = std::vector<float>(mesh.vertices.size());
+                
+                unsigned index = 0;
+                for(unsigned k = 0; k < fbxNormals.size() / 3; ++k)
+                {
+                    std::vector<unsigned> polyIndices;
+                    for(unsigned l = index; l < fbxIndices.size(); ++l)
+                        polyIndices.push_back(l);
+                    
+                    for(unsigned l = 0; l < polyIndices.size(); ++l)
+                    {
+                        normals[polyIndices[l] * 3] = fbxNormals[k * 3];
+                        normals[polyIndices[l] * 3 + 1] = fbxNormals[k * 3 + 1];
+                        normals[polyIndices[l] * 3 + 2] = fbxNormals[k * 3 + 2];
+                    }
+                }
+            }
+            else if(normalsMapping == "ByPolygonVertex")
+            {
+                normals = std::vector<float>(mesh.vertices.size());
+                
+                for(unsigned k = 0; k < fbxIndices.size(); ++k)
+                {
+                    int32_t idx = fbxIndices[k] < 0 ? -fbxIndices[k] - 1 : fbxIndices[k];
+                    
+                    normals[k * 3] = fbxNormals[k * 3];
+                    normals[k * 3 + 1] = fbxNormals[k * 3 + 1];
+                    normals[k * 3 + 2] = fbxNormals[k * 3 + 2];
+                }
+            }
+            
+            mesh.normalLayers.push_back(normals);
+            /*
+            // TODO
+            else if(normalsMapping == "ByEdge")
+            {
+                
+            }
+            else if(normalsMapping == "AllSame")
+            {
+                
+            }
+            */
+        }
+        
+        mesh.OptimizeDuplicates();
+        meshes.push_back(mesh);
+    }
+    
+    
+        
+    
+    
+    return true;
+}
+
+bool Reader::ReadFileFBX(const char* data, unsigned size)
+{
     if(!data)
     {
         //std::cout << "data is null" << std::endl;
@@ -295,7 +397,7 @@ bool Reader::ReadFile(const char* data, unsigned size)
     while(cursor < data + size)
     {
         if(!ReadBlock(rootNode, data, cursor, data + size, flags))
-            return false;
+            break;
     }
     
     return true;

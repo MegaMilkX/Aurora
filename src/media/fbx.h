@@ -302,6 +302,99 @@ public:
     Math::Mat4f bindTransform;
 };
 
+enum CoordSystem
+{
+    ORIGINAL,
+    OPENGL,
+    DIRECT3D
+};
+
+enum Axis
+{
+    AXIS_X = 0, AXIS_Y = 1, AXIS_Z = 2, AXIS_UNKNOWN
+};
+
+class Mesh
+{
+public:
+    void OptimizeDuplicates()
+    {
+        for(unsigned i = 0; i < indices.size(); ++i)
+            for(unsigned j = i + 1; j < indices.size(); ++j)
+                if(IsSameVertex(indices[i], indices[j]))
+                    EraseVertex(indices[j], indices[i]);
+    }
+    
+    bool IsSameVertex(unsigned a, unsigned b)
+    {
+        if(a == b)
+            return false;
+        
+        if(vertices[a * 3] != vertices[b * 3] || 
+           vertices[a * 3 + 1] != vertices[b * 3 + 1] ||
+           vertices[a * 3 + 2] != vertices[b * 3 + 2])
+            return false;
+        else
+        {
+            for(unsigned i = 0; i < normalLayers.size(); ++i)
+            {
+                if(normalLayers[i][a * 3] != normalLayers[i][b * 3] || 
+                   normalLayers[i][a * 3 + 1] != normalLayers[i][b * 3 + 1] ||
+                   normalLayers[i][a * 3 + 2] != normalLayers[i][b * 3 + 2])
+                    return false;
+            }
+            
+            for(unsigned i = 0; i < uvLayers.size(); ++i)
+            {
+                if(uvLayers[i][a * 2] != uvLayers[i][b * 2] || 
+                   uvLayers[i][a * 2 + 1] != uvLayers[i][b * 2 + 1])
+                    return false;
+            }
+            
+            for(unsigned i = 0; i < rgbaLayers.size(); ++i)
+            {
+                if(rgbaLayers[i][a * 4] != rgbaLayers[i][b * 4] || 
+                   rgbaLayers[i][a * 4 + 1] != rgbaLayers[i][b * 4 + 1] ||
+                   rgbaLayers[i][a * 4 + 2] != rgbaLayers[i][b * 4 + 2] ||
+                   rgbaLayers[i][a * 4 + 3] != rgbaLayers[i][b * 4 + 3])
+                    return false;
+            }
+        }
+        
+        return true;
+    }
+    
+    void EraseVertex(int id, int newId)
+    {
+        for(unsigned i = 0; i < indices.size(); ++i)
+            if(indices[i] == id)
+                indices[i] = newId;
+            
+        for(unsigned i = 0; i < indices.size(); ++i)
+            if(indices[i] >= id)
+                indices[i]--;
+        vertices.erase(vertices.begin() + id * 3, vertices.begin() + id * 3 + 3);
+        for(unsigned i = 0; i < normalLayers.size(); ++i)
+        {
+            normalLayers[i].erase(normalLayers[i].begin() + id * 3, normalLayers[i].begin() + id * 3 + 3);
+        }
+        for(unsigned i = 0; i < uvLayers.size(); ++i)
+        {
+            uvLayers[i].erase(uvLayers[i].begin() + id * 2, uvLayers[i].begin() + id * 2 + 2);
+        }
+        for(unsigned i = 0; i < rgbaLayers.size(); ++i)
+        {
+            rgbaLayers[i].erase(rgbaLayers[i].begin() + id * 4, rgbaLayers[i].begin() + id * 4 + 4);
+        }
+    }
+
+    std::vector<int> indices;
+    std::vector<float> vertices;
+    std::vector<std::vector<float>> normalLayers;
+    std::vector<std::vector<float>> uvLayers;
+    std::vector<std::vector<unsigned char>> rgbaLayers;
+};
+
 class Reader
 {
 public:
@@ -309,10 +402,54 @@ public:
     {}
     bool ReadFile(const char* data, unsigned size);
     
-    template<typename T>
-    std::vector<T> GetVertices(unsigned object = 0);
-    template<typename T>
-    std::vector<T> GetNormals(unsigned object = 0);
+    void ConvertCoordSys(CoordSystem sys)
+    { 
+        coordSys = sys;     
+    }
+    
+    Axis GetUpAxis()
+    {
+        int axis = (int)rootNode.Get("Properties70", 0).GetWhere(0, "UpAxis")[4].GetInt32();
+        return FBXAxisToAxis(axis);
+    }
+    Axis GetFrontAxis()
+    {
+        int axis = (int)rootNode.Get("Properties70", 0).GetWhere(0, "FrontAxis")[4].GetInt32();
+        return FBXAxisToAxis(axis);
+    }
+    Axis GetRightAxis()
+    {
+        int axis = (int)rootNode.Get("Properties70", 0).GetWhere(0, "CoordAxis")[4].GetInt32();
+        return FBXAxisToAxis(axis);
+    }
+    int GetUpAxisSign()
+    {
+        return (int)rootNode.Get("Properties70", 0).GetWhere(0, "UpAxisSign")[4].GetInt32();
+    }
+    int GetFrontAxisSign()
+    {
+        return (int)rootNode.Get("Properties70", 0).GetWhere(0, "FrontAxisSign")[4].GetInt32();
+    }
+    int GetRightAxisSign()
+    {
+        return (int)rootNode.Get("Properties70", 0).GetWhere(0, "CoordAxisSign")[4].GetInt32();
+    }
+    
+    int MeshCount() { return meshes.size(); }
+    
+    std::vector<float> Reader::GetVertices(unsigned object)
+    {
+        std::vector<float> vertices = meshes[object].vertices;
+        ConvertVertexArray(vertices);
+        return vertices;
+    }
+
+    std::vector<float> Reader::GetNormals(unsigned object = 0, unsigned layer = 0)
+    {
+        std::vector<float> normals = meshes[object].normalLayers[layer];
+        ConvertVertexArray(normals);
+        return normals;
+    }
     template<typename T>
     std::vector<T> GetUV(unsigned object = 0);
     template<typename T>
@@ -327,88 +464,58 @@ public:
 private:
     void ReadData(Prop& prop, std::vector<char>& out, const char* data, const char*& cursor, const char* end);
     bool ReadBlock(Node& node, const char* data, const char*& cursor, const char* end, Word flags);
+    bool ReadFileFBX(const char* data, unsigned size);
+    
+    Axis FBXAxisToAxis(unsigned axis)
+    { 
+        if(axis == 0)
+            return AXIS_X;
+        else if(axis == 1)
+            return AXIS_Z;
+        else if(axis == 2)
+            return AXIS_Y;
+        else
+            return AXIS_UNKNOWN;
+    }
+    
+    template<typename T>
+    void ConvertVertexArray(std::vector<T>& vertices)
+    {
+        Axis up = GetUpAxis();
+        Axis front = GetFrontAxis();
+        Axis right = GetRightAxis();
+    
+        if(coordSys == OPENGL)
+        {
+            for(unsigned i = 0; i < vertices.size(); i += 3)
+            {
+                T x = vertices[i + right];
+                T y = vertices[i + up];
+                T z = vertices[i + front];
+                
+                vertices[i + AXIS_Y] = y;
+                vertices[i + AXIS_Z] = -z;
+            }
+        }
+        else if(coordSys == DIRECT3D)
+        {
+            // UNTESTED
+            for(unsigned i = 0; i < vertices.size(); i += 3)
+            {
+                T x = vertices[i + right];
+                T y = vertices[i + up];
+                T z = vertices[i + front];
+                
+                vertices[i + AXIS_Y] = y;
+                vertices[i + AXIS_Z] = z;
+            }
+        }
+    }
     
     Node rootNode;
+    CoordSystem coordSys;
+    std::vector<Mesh> meshes;
 };
-
-template<typename T>
-std::vector<T> Reader::GetVertices(unsigned object)
-{
-    return rootNode.Get("Geometry", object).Get("Vertices")[0].GetArray<T>();
-}
-
-template<typename T>
-std::vector<T> Reader::GetNormals(unsigned object)
-{
-    std::vector<float> temp = 
-        rootNode.Get("Geometry", object).Get("LayerElementNormal").Get("Normals")[0].GetArray<float>();
-    std::string mapping = 
-        rootNode.Get("Geometry", object).Get("LayerElementNormal").Get("MappingInformationType")[0].GetString();
-    std::vector<float> vertices = GetVertices<float>(object);
-    
-    std::vector<T> result(vertices.size());
-    if(mapping == "ByVertex" || mapping == "ByVertice")
-    {
-        for(unsigned i = 0; i < temp.size(); ++i)
-        {
-            result[i] = ((T)temp[i]);
-        }
-    }
-    else if(mapping == "ByPolygon")
-    {
-        std::vector<int32_t> indices = rootNode.Get("Geometry", object).Get("PolygonVertexIndex")[0].GetArray<int32_t>();
-        unsigned index = 0;
-        for(unsigned i = 0; i < temp.size() / 3; ++i)
-        {
-            std::vector<unsigned> polyIndices;
-            for(unsigned j = index; j < indices.size(); ++j)
-            {
-                index = j + 1;
-                int32_t idx = indices[j];
-                if(idx < 0)
-                {
-                    idx = -idx - 1;
-                    polyIndices.push_back(idx);
-                    break;
-                }
-                polyIndices.push_back(idx);
-            }
-            
-            for(unsigned j = 0; j < polyIndices.size(); ++j)
-            {
-                result[polyIndices[j] * 3] = temp[i * 3];
-                result[polyIndices[j] * 3 + 1] = temp[i * 3 + 1];
-                result[polyIndices[j] * 3 + 2] = temp[i * 3 + 2];
-            }
-        }
-    }
-    else if(mapping == "ByPolygonVertex")
-    {
-        std::vector<int32_t> indices = rootNode.Get("Geometry", object).Get("PolygonVertexIndex")[0].GetArray<int32_t>();
-        for(unsigned i = 0; i < indices.size(); ++i)
-        {
-            int32_t index = indices[i];
-            if(index < 0)
-                index = -index - 1;
-            
-            result[index * 3] = temp[i * 3];
-            result[index * 3 + 1] = temp[i * 3 + 1];
-            result[index * 3 + 2] = temp[i * 3 + 2];
-        }
-    }
-    /*
-    // TODO
-    else if(mapping == "ByEdge")
-    {
-        
-    }
-    else if(mapping == "AllSame")
-    {
-        
-    }
-    */
-    return result;
-}
 
 template<typename T>
 std::vector<T> Reader::GetUV(unsigned object)
@@ -419,7 +526,7 @@ std::vector<T> Reader::GetUV(unsigned object)
 
 template<typename T>
 std::vector<T> Reader::GetIndices(unsigned object)
-{
+{/*
     std::vector<int32_t> temp = rootNode.Get("Geometry", object).Get("PolygonVertexIndex")[0].GetArray<int32_t>();
     std::vector<T> result;
     for(unsigned i = 0; i < temp.size(); ++i)
@@ -427,7 +534,14 @@ std::vector<T> Reader::GetIndices(unsigned object)
         if(temp[i] < 0)
             temp[i] = -temp[i] - 1;
         result.push_back((T)temp[i]);
+    }*/
+    std::vector<T> result;
+    
+    for(unsigned i = 0; i < meshes[object].indices.size(); ++i)
+    {
+        result.push_back((T)meshes[object].indices[i]);
     }
+    
     return result;
 }
 
