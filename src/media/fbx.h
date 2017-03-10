@@ -109,6 +109,13 @@ public:
         return *(int64_t*)(data.data());
     }
     
+    int32_t GetInt32()
+    {
+        if(data.size() != sizeof(int32_t))
+            return 0;
+        return *(int32_t*)(data.data());
+    }
+    
     template<typename T>
     std::vector<T> GetArray()
     {
