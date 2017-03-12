@@ -30,11 +30,11 @@ public:
     }
     
     void Move(int x, int y)
-    {
+    {        
         if(!mouseDown)
             return;
         model.Rotate(x * 0.01f, Au::Math::Vec3f(0, 1, 0));
-        model.Rotate(y * 0.01f, model.GetTransform() * Au::Math::Vec3f(1, 0, 0));
+        //model.Rotate(y * 0.01f, model.GetTransform() * Au::Math::Vec3f(1, 0, 0));
     }
     
     void Wheel(short value)
@@ -185,7 +185,7 @@ Au::GFX::Mesh* Create3DCrossMesh()
 Au::GFX::RenderState* CreateRenderState()
 {
     Au::GFX::Shader* shaderVertex = gfxDevice.CreateShader(Au::GFX::Shader::VERTEX);
-    shaderVertex->Source(R"(
+    shaderVertex->Source(R"(#version 120
         uniform mat4 MatrixModel;
         uniform mat4 MatrixView;
         uniform mat4 MatrixProjection;
@@ -197,40 +197,52 @@ Au::GFX::RenderState* CreateRenderState()
         
         varying vec3 fragPos;
         
+        uniform mat4 Bones[32];
+        in vec4 BoneWeights;
+        in ivec4 BoneIndices;
+        
         void main()
         {
-            fragPos = vec3(MatrixModel * vec4(Position, 1.0));
+            vec3 skinnedPos = (BoneWeights[0] * (Bones[BoneIndices[0]] * vec4(Position, 1.0)) + 
+                              BoneWeights[1] * (Bones[BoneIndices[1]] * vec4(Position, 1.0)) + 
+                              BoneWeights[2] * (Bones[BoneIndices[2]] * vec4(Position, 1.0)) + 
+                              BoneWeights[3] * (Bones[BoneIndices[3]] * vec4(Position, 1.0))
+                              ).xyz;
+            vec3 skinnedNormal = BoneWeights[0] * (mat3(Bones[BoneIndices[0]]) * Normal) +
+                                 BoneWeights[1] * (mat3(Bones[BoneIndices[1]]) * Normal) +
+                                 BoneWeights[2] * (mat3(Bones[BoneIndices[2]]) * Normal) +
+                                 BoneWeights[3] * (mat3(Bones[BoneIndices[3]]) * Normal);
             
+            skinnedNormal = normalize(skinnedNormal);
+            
+            fragPos = vec3(MatrixModel * vec4(skinnedPos, 1.0));
             color = ColorRGB;
-            normal = (MatrixModel * vec4(Normal, 1.0)).xyz;
-            gl_Position = MatrixProjection * MatrixView * MatrixModel * vec4(Position, 1.0);
+            normal = (MatrixModel * vec4(skinnedNormal, 1.0)).xyz;
+            gl_Position = MatrixProjection * MatrixView * MatrixModel * vec4(skinnedPos, 1.0);
     })");
     std::cout << shaderVertex->StatusString() << std::endl;
     
     Au::GFX::Shader* shaderPixel = gfxDevice.CreateShader(Au::GFX::Shader::PIXEL);
-    shaderPixel->Source(R"(
+    shaderPixel->Source(R"(#version 120
         varying vec3 color;
         varying vec3 normal;
         varying vec3 fragPos;
+        
+        uniform vec3 LightOmniPos[3];
+        uniform vec3 LightOmniRGB[3];
+        
         void main()
         {
-            vec3 ambient_color = vec3(0.4, 0.4, 0.4);
+            vec3 ambient_color = vec3(0.2, 0.2, 0.2);            
+            vec3 result = ambient_color;
             
-            vec3 surface_color = vec3(1.0, 1.0, 1.0);
-            vec3 omni_light2 = vec3(0.0, 1.5, 7.0);
-            vec3 omni_light = vec3(0.0, -1.0, 0.0);
-            vec3 light_col = vec3(0.8, 0.2, 0.2);
-            vec3 light_col2 = vec3(0.2, 0.8, 0.6);
-            vec3 l0 = light_col * dot(normal, omni_light);
-            vec3 l1 = light_col2 * dot(normal, omni_light2);
-            
-            vec3 lightDir = normalize(omni_light2 - fragPos);
-            vec3 lightColor = vec3(0.8, 0.6, 0.2);
-            vec3 lightColor2 = vec3(0.8, 0.2, 0.2);
-            
-            float diff = max(dot(normal, lightDir), 0.0);
-            vec3 diffuse = diff * lightColor;
-            vec3 result = (ambient_color + diffuse);
+            for(int i = 0; i < 3; i++)
+            {
+                vec3 lightDir = normalize(LightOmniPos[i] - fragPos);
+                float diff = max(dot(normal, lightDir), 0.0);
+                vec3 diffuse = diff * LightOmniRGB[i];
+                result += diffuse;
+            }
             
             gl_FragColor = vec4(result, 1.0);
     })");
@@ -243,6 +255,9 @@ Au::GFX::RenderState* CreateRenderState()
     renderState->AddUniform<Au::Math::Mat4f>("MatrixModel");
     renderState->AddUniform<Au::Math::Mat4f>("MatrixView");
     renderState->AddUniform<Au::Math::Mat4f>("MatrixProjection");
+    renderState->AddUniform<Au::Math::Vec3f>("LightOmniPos", 3);
+    renderState->AddUniform<Au::Math::Vec3f>("LightOmniRGB", 3);
+    renderState->AddUniform<Au::Math::Mat4f>("Bones", 32);
     
     std::cout << renderState->StatusString() << std::endl;
     
@@ -323,7 +338,7 @@ int main()
     Au::Window window;
     
     Init(window);
-    Au::GFX::Mesh* mesh = LoadMesh("skin.fbx");
+    Au::GFX::Mesh* mesh = LoadMesh("miku.fbx");
     Au::GFX::RenderState* renderState = CreateRenderState();
     Au::GFX::Armature armature = LoadArmature("skin.fbx");
     Au::GFX::Mesh* cross = Create3DCrossMesh();
@@ -338,7 +353,18 @@ int main()
     Au::GFX::Uniform uniModelMat4f = Au::GFX::GetUniform<Au::Math::Mat4f>("MatrixModel");
     Au::GFX::Uniform uniViewMat4f = Au::GFX::GetUniform<Au::Math::Mat4f>("MatrixView");
     Au::GFX::Uniform uniProjMat4f = Au::GFX::GetUniform<Au::Math::Mat4f>("MatrixProjection");
-
+    
+    Au::GFX::Uniform uniLightOmniPos = Au::GFX::GetUniform<Au::Math::Vec3f>("LightOmniPos", 3);
+    Au::GFX::Uniform uniLightOmniRGB = Au::GFX::GetUniform<Au::Math::Vec3f>("LightOmniRGB", 3);
+    uniLightOmniPos.Set(Au::Math::Vec3f(0.0f, 1.5f, 4.0f), 0);
+    uniLightOmniRGB.Set(Au::Math::Vec3f(0.8f, 0.6f, 0.2f), 0);
+    uniLightOmniPos.Set(Au::Math::Vec3f(4.0f, 0.0f, 0.0f), 1);
+    uniLightOmniRGB.Set(Au::Math::Vec3f(0.6f, 0.8f, 0.2f), 1);
+    uniLightOmniPos.Set(Au::Math::Vec3f(-4.0f, 0.0f, 0.0f), 2);
+    uniLightOmniRGB.Set(Au::Math::Vec3f(0.2f, 0.6f, 0.8f), 2);
+    
+    Au::GFX::Uniform uniBones = Au::GFX::GetUniform<Au::Math::Mat4f>("Bones", 32);
+    
     if(window.Show())
         while(!window.Destroyed())
         {
@@ -349,6 +375,7 @@ int main()
             gfxDevice.Set(uniModelMat4f, model.GetTransform());
             gfxDevice.Set(uniViewMat4f, Au::Math::Inverse(view.GetTransform()));
             gfxDevice.Set(uniProjMat4f, projection);
+            //armature.Upload(gfxDevice, uniBones);
             gfxDevice.Bind(mesh);
             gfxDevice.Render();
 
