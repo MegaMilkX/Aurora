@@ -18,7 +18,7 @@ public:
     void AttribFormat(const std::vector<AttribInfo>& vertexFormat);
     void SetShader(Shader* shaderStage);
     template<typename T>
-    void AddUniform(const std::string& name);
+    void AddUniform(const std::string& name, unsigned int count = 1);
     
     void DepthTest(bool);
     
@@ -41,9 +41,9 @@ private:
 };
 
 template<typename T>
-void RenderState::AddUniform(const std::string& name)
+void RenderState::AddUniform(const std::string& name, unsigned int count)
 {
-    Uniform uniform = GetUniform<T>(name);
+    Uniform uniform = GetUniform<T>(name, count);
     
     uniformLocations.push_back(glGetUniformLocation(shaderProgram, name.c_str()));
     uniforms.push_back(uniform);
