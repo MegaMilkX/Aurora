@@ -11,8 +11,16 @@
 namespace Au{
 namespace GFX{
 
-struct Bone
+class Bone
 {
+public:
+    Bone* CreateChild();
+    Bone* GetChild(int id);
+    Bone* GetChild(const std::string& name);
+    Bone* Parent();
+    
+    Bone* BindTransform(const Math::Mat4f mat);
+    
     int64_t uid;
     int64_t parentUID;
     Math::Mat4f bindTransform;
@@ -38,6 +46,7 @@ public:
 private:
     std::vector<Bone> bones;
     std::vector<std::string> boneNames;
+    std::vector<Math::Mat4f> transforms;
 };
 
 }
