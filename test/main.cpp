@@ -185,7 +185,7 @@ Au::GFX::Mesh* Create3DCrossMesh()
 Au::GFX::RenderState* CreateRenderState()
 {
     Au::GFX::Shader* shaderVertex = gfxDevice.CreateShader(Au::GFX::Shader::VERTEX);
-    shaderVertex->Source(R"(#version 120
+    shaderVertex->Source(R"(#version 130
         uniform mat4 MatrixModel;
         uniform mat4 MatrixView;
         uniform mat4 MatrixProjection;
@@ -215,15 +215,15 @@ Au::GFX::RenderState* CreateRenderState()
             
             skinnedNormal = normalize(skinnedNormal);
             
-            fragPos = vec3(MatrixModel * vec4(skinnedPos, 1.0));
+            fragPos = vec3(MatrixModel * vec4(Position, 1.0));
             color = ColorRGB;
-            normal = (MatrixModel * vec4(skinnedNormal, 1.0)).xyz;
-            gl_Position = MatrixProjection * MatrixView * MatrixModel * vec4(skinnedPos, 1.0);
+            normal = (MatrixModel * vec4(Position, 1.0)).xyz;
+            gl_Position = MatrixProjection * MatrixView * MatrixModel * vec4(Position, 1.0);
     })");
     std::cout << shaderVertex->StatusString() << std::endl;
     
     Au::GFX::Shader* shaderPixel = gfxDevice.CreateShader(Au::GFX::Shader::PIXEL);
-    shaderPixel->Source(R"(#version 120
+    shaderPixel->Source(R"(#version 130
         varying vec3 color;
         varying vec3 normal;
         varying vec3 fragPos;
