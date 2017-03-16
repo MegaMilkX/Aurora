@@ -1,6 +1,8 @@
 #ifndef FBX_H
 #define FBX_H
 
+#include <stdint.h>
+
 #include <iostream>
 #include <string>
 #include <vector>
