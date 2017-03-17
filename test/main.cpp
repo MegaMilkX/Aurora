@@ -6,6 +6,8 @@
 
 #include <aurora/media/fbx.h>
 
+#include <aurora/timeline.h>
+
 #include <fstream>
 #include <iostream>
 
@@ -121,8 +123,14 @@ Au::GFX::Armature LoadArmature(const std::string& path)
         
         std::vector<Au::Media::FBX::Bone> bones = fbxReader.GetBones();
         
+        std::vector<Au::Math::Mat4f> bindTransforms;
+        std::vector<Au::Timeline<Au::Math::Mat4f>> timelines;
+        
         for(unsigned i = 0; i < bones.size(); ++i)
-        {    
+        {
+            bindTransforms.push_back(bones[i].bindTransform);
+            //timelines[i][0.0] = 123;
+            
             armature.GetBone(bones[i].uid)->parentUID = bones[i].parentUID;
             armature.GetBone(bones[i].uid)->bindTransform = bones[i].bindTransform;
             armature.GetBone(bones[i].uid)->name = bones[i].name;
@@ -192,10 +200,10 @@ Au::GFX::RenderState* CreateRenderState()
         in vec3 Position;
         in vec3 Normal;
         in vec3 ColorRGB;
-        varying vec3 color;
-        varying vec3 normal;
+        out vec3 color;
+        out vec3 normal;
         
-        varying vec3 fragPos;
+        out vec3 fragPos;
         
         uniform mat4 Bones[32];
         in vec4 BoneWeights;
@@ -224,12 +232,14 @@ Au::GFX::RenderState* CreateRenderState()
     
     Au::GFX::Shader* shaderPixel = gfxDevice.CreateShader(Au::GFX::Shader::PIXEL);
     shaderPixel->Source(R"(#version 130
-        varying vec3 color;
-        varying vec3 normal;
-        varying vec3 fragPos;
+        in vec3 color;
+        in vec3 normal;
+        in vec3 fragPos;
         
         uniform vec3 LightOmniPos[3];
         uniform vec3 LightOmniRGB[3];
+        
+        out vec4 fragColor;
         
         void main()
         {
@@ -244,7 +254,7 @@ Au::GFX::RenderState* CreateRenderState()
                 result += diffuse;
             }
             
-            gl_FragColor = vec4(result, 1.0);
+            fragColor = vec4(result, 1.0);
     })");
     std::cout << shaderPixel->StatusString() << std::endl;
     
@@ -338,7 +348,7 @@ int main()
     Au::Window window;
     
     Init(window);
-    Au::GFX::Mesh* mesh = LoadMesh("miku.fbx");
+    Au::GFX::Mesh* mesh = LoadMesh("teapot.fbx");
     Au::GFX::RenderState* renderState = CreateRenderState();
     Au::GFX::Armature armature = LoadArmature("skin.fbx");
     Au::GFX::Mesh* cross = Create3DCrossMesh();
@@ -356,7 +366,7 @@ int main()
     
     Au::GFX::Uniform uniLightOmniPos = Au::GFX::GetUniform<Au::Math::Vec3f>("LightOmniPos", 3);
     Au::GFX::Uniform uniLightOmniRGB = Au::GFX::GetUniform<Au::Math::Vec3f>("LightOmniRGB", 3);
-    uniLightOmniPos.Set(Au::Math::Vec3f(0.0f, 1.5f, 4.0f), 0);
+    uniLightOmniPos.Set(Au::Math::Vec3f(0.0f, 1.5f, -4.0f), 0);
     uniLightOmniRGB.Set(Au::Math::Vec3f(0.8f, 0.6f, 0.2f), 0);
     uniLightOmniPos.Set(Au::Math::Vec3f(4.0f, 0.0f, 0.0f), 1);
     uniLightOmniRGB.Set(Au::Math::Vec3f(0.6f, 0.8f, 0.2f), 1);
