@@ -90,7 +90,7 @@ bool Device::Init(Window& window)
     std::cout << "GLSL v" << glGetString(GL_SHADING_LANGUAGE_VERSION) << "\n";
     
     //=======================================================
-    glClearColor (0.2f, 0.2f, 0.2f, 0.0f);
+    glClearColor (0.0f, 0.0f, 0.0f, 0.0f);
     
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
