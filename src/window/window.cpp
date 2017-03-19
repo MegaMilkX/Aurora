@@ -35,9 +35,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
     return result;
 }
 
-Window::Window(const std::string& title, int width, int height)
- : hWnd(NULL)
+Window* Window::Create(const std::string& title, int width, int height)
 {
+    Window* w = new Window(title, width, height);
+    
     std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
     std::wstring w_name = converter.from_bytes(title.c_str());
 
@@ -67,7 +68,7 @@ Window::Window(const std::string& title, int width, int height)
     
     if(!RegisterClassEx(&wc))
     {
-        return;
+        return 0;
     }
 
     RECT rect;
@@ -78,7 +79,7 @@ Window::Window(const std::string& title, int width, int height)
 
 	AdjustWindowRectEx(&rect, WS_OVERLAPPEDWINDOW, false, 0);
     
-    hWnd = CreateWindowExW(
+    w->hWnd = CreateWindowExW(
         0,
         w_class_name.c_str(),
         w_name.c_str(),
@@ -89,17 +90,31 @@ Window::Window(const std::string& title, int width, int height)
     
     gTotalActiveWindows++;
     
-    destroyed = new bool(false);
-    flags_destroyed[hWnd] = destroyed;
+    w->destroyed = new bool(false);
+    flags_destroyed[w->hWnd] = w->destroyed;
+    
+    return w;
+}
 
-    return;
+void Window::Destroy(Window* window)
+{
+    delete window;
+}
+
+Window::Window(const std::string& title, int width, int height)
+ : hWnd(NULL)
+{
+
 }
 
 Window::~Window()
 {
-    CloseWindow(hWnd);
-    flags_destroyed.erase(hWnd);
-    delete destroyed;
+    if(hWnd)
+    {
+        CloseWindow(hWnd);
+        flags_destroyed.erase(hWnd);
+        delete destroyed;
+    }
 }
 
 bool Window::Show()

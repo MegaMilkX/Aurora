@@ -23,6 +23,8 @@ public:
     { return hWnd; }
     bool operator<(const Window& other);
     
+    static Window* Create(const std::string& title = "MyWindow", int width = 800, int height = 600);
+    static void Destroy(Window* window);
     static bool PollMessages();
 private:
     Window(const Window& other){}
