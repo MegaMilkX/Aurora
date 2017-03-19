@@ -266,105 +266,172 @@ bool Reader::ReadBlock(Node& node, const char* data, const char*& cursor, const 
     return true;
 }
 
+bool Reader::ReadVerticesAndIndices(Mesh& mesh, unsigned meshId)
+{
+    std::vector<int32_t> fbxIndices = 
+        rootNode.Get("Geometry", meshId).Get("PolygonVertexIndex")[0].GetArray<int32_t>();
+    std::vector<float> fbxVertices =
+        rootNode.Get("Geometry", meshId).Get("Vertices")[0].GetArray<float>();
+    
+    for(unsigned j = 0; j < fbxIndices.size(); ++j)
+    {
+        int32_t idx = fbxIndices[j] < 0 ? -fbxIndices[j] - 1 : fbxIndices[j];
+        mesh.vertices.push_back(fbxVertices[idx * 3]);
+        mesh.vertices.push_back(fbxVertices[idx * 3 + 1]);
+        mesh.vertices.push_back(fbxVertices[idx * 3 + 2]);
+        mesh.indices.push_back(j);
+    }
+    
+    return true;
+}
+
+bool Reader::ReadNormals(Mesh& mesh, unsigned meshId)
+{
+    std::vector<int32_t> fbxIndices = 
+        rootNode.Get("Geometry", meshId).Get("PolygonVertexIndex")[0].GetArray<int32_t>();
+    int normalLayerCount = rootNode.Get("Geometry", meshId).Count("LayerElementNormal");
+    for(int j = 0; j < normalLayerCount; ++j)
+    {
+        std::vector<float> fbxNormals = 
+            rootNode.Get("Geometry", j).Get("LayerElementNormal").Get("Normals")[0].GetArray<float>();
+        std::string normalsMapping = 
+            rootNode.Get("Geometry", j).Get("LayerElementNormal").Get("MappingInformationType")[0].GetString();
+        
+        std::vector<float> normals;
+        
+        if(normalsMapping == "ByVertex" || normalsMapping == "ByVertice")
+        {
+            for(unsigned l = 0; l < fbxIndices.size(); ++l)
+            {
+                int32_t idx = fbxIndices[l] < 0 ? -fbxIndices[l] - 1 : fbxIndices[l];
+                normals.push_back(fbxNormals[idx * 3]);
+                normals.push_back(fbxNormals[idx * 3 + 1]);
+                normals.push_back(fbxNormals[idx * 3 + 2]);
+            }
+        }
+        else if(normalsMapping == "ByPolygon")
+        {
+            normals = std::vector<float>(mesh.vertices.size());
+            
+            unsigned index = 0;
+            for(unsigned k = 0; k < fbxNormals.size() / 3; ++k)
+            {
+                std::vector<unsigned> polyIndices;
+                for(unsigned l = index; l < fbxIndices.size(); ++l)
+                    polyIndices.push_back(l);
+                
+                for(unsigned l = 0; l < polyIndices.size(); ++l)
+                {
+                    normals[polyIndices[l] * 3] = fbxNormals[k * 3];
+                    normals[polyIndices[l] * 3 + 1] = fbxNormals[k * 3 + 1];
+                    normals[polyIndices[l] * 3 + 2] = fbxNormals[k * 3 + 2];
+                }
+            }
+        }
+        else if(normalsMapping == "ByPolygonVertex")
+        {
+            normals = std::vector<float>(mesh.vertices.size());
+            
+            for(unsigned k = 0; k < fbxIndices.size(); ++k)
+            {
+                int32_t idx = fbxIndices[k] < 0 ? -fbxIndices[k] - 1 : fbxIndices[k];
+                
+                normals[k * 3] = fbxNormals[k * 3];
+                normals[k * 3 + 1] = fbxNormals[k * 3 + 1];
+                normals[k * 3 + 2] = fbxNormals[k * 3 + 2];
+            }
+        }
+        
+        mesh.normalLayers.push_back(normals);
+        /*
+        // TODO
+        else if(normalsMapping == "ByEdge")
+        {
+            
+        }
+        else if(normalsMapping == "AllSame")
+        {
+            
+        }
+        */
+    }
+    
+    return true;
+}
+
+bool Reader::ReadUV(Mesh& mesh, unsigned meshId)
+{
+    return true;
+}
+
+bool Reader::ReadWeights(Mesh& mesh, unsigned meshId)
+{
+    std::vector<Node> deformers = 
+        rootNode.GetNodesWithProp("Deformer", 2, "Cluster");
+    
+    for(unsigned i = 0; i < deformers.size(); ++i)
+    {
+        std::vector<int32_t> boneIndices = 
+            deformers[i].Get("Indexes")[0].GetArray<int32_t>();
+        std::vector<double> boneWeights = 
+            deformers[i].Get("Weights")[0].GetArray<double>();
+            
+        
+    }
+    
+    return true;
+}
+
+bool Reader::ReadSkin(Mesh& mesh, unsigned meshId)
+{
+    std::vector<Node> skin =
+        rootNode.GetNodesWithProp("Deformer", 2, "Skin");
+    for(unsigned i = 0; i < skin.size(); ++i)
+    {
+        std::vector<Node> connections = 
+            rootNode.GetNodesWithProp("C", 0, "OO");
+        for(unsigned j = 0; j < connections.size(); ++j)
+        {
+            if(connections[j][1].GetInt64() == skin[i][0].GetInt64())
+            {
+                if(connections[j][2].GetInt64() != mesh.uid)
+                    continue;
+
+                std::vector<Node> deformers = 
+                    GetConnectedChildren("Deformer", skin[i]);
+                    
+                for(unsigned k = 0; k < deformers.size(); ++k)
+                {
+                    deformers[k].Get("Indexes")[0].GetArray<int32_t>();
+                    deformers[k].Get("Weights")[0].GetArray<double>();
+                }
+            }
+        }
+    }
+    return true;
+}
+
 bool Reader::ReadFile(const char* data, unsigned size)
 {
     if(!ReadFileFBX(data, size))
         return false;
     
     int meshCount = rootNode.Count("Geometry");
-
     for(int i = 0; i < meshCount; ++i)
     {
-        Mesh mesh;
-        std::vector<int32_t> fbxIndices = 
-            rootNode.Get("Geometry", i).Get("PolygonVertexIndex")[0].GetArray<int32_t>();
-        std::vector<float> fbxVertices =
-            rootNode.Get("Geometry", i).Get("Vertices")[0].GetArray<float>();
+        int64_t uid = rootNode.Get("Geometry", i)[0].GetInt64();
+        Mesh mesh(uid, GetRightAxis(), GetUpAxis(), GetFrontAxis());
+        mesh.coordSys = coordSys;
         
-        for(unsigned j = 0; j < fbxIndices.size(); ++j)
-        {
-            int32_t idx = fbxIndices[j] < 0 ? -fbxIndices[j] - 1 : fbxIndices[j];
-            mesh.vertices.push_back(fbxVertices[idx * 3]);
-            mesh.vertices.push_back(fbxVertices[idx * 3 + 1]);
-            mesh.vertices.push_back(fbxVertices[idx * 3 + 2]);
-            mesh.indices.push_back(j);
-        }
+        ReadVerticesAndIndices(mesh, i);
+        ReadNormals(mesh, i);
+        ReadUV(mesh, i);
         
-        // Normals
-        int normalLayerCount = rootNode.Get("Geometry", i).Count("LayerElementNormal");
-        for(int j = 0; j < normalLayerCount; ++j)
-        {
-            std::vector<float> fbxNormals = 
-                rootNode.Get("Geometry", j).Get("LayerElementNormal").Get("Normals")[0].GetArray<float>();
-            std::string normalsMapping = 
-                rootNode.Get("Geometry", j).Get("LayerElementNormal").Get("MappingInformationType")[0].GetString();
-            
-            std::vector<float> normals;
-            
-            if(normalsMapping == "ByVertex" || normalsMapping == "ByVertice")
-            {
-                for(unsigned l = 0; l < fbxIndices.size(); ++l)
-                {
-                    int32_t idx = fbxIndices[l] < 0 ? -fbxIndices[l] - 1 : fbxIndices[l];
-                    normals.push_back(fbxNormals[idx * 3]);
-                    normals.push_back(fbxNormals[idx * 3 + 1]);
-                    normals.push_back(fbxNormals[idx * 3 + 2]);
-                }
-            }
-            else if(normalsMapping == "ByPolygon")
-            {
-                normals = std::vector<float>(mesh.vertices.size());
-                
-                unsigned index = 0;
-                for(unsigned k = 0; k < fbxNormals.size() / 3; ++k)
-                {
-                    std::vector<unsigned> polyIndices;
-                    for(unsigned l = index; l < fbxIndices.size(); ++l)
-                        polyIndices.push_back(l);
-                    
-                    for(unsigned l = 0; l < polyIndices.size(); ++l)
-                    {
-                        normals[polyIndices[l] * 3] = fbxNormals[k * 3];
-                        normals[polyIndices[l] * 3 + 1] = fbxNormals[k * 3 + 1];
-                        normals[polyIndices[l] * 3 + 2] = fbxNormals[k * 3 + 2];
-                    }
-                }
-            }
-            else if(normalsMapping == "ByPolygonVertex")
-            {
-                normals = std::vector<float>(mesh.vertices.size());
-                
-                for(unsigned k = 0; k < fbxIndices.size(); ++k)
-                {
-                    int32_t idx = fbxIndices[k] < 0 ? -fbxIndices[k] - 1 : fbxIndices[k];
-                    
-                    normals[k * 3] = fbxNormals[k * 3];
-                    normals[k * 3 + 1] = fbxNormals[k * 3 + 1];
-                    normals[k * 3 + 2] = fbxNormals[k * 3 + 2];
-                }
-            }
-            
-            mesh.normalLayers.push_back(normals);
-            /*
-            // TODO
-            else if(normalsMapping == "ByEdge")
-            {
-                
-            }
-            else if(normalsMapping == "AllSame")
-            {
-                
-            }
-            */
-        }
+        ReadSkin(mesh, i);
         
         mesh.OptimizeDuplicates();
         meshes.push_back(mesh);
-    }
-    
-    
-        
-    
+    }    
     
     return true;
 }
