@@ -101,6 +101,9 @@ AU_DEF_ATTRIB(UVW, float, 3);
 AU_DEF_ATTRIB(ColorRGBA, unsigned char, 4);
 AU_DEF_ATTRIB(ColorRGB, unsigned char, 3);
 
+AU_DEF_ATTRIB(BoneWeight4, unsigned char, 4);
+AU_DEF_ATTRIB(BoneIndex4, int, 4);
+
 }
 
 #endif
