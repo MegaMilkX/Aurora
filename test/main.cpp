@@ -76,7 +76,11 @@ KeyboardHandler keyboardHandler;
 Au::GFX::Mesh* LoadMesh(const std::string& path)
 {
     Au::GFX::Mesh* mesh = gfxDevice.CreateMesh();
-    mesh->Format(Au::Position() << Au::Normal() << Au::ColorRGB());
+    mesh->Format(Au::Position() << 
+                Au::Normal() << 
+                Au::ColorRGB() << 
+                Au::BoneWeight4() << 
+                Au::BoneIndex4());
     
     // FBX Loading WIP =========================
     
@@ -91,17 +95,29 @@ Au::GFX::Mesh* LoadMesh(const std::string& path)
         fbxReader.ConvertCoordSys(Au::Media::FBX::OPENGL);
         //fbxReader.Print();
         
-        std::vector<float> vertices = fbxReader.GetVertices(0);
-        mesh->VertexAttrib<Au::Position>(vertices);
-        
-        std::vector<float> normals = fbxReader.GetNormals(0, 0);
-        mesh->VertexAttrib<Au::Normal>(normals);
-        
-        std::vector<unsigned short> indices = fbxReader.GetIndices<unsigned short>(0);
-        mesh->IndexData(indices);
-        
-        //fbxReader.GetWeights<unsigned char>(0);
-        //fbxReader.GetBoneIndices<unsigned char>(0);        
+        int meshCount = fbxReader.MeshCount();
+        if(meshCount > 0)
+        {
+            Au::Media::FBX::Mesh& fbxMesh = fbxReader.GetMesh(0);
+            std::vector<float> vertices = fbxMesh.GetVertices();
+            mesh->VertexAttrib<Au::Position>(vertices);
+            std::vector<float> normals = fbxMesh.GetNormals(0);
+            mesh->VertexAttrib<Au::Normal>(normals);
+            std::vector<unsigned short> indices = fbxMesh.GetIndices<unsigned short>();
+            mesh->IndexData(indices);
+            
+            Au::Media::FBX::Skin skin = fbxMesh.GetSkin();
+            for(unsigned i = 0; i < skin.DeformerCount(); ++i)
+            {
+                Au::Media::FBX::SkinDeformer* deformer = 
+                    skin.GetDeformer(i);
+                    
+                
+            }
+            //std::vector<int> boneIndices;
+            //std::vector<unsigned char> boneWeights;
+            //std::vector<Au::Media::FBX::Deformer> deformers = fbxMesh.GetDeformers();
+        }
     }
     // =========================================
     
@@ -206,20 +222,20 @@ Au::GFX::RenderState* CreateRenderState()
         out vec3 fragPos;
         
         uniform mat4 Bones[32];
-        in vec4 BoneWeights;
-        in ivec4 BoneIndices;
+        in vec4 BoneWeight4;
+        in ivec4 BoneIndex4;
         
         void main()
         {
-            vec3 skinnedPos = (BoneWeights[0] * (Bones[BoneIndices[0]] * vec4(Position, 1.0)) + 
-                              BoneWeights[1] * (Bones[BoneIndices[1]] * vec4(Position, 1.0)) + 
-                              BoneWeights[2] * (Bones[BoneIndices[2]] * vec4(Position, 1.0)) + 
-                              BoneWeights[3] * (Bones[BoneIndices[3]] * vec4(Position, 1.0))
+            vec3 skinnedPos = (BoneWeight4[0] * (Bones[BoneIndex4[0]] * vec4(Position, 1.0)) + 
+                              BoneWeight4[1] * (Bones[BoneIndex4[1]] * vec4(Position, 1.0)) + 
+                              BoneWeight4[2] * (Bones[BoneIndex4[2]] * vec4(Position, 1.0)) + 
+                              BoneWeight4[3] * (Bones[BoneIndex4[3]] * vec4(Position, 1.0))
                               ).xyz;
-            vec3 skinnedNormal = BoneWeights[0] * (mat3(Bones[BoneIndices[0]]) * Normal) +
-                                 BoneWeights[1] * (mat3(Bones[BoneIndices[1]]) * Normal) +
-                                 BoneWeights[2] * (mat3(Bones[BoneIndices[2]]) * Normal) +
-                                 BoneWeights[3] * (mat3(Bones[BoneIndices[3]]) * Normal);
+            vec3 skinnedNormal = BoneWeight4[0] * (mat3(Bones[BoneIndex4[0]]) * Normal) +
+                                 BoneWeight4[1] * (mat3(Bones[BoneIndex4[1]]) * Normal) +
+                                 BoneWeight4[2] * (mat3(Bones[BoneIndex4[2]]) * Normal) +
+                                 BoneWeight4[3] * (mat3(Bones[BoneIndex4[3]]) * Normal);
             
             skinnedNormal = normalize(skinnedNormal);
             
@@ -345,10 +361,10 @@ int main()
     //stateStack.Tick();
 
     //Au::Input::LoadDeviceList();
-    Au::Window window;
+    Au::Window* window = Au::Window::Create("Aurora", 640, 480);
     
-    Init(window);
-    Au::GFX::Mesh* mesh = LoadMesh("teapot.fbx");
+    Init(*window);
+    Au::GFX::Mesh* mesh = LoadMesh("skin.fbx");
     Au::GFX::RenderState* renderState = CreateRenderState();
     Au::GFX::Armature armature = LoadArmature("skin.fbx");
     Au::GFX::Mesh* cross = Create3DCrossMesh();
@@ -357,26 +373,23 @@ int main()
     projection = Au::Math::Perspective(fov, 4.0f/3.0f, 0.1f, zfar);
     view.Translate(Au::Math::Vec3f(0.0f, 1.5f, 7.0f));
     
-    window.Name("Aurora");
-    //window.Resize(640, 480);
-    
     Au::GFX::Uniform uniModelMat4f = Au::GFX::GetUniform<Au::Math::Mat4f>("MatrixModel");
     Au::GFX::Uniform uniViewMat4f = Au::GFX::GetUniform<Au::Math::Mat4f>("MatrixView");
     Au::GFX::Uniform uniProjMat4f = Au::GFX::GetUniform<Au::Math::Mat4f>("MatrixProjection");
     
     Au::GFX::Uniform uniLightOmniPos = Au::GFX::GetUniform<Au::Math::Vec3f>("LightOmniPos", 3);
     Au::GFX::Uniform uniLightOmniRGB = Au::GFX::GetUniform<Au::Math::Vec3f>("LightOmniRGB", 3);
-    uniLightOmniPos.Set(Au::Math::Vec3f(0.0f, 1.5f, -4.0f), 0);
+    uniLightOmniPos.Set(Au::Math::Vec3f(0.0f, 1.5f, 2.5f), 0);
     uniLightOmniRGB.Set(Au::Math::Vec3f(0.8f, 0.6f, 0.2f), 0);
     uniLightOmniPos.Set(Au::Math::Vec3f(4.0f, 0.0f, 0.0f), 1);
     uniLightOmniRGB.Set(Au::Math::Vec3f(0.6f, 0.8f, 0.2f), 1);
     uniLightOmniPos.Set(Au::Math::Vec3f(-4.0f, 0.0f, 0.0f), 2);
-    uniLightOmniRGB.Set(Au::Math::Vec3f(0.2f, 0.6f, 0.8f), 2);
+    uniLightOmniRGB.Set(Au::Math::Vec3f(0.8f, 0.6f, 0.8f), 2);
     
     Au::GFX::Uniform uniBones = Au::GFX::GetUniform<Au::Math::Mat4f>("Bones", 32);
     
-    if(window.Show())
-        while(!window.Destroyed())
+    if(window->Show())
+        while(!window->Destroyed())
         {
             Au::Window::PollMessages();
             
@@ -405,5 +418,6 @@ int main()
 
     
     Cleanup();
+    Au::Window::Destroy(window);
     return 0;
 }
