@@ -20,7 +20,7 @@ void RenderState::AttribFormat(const std::vector<AttribInfo>& vertexFormat)
 {
     _createProgramIfNotExists();
     
-    std::cout << "Formatting shader attribs" << std::endl;
+    //std::cout << "Formatting shader attribs" << std::endl;
     this->vertexFormat = vertexFormat;
     std::map<typeindex, AttribInstance> instanceCounters;
     for(unsigned int i = 0; i < vertexFormat.size(); ++i)
@@ -35,8 +35,8 @@ void RenderState::AttribFormat(const std::vector<AttribInfo>& vertexFormat)
             shaderInputName += std::to_string(instance);
                                  
         glBindAttribLocation(shaderProgram, globalAttribIndex, shaderInputName.c_str());
-        attrInfo.Print();
-        std::cout << "globalAttribIndex: " << globalAttribIndex << std::endl;
+        //attrInfo.Print();
+        //std::cout << "globalAttribIndex: " << globalAttribIndex << std::endl;
     }
 }
 void RenderState::SetShader(Shader* shaderStage)
