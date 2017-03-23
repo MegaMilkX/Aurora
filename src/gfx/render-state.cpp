@@ -38,40 +38,14 @@ void RenderState::AttribFormat(const std::vector<AttribInfo>& vertexFormat)
         //attrInfo.Print();
         //std::cout << "globalAttribIndex: " << globalAttribIndex << std::endl;
     }
+    
+    _linkProgram();
 }
 void RenderState::SetShader(Shader* shaderStage)
 {
-    _createProgramIfNotExists();
     shaders.insert(std::make_pair(shaderStage->Stage(), shaderStage->_uniqueIndex()));
-    
-    if(shaders.size() < 2)
-        return;
-    
-    std::map<Shader::STAGE, unsigned int>::iterator it = shaders.begin();
-    for(it; it != shaders.end(); ++it)
-    {
-        glAttachShader(shaderProgram, it->second);
-    }
-    glLinkProgram(shaderProgram);
-    
-    GLint Result = GL_FALSE;
-    int InfoLogLength;
 
-    glGetProgramiv(shaderProgram, GL_LINK_STATUS, &Result);
-    glGetProgramiv(shaderProgram, GL_INFO_LOG_LENGTH, &InfoLogLength);
-    
-    if (InfoLogLength > 0)
-    {
-        std::vector<char> ProgramErrorMessage(InfoLogLength + 1);
-        glGetProgramInfoLog(shaderProgram, InfoLogLength, NULL, &ProgramErrorMessage[0]);
-        statusString += &ProgramErrorMessage[0];
-    }
-    
-    it = shaders.begin();
-    for(it; it != shaders.end(); ++it)
-    {
-        glDetachShader(shaderProgram, it->second);
-    }
+    _linkProgram();
 }
 
 void RenderState::DepthTest(bool flag)
@@ -98,6 +72,41 @@ void RenderState::_createProgramIfNotExists()
     if(shaderProgram > 0)
         return;
     shaderProgram = glCreateProgram();
+}
+
+void RenderState::_linkProgram()
+{
+    _createProgramIfNotExists();
+    
+    if(shaders.size() < 2)
+        return;
+    
+    std::map<Shader::STAGE, unsigned int>::iterator it = shaders.begin();
+    for(it; it != shaders.end(); ++it)
+    {
+        glAttachShader(shaderProgram, it->second);
+    }
+    
+    glLinkProgram(shaderProgram);
+    
+    GLint Result = GL_FALSE;
+    int InfoLogLength;
+
+    glGetProgramiv(shaderProgram, GL_LINK_STATUS, &Result);
+    glGetProgramiv(shaderProgram, GL_INFO_LOG_LENGTH, &InfoLogLength);
+    
+    if (InfoLogLength > 0)
+    {
+        std::vector<char> ProgramErrorMessage(InfoLogLength + 1);
+        glGetProgramInfoLog(shaderProgram, InfoLogLength, NULL, &ProgramErrorMessage[0]);
+        statusString += &ProgramErrorMessage[0];
+    }
+    
+    it = shaders.begin();
+    for(it; it != shaders.end(); ++it)
+    {
+        glDetachShader(shaderProgram, it->second);
+    }
 }
 
 }

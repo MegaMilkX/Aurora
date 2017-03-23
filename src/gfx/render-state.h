@@ -38,6 +38,7 @@ private:
     bool depthTest;
     
     void _createProgramIfNotExists();
+    void _linkProgram();
 };
 
 template<typename T>
