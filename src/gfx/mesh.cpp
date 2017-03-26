@@ -112,6 +112,57 @@ void Mesh::VertexData(void* data, unsigned int count)
     vertexBuffer.Data(data, vertexSize * count);
 }
 
+void Mesh::VertexAttribByInfo(const AttribInfo& attrInfo, const std::vector<unsigned char>& data)
+{
+    VertexAttribByInfo(attrInfo, data.data(), data.size());
+}
+void Mesh::VertexAttribByInfo(const AttribInfo& attrInfo, const unsigned char* data, size_t sz)
+{
+    unsigned newVertexCount = sz / attrInfo.elemSize / attrInfo.elemCount;
+    unsigned oldVertexCount = 0;
+    
+    std::vector<char> newBuffer(newVertexCount * vertexSize);
+    
+    if(vertexBuffer.Valid())
+    {
+        std::vector<char> oldData = vertexBuffer.Data();
+        oldVertexCount = oldData.size() / vertexSize;
+        if(oldVertexCount > newVertexCount)
+            newBuffer.resize(oldVertexCount * vertexSize);
+        for(unsigned i = 0; i < oldData.size(); ++i)
+            newBuffer[i] = oldData[i];
+    }
+    
+#define BLIT_ATTRIB(ELEM_TYPE) \
+        BlitAttribToBuffer<ELEM_TYPE>( \
+            std::vector<ELEM_TYPE>( \
+                (ELEM_TYPE*)data, \
+                (ELEM_TYPE*)data + sz / sizeof(ELEM_TYPE) \
+            ), \
+            newBuffer, \
+            attrInfo \
+        )
+    
+    if(attrInfo.elemType == TypeInfo<char>::Index())
+        BLIT_ATTRIB(char);
+    else if(attrInfo.elemType == TypeInfo<unsigned char>::Index())
+        BLIT_ATTRIB(unsigned char);
+    else if(attrInfo.elemType == TypeInfo<short>::Index())
+        BLIT_ATTRIB(short);
+    else if(attrInfo.elemType == TypeInfo<unsigned short>::Index())
+        BLIT_ATTRIB(unsigned short);
+    else if(attrInfo.elemType == TypeInfo<int>::Index())
+        BLIT_ATTRIB(int);
+    else if(attrInfo.elemType == TypeInfo<unsigned int>::Index())
+        BLIT_ATTRIB(unsigned int);
+    else if(attrInfo.elemType == TypeInfo<float>::Index())
+        BLIT_ATTRIB(float);
+    else if(attrInfo.elemType == TypeInfo<double>::Index())
+        BLIT_ATTRIB(double);
+#undef BLIT_ATTRIB
+    VertexData((void*)newBuffer.data(), newBuffer.size() / vertexSize);
+}
+
 void Mesh::IndexData(const std::vector<unsigned short>& data)
 {
     IndexData((void*)data.data(), data.size());

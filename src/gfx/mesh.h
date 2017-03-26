@@ -29,6 +29,8 @@ public:
     void VertexData(void* data, unsigned int count);
     template<typename ATTRIB, typename T>
     void VertexAttrib(const std::vector<T>& attribData);
+    void VertexAttribByInfo(const AttribInfo& attrInfo, const std::vector<unsigned char>& data);
+    void VertexAttribByInfo(const AttribInfo& attrInfo, const unsigned char* data, size_t sz);
     void IndexData(const std::vector<unsigned short>& data);
     void IndexData(void* data, unsigned int count);
     
