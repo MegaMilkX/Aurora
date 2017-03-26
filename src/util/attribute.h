@@ -14,6 +14,7 @@
         operator AttribInfo() const \
         { \
             AttribInfo info; \
+            info.attribIndex = GetAttribIndex<NAME>(); \
             info.typeIndex = TypeInfo<NAME>::Index(); \
             info.elemType = TypeInfo<ELEMTYPE>::Index(); \
             info.elemSize = sizeof(ELEMTYPE); \
@@ -21,11 +22,11 @@
             info.name = #NAME; \
             return info; \
         } \
-        std::vector<AttribInfo> operator<<(const AttribInfo& other) \
+        AttribFormat operator<<(const AttribInfo& other) \
         { \
-            std::vector<AttribInfo> result; \
-            result.push_back(*this); \
-            result.push_back(other); \
+            AttribFormat result; \
+            result << (*this); \
+            result << (other); \
             return result; \
         } \
         operator std::vector<AttribInfo>() const \
@@ -59,6 +60,7 @@ typedef unsigned int AttribInstance;
 
 struct AttribInfo
 {
+    AttribIndex attribIndex;
     typeindex typeIndex;
     std::string name;
     typeindex elemType;
@@ -70,9 +72,15 @@ struct AttribInfo
         return typeIndex == other.typeIndex;
     }
     
+    operator unsigned int() const
+    {
+        return attribIndex;
+    }
+    
     void Print() const
     {
         std::cout << name << ": " << std::endl;
+        std::cout << "attribIndex: " << attribIndex << std::endl;
         std::cout << "typeIndex: " << typeIndex << std::endl;
         std::cout << "elemType: " << elemType << std::endl;
         std::cout << "elemSize: " << (int)elemSize << std::endl;
@@ -80,12 +88,44 @@ struct AttribInfo
     }
 };
 
-inline std::vector<AttribInfo> operator<<(const std::vector<AttribInfo>& left, const AttribInfo& right)
+class AttribFormat
 {
-    std::vector<AttribInfo> result = left;
-    result.push_back(right);
-    return result;
-}
+public:
+    AttribFormat() {}
+    AttribFormat(const std::vector<AttribInfo>& fmt)
+    : attrFmt(fmt.begin(), fmt.end()) {}
+
+    bool operator==(const AttribFormat& other)
+    {
+        if(attrFmt.size() != other.attrFmt.size())
+            return false;
+        for(unsigned i = 0; i < attrFmt.size(); ++i)
+        {
+            if((unsigned int)attrFmt[i] != (unsigned int)other.attrFmt[i])
+                return false;
+        }
+        
+        return true;
+    }
+    
+    bool operator!=(const AttribFormat& other)
+    {
+        return !operator==(other);
+    }
+
+    operator std::vector<AttribInfo>()
+    {
+        return attrFmt;
+    }
+    
+    AttribFormat& operator<<(const AttribInfo& right)
+    {
+        attrFmt.push_back(right);
+        return *this;
+    }
+private:
+    std::vector<AttribInfo> attrFmt;
+};
 
 AttribIndex GetGlobalAttribIndex(typeindex type, unsigned int instance);
     
