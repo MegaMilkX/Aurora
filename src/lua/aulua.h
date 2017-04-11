@@ -76,10 +76,21 @@ public:
         file.close();
     }
     
-    void Call(const std::string& funcName)
+    void PushArgs() {}
+    
+    template<typename Arg, typename... Args>
+    void PushArgs(const Arg& arg, const Args&... args)
+    {
+        LuaType::GetPtr<Arg>()->LuaPush(L, (void*)&arg);
+        PushArgs(args...);
+    }
+    
+    template<typename... Args>
+    void Call(const std::string& funcName, const Args&... args)
     {
         lua_getglobal(L, funcName.c_str());
-        lua_pcall(L, 0, 0, 0);
+        PushArgs(args...);
+        lua_pcall(L, sizeof...(Args), 0, 0);
     }
     
     // Type shenanigans ==================
