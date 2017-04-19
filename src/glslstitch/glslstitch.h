@@ -342,7 +342,6 @@ inline void MakeSnippets(
             )
         );
         v->back().name = names[i/2];
-        Print(v->back());
     }
 }
 
