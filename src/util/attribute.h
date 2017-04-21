@@ -123,6 +123,15 @@ public:
         attrFmt.push_back(right);
         return *this;
     }
+    
+    void Print() const
+    {
+        for(unsigned i = 0; i < attrFmt.size(); ++i)
+        {
+            attrFmt.at(i).Print();
+        }
+    }
+    
 private:
     std::vector<AttribInfo> attrFmt;
 };
