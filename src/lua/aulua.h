@@ -99,14 +99,14 @@ public:
     LuaType& BindType()
     { return LuaType::Get<T>(); }
     
-    //====================================
-    /*
-    void SetGlobal(const LuaValue& value, const std::string& name)
+    template<typename T>
+    void SetGlobal(T* value, const std::string& name)
     {
-        value.LuaPush(L);
+        LuaType* type = LuaType::GetPtr<T*>();
+        type->LuaPush(L, value);
         lua_setglobal(L, name.c_str());
     }
-    
+    /*
     template<typename T>
     T GetGlobal(const std::string& name)
     {
