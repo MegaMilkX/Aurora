@@ -44,6 +44,9 @@ private:
 template<typename T>
 void RenderState::AddUniform(const std::string& name, unsigned int count)
 {
+    if(count == 0)
+        return;
+    
     Uniform uniform = GetUniform<T>(name, count);
     
     uniformLocations.push_back(glGetUniformLocation(shaderProgram, name.c_str()));
