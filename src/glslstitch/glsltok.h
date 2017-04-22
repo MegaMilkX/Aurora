@@ -68,7 +68,7 @@ inline bool EatMatching(std::string& source, const std::string& token)
 {
     if(BeginsWith(source, token))
     {
-        source.erase(source.begin(), source.begin() + token.size() - 1);
+        source.erase(source.begin(), source.begin() + token.size());
         return true;
     }
     return false;
@@ -99,7 +99,6 @@ inline Token TokenOperator(std::string& source)
         {
             token.data = ops[i];
             token.type = Token::OPERATOR;
-            source.erase(source.begin(), source.begin() + ops[i].size());
             break;
         }
     }
