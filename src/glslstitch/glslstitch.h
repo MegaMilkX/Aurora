@@ -17,15 +17,31 @@ struct Variable
 {
     std::string type;
     std::string name;
+    std::string arraySize;
     
     bool operator==(const Variable& other) const
     {
         return name == other.name;
     }
     
+    std::string DeclLine()
+    {
+        std::string str;
+        str = type;
+        str += " ";
+        str += name;
+        if(!arraySize.empty())
+        {
+            str += "[";
+            str += arraySize;
+            str += "]";
+        }
+        return str;
+    }
+    
     void Print()
     {
-        std::cout << type << " " << name << ";\n";
+        std::cout << DeclLine() << ";\n";
     }
 };
     
@@ -204,21 +220,32 @@ inline Snippet MakeSnippet(const std::string& source)
             unsigned varNameCursor = cursor;
             GetNextToken(tokens, cursor, tok);
             var.name = tok;
-
+            
+            GetNextToken(tokens, cursor, tok);
+            if(tok.data == "=")
+            {                
+                cursor = varNameCursor;
+            }
+            else if(tok.data == "[")
+            {
+                std::string arrayPostfix;
+                GetNextToken(tokens, cursor, tok);
+                if(tok.type == GLSLTok::Token::IDENTIFIER ||
+                    tok.type == GLSLTok::Token::INT_LITERAL)
+                {
+                    var.arraySize = tok.data;
+                    GetNextToken(tokens, cursor, tok);
+                    if(tok.data == "]")
+                    {GetNextToken(tokens, cursor, tok);}
+                }
+            }
+            
             if(specTok == "in")
                 snip.inputs.push_back(var);
             else if(specTok == "out")
                 snip.outputs.push_back(var);
             else if(specTok == "uniform")
                 snip.other.push_back(var);
-            
-            GetNextToken(tokens, cursor, tok);
-            if(tok.type == GLSLTok::Token::OPERATOR)
-            {
-                cursor = varNameCursor;
-                continue;
-            }
-            
         }
         else
         {
@@ -512,26 +539,26 @@ inline std::string Finalize(Snippet& snip)
     for(unsigned i = 0; i < snip.inputs.size(); ++i)
     {
         Variable& var = snip.inputs[i];
-        result += "in " + var.type + " " + var.name + ";\n";
+        result += "in " + var.DeclLine() + ";\n";
     }
     result += "\n";
     for(unsigned i = 0; i < snip.outputs.size(); ++i)
     {
         Variable& var = snip.outputs[i];
-        result += "out " + var.type + " " + var.name + ";\n";
+        result += "out " + var.DeclLine() + ";\n";
     }
     result += "\n";
     for(unsigned i = 0; i < snip.other.size(); ++i)
     {
         Variable& var = snip.other[i];
-        result += "uniform " + var.type + " " + var.name + ";\n";
+        result += "uniform " + var.DeclLine() + ";\n";
     }
     
     result += "\nvoid main()\n{\n";
     for(unsigned i = 0; i < snip.locals.size(); ++i)
     {
         Variable& var = snip.locals[i];
-        result += var.type + " " + var.name + ";\n";
+        result += var.DeclLine() + ";\n";
     }
     result += snip.source;
     result += "}\n";
