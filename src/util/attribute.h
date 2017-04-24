@@ -4,6 +4,7 @@
 #include <string>
 #include <iostream>
 #include <vector>
+#include <algorithm>
 
 #include "typeinfo.h"
 
@@ -83,6 +84,11 @@ struct AttribInfo
         return attribIndex;
     }
     
+    bool operator<(const AttribInfo& other) const
+    {
+        return typeIndex < other.typeIndex;
+    }
+    
     void Print() const
     {
         std::cout << name << ": " << std::endl;
@@ -127,6 +133,7 @@ public:
     AttribFormat& operator<<(const AttribInfo& right)
     {
         attrFmt.push_back(right);
+        std::sort(attrFmt.begin(), attrFmt.end());
         return *this;
     }
     
