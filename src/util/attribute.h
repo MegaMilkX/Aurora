@@ -35,6 +35,12 @@
             result.push_back(*this); \
             return result; \
         } \
+        operator AttribFormat() const \
+        { \
+            AttribFormat result; \
+            result << (*this); \
+            return result; \
+        } \
     }
 
 namespace Au{
