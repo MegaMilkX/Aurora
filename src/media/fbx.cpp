@@ -50,6 +50,65 @@ bool ReadString(std::string& out, const char* data, const char*& cursor, const c
     return true;
 }
 
+// MEMBER FUNCTIONS ====================
+
+void Reader::ConvertCoordSys(CoordSystem sys)
+{ 
+    coordSys = sys;
+    if(sys == OPENGL)
+        for(unsigned i = 0; i < meshes.size(); ++i)
+            meshes[i].ConvertCoordSystem(AXIS_X, AXIS_Y, AXIS_Z);
+    else if(sys == DIRECT3D)
+        for(unsigned i = 0; i < meshes.size(); ++i)
+            meshes[i].ConvertCoordSystem(AXIS_X, AXIS_Y, AXIS_MZ);
+}
+
+Axis Reader::GetUpAxis()
+{
+    int axis = (int)rootNode.Get("Properties70", 0).GetWhere(0, "UpAxis")[4].GetInt32();
+    Axis up = FBXAxisToAxis(axis);
+    int sign = (int)rootNode.Get("Properties70", 0).GetWhere(0, "UpAxisSign")[4].GetInt32();
+    if(sign != 1)
+        FlipAxis(up);
+    return up;
+}
+
+Axis Reader::GetFrontAxis()
+{
+    int axis = (int)rootNode.Get("Properties70", 0).GetWhere(0, "FrontAxis")[4].GetInt32();
+    Axis front = FBXAxisToAxis(axis);
+    int sign = -(int)rootNode.Get("Properties70", 0).GetWhere(0, "FrontAxisSign")[4].GetInt32();
+    if(sign != 1)
+        FlipAxis(front);
+    return front;
+}
+
+Axis Reader::GetRightAxis()
+{
+    int axis = (int)rootNode.Get("Properties70", 0).GetWhere(0, "CoordAxis")[4].GetInt32();
+    Axis right = FBXAxisToAxis(axis);
+    int sign = (int)rootNode.Get("Properties70", 0).GetWhere(0, "CoordAxisSign")[4].GetInt32();
+    if(sign != 1)
+        FlipAxis(right);
+    return right;
+}
+
+void Reader::FlipAxis(Axis& axis)
+{
+    if(axis == AXIS_X)
+        axis = AXIS_MX;
+    else if(axis == AXIS_Y)
+        axis = AXIS_MY;
+    else if(axis == AXIS_Z)
+        axis = AXIS_MZ;
+    else if(axis == AXIS_MX)
+        axis = AXIS_X;
+    else if(axis == AXIS_MY)
+        axis = AXIS_Y;
+    else if(axis == AXIS_MZ)
+        axis = AXIS_Z;
+}
+
 void Reader::ReadData(Prop& prop, std::vector<char>& out, const char* data, const char*& cursor, const char* end)
 {
     bool is_encoded = false;
@@ -366,15 +425,15 @@ bool Reader::ReadUV(Mesh& mesh, unsigned meshId)
 
 bool Reader::ReadWeights(Mesh& mesh, unsigned meshId)
 {
-    std::vector<Node> deformers = 
+    std::vector<Node*> deformers = 
         rootNode.GetNodesWithProp("Deformer", 2, "Cluster");
     
     for(unsigned i = 0; i < deformers.size(); ++i)
     {
         std::vector<int32_t> boneIndices = 
-            deformers[i].Get("Indexes")[0].GetArray<int32_t>();
+            deformers[i]->Get("Indexes")[0].GetArray<int32_t>();
         std::vector<double> boneWeights = 
-            deformers[i].Get("Weights")[0].GetArray<double>();
+            deformers[i]->Get("Weights")[0].GetArray<double>();
             
         
     }
@@ -384,21 +443,21 @@ bool Reader::ReadWeights(Mesh& mesh, unsigned meshId)
 
 bool Reader::ReadSkin(Mesh& mesh, unsigned meshId)
 {
-    std::vector<Node> skin =
+    std::vector<Node*> skin =
         rootNode.GetNodesWithProp("Deformer", 2, "Skin");
     for(unsigned i = 0; i < skin.size(); ++i)
     {
-        std::vector<Node> connections = 
+        std::vector<Node*> connections = 
             rootNode.GetNodesWithProp("C", 0, "OO");
         for(unsigned j = 0; j < connections.size(); ++j)
         {
-            if(connections[j][1].GetInt64() == skin[i][0].GetInt64())
+            if((*connections[j])[1].GetInt64() == (*skin[i])[0].GetInt64())
             {
-                if(connections[j][2].GetInt64() != mesh.uid)
+                if((*connections[j])[2].GetInt64() != mesh.uid)
                     continue;
 
                 std::vector<Node> deformers = 
-                    GetConnectedChildren("Deformer", skin[i]);
+                    GetConnectedChildren("Deformer", *skin[i]);
                     
                 for(unsigned k = 0; k < deformers.size(); ++k)
                 {
@@ -411,10 +470,43 @@ bool Reader::ReadSkin(Mesh& mesh, unsigned meshId)
     return true;
 }
 
+std::vector<Node> Reader::GetConnectedChildren(const std::string& childName, Node& node)
+{
+    std::vector<Node> result;
+    std::vector<Node*> connections = 
+        rootNode.GetNodesWithProp("C", 2, node[0].GetInt64());
+    for(unsigned i = 0; i < connections.size(); ++i)
+    {
+        Node* n = rootNode.GetNodeWithUID(childName, (*connections[i])[1].GetInt64());
+        if(n)
+            result.push_back(*n);
+    }
+    return result;
+}
+
+Axis Reader::FBXAxisToAxis(unsigned axis)
+{ 
+    if(axis == 0)
+        return AXIS_X;
+    else if(axis == 1)
+        return AXIS_Z;
+    else if(axis == 2)
+        return AXIS_Y;
+    else
+        return AXIS_UNKNOWN;
+}
+
 bool Reader::ReadFile(const char* data, unsigned size)
 {
     if(!ReadFileFBX(data, size))
         return false;
+    
+    int animStackCount = rootNode.Count("AnimationStack");
+    for(int i = 0; i < animStackCount; ++i)
+    {
+        AnimationStack animStack(rootNode, rootNode.Get("AnimationStack", i));
+        animStacks.push_back(animStack);
+    }
     
     int meshCount = rootNode.Count("Geometry");
     for(int i = 0; i < meshCount; ++i)

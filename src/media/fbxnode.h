@@ -230,26 +230,63 @@ public:
         return children[children.size()-1];
     }
     
-    std::vector<Node> GetNodesWithProp(const std::string& name, unsigned propId, const std::string& value)
+    std::vector<Node*> GetConnectedChildren(
+        const std::string& childName, 
+        int64_t parentUID,
+        std::vector<Node*>& conns = std::vector<Node*>())
     {
-        std::vector<Node> result;
-        for(unsigned i = 0; i < children.size(); ++i)
+        std::vector<Node*> result;
+        std::vector<Node*> connections = 
+            GetNodesWithProp("C", 2, parentUID);
+        for(unsigned i = 0; i < connections.size(); ++i)
         {
-            if(children[i].name == name)
-                if(children[i][propId].GetString() == value)
-                    result.push_back(children[i]);
+            Node* n = GetNodeWithUID(childName, (*connections[i])[1].GetInt64());
+            if(n)
+            {
+                conns.push_back(connections[i]);
+                result.push_back(n);
+            }
         }
         return result;
     }
     
-    std::vector<Node> GetNodesWithProp(const std::string& name, unsigned propId, int64_t value)
+    Node* GetConnectedParent(const std::string& parentName, int64_t childUID, Node** conn)
     {
-        std::vector<Node> result;
+        std::vector<Node*> connections = 
+            GetNodesWithProp("C", 1, childUID);
+        for(unsigned i = 0; i < connections.size(); ++i)
+        {
+            Node* n = GetNodeWithUID(parentName, (*connections[i])[2].GetInt64());
+            if(n)
+            {
+                if(conn)
+                    (*conn) = connections[i];
+                return n;
+            }
+        }
+        return 0;
+    }
+    
+    std::vector<Node*> GetNodesWithProp(const std::string& name, unsigned propId, const std::string& value)
+    {
+        std::vector<Node*> result;
+        for(unsigned i = 0; i < children.size(); ++i)
+        {
+            if(children[i].name == name)
+                if(children[i][propId].GetString() == value)
+                    result.push_back(&children[i]);
+        }
+        return result;
+    }
+    
+    std::vector<Node*> GetNodesWithProp(const std::string& name, unsigned propId, int64_t value)
+    {
+        std::vector<Node*> result;
         for(unsigned i = 0; i < children.size(); ++i)
         {
             if(children[i].name == name)
                 if(children[i][propId].GetInt64() == value)
-                    result.push_back(children[i]);
+                    result.push_back(&children[i]);
         }
         return result;
     }
