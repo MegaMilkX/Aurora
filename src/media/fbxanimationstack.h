@@ -6,6 +6,8 @@
 namespace Au{
 namespace Media{
 namespace FBX{
+
+const int64_t TimeSecond = 46186158000;
     
 enum TIME_MODE
 {
@@ -132,14 +134,31 @@ public:
             root.GetConnectedChildren("AnimationLayer", uid);
         for(unsigned i = 0; i < nodes.size(); ++i)
             layers.push_back(AnimationLayer(root, *(nodes[i])));
+        
+        Node& prop70 = object.Get("Properties70");
+        int pCount = prop70.Count("P");
+        for(int i = 0; i < pCount; ++i)
+        {
+            Node& p = prop70.Get("P", i);
+            std::string pName = p[0].GetString();
+            if(pName == "LocalStop" ||
+                pName == "ReferenceStop")
+            {
+                length = p[4].GetInt64();
+                if(length)
+                    break;
+            }
+        }
     }
     
+    int64_t GetLength() { return length; }
     std::string GetName() { return name; }
     unsigned LayerCount() { return layers.size(); }
     AnimationLayer* GetLayer(unsigned id) { return &layers[id]; }
 private:
     std::string name;
     std::vector<AnimationLayer> layers;
+    int64_t length;
 };
 
 }
