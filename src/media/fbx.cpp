@@ -93,6 +93,100 @@ Axis Reader::GetRightAxis()
     return right;
 }
 
+TIME_MODE Reader::GetTimeMode()
+{
+    int timeMode = rootNode.Get("Properties70", 0).GetWhere(0, "TimeMode")[4].GetInt32();
+    return (TIME_MODE)timeMode;
+}
+
+int Reader::GetTimeProtocol()
+{
+    int timeMode = rootNode.Get("Properties70", 0).GetWhere(0, "TimeProtocol")[4].GetInt32();
+    return timeMode;
+}
+
+double Reader::GetCustomFrameRate()
+{
+    double fps = rootNode.Get("Properties70", 0).GetWhere(0, "CustomFrameRate")[4].GetDouble();
+    return fps;
+}
+
+double Reader::GetFrameRate()
+{
+    TIME_MODE mode = GetTimeMode();
+    double fps = 30.0;
+    switch(mode)
+    {
+    case FRAMES_DEFAULT:
+        break;
+    case FRAMES_120:
+        fps = 120.0;
+        break;
+    case FRAMES_100:
+        fps = 100.0;
+        break;
+    case FRAMES_60:
+        fps = 60.0;
+        break;
+    case FRAMES_50:
+        fps = 50.0;
+        break;
+    case FRAMES_48:
+        fps = 48.0;
+        break;
+    case FRAMES_30:
+        fps = 30.0;
+        break;
+    case FRAMES_30_DROP:
+        fps = 30.0;
+        break;
+    case FRAMES_NTSC_DROP:
+        fps = 29.97;
+        break;
+    case FRAMES_NTSC_FULL:
+        fps = 29.97;
+        break;
+    case FRAMES_PAL:
+        fps = 25.0;
+        break;
+    case FRAMES_CINEMA:
+        fps = 24.0;
+        break;
+    case FRAMES_1000m: // Should not be used for frame rate
+        fps = 30.0;
+        break;
+    case FRAMES_CINEMA_ND:
+        fps = 23.976;
+        break;
+    case FRAMES_CUSTOM:
+        fps = GetCustomFrameRate();
+        break;
+    case FRAMES_96:
+        fps = 96.0;
+        break;
+    case FRAMES_72:
+        fps = 72.0;
+        break;
+    case FRAMES_59dot94:
+        fps = 59.94;
+        break;
+    }
+    
+    return fps;
+}
+
+std::vector<AnimationStack> Reader::GetAnimationStacks()
+{
+    std::vector<AnimationStack> animStacks;
+    int animStackCount = rootNode.Count("AnimationStack");
+    for(int i = 0; i < animStackCount; ++i)
+    {
+        AnimationStack animStack(rootNode, rootNode.Get("AnimationStack", i));
+        animStacks.push_back(animStack);
+    }
+    return animStacks;
+}
+
 void Reader::FlipAxis(Axis& axis)
 {
     if(axis == AXIS_X)
@@ -500,13 +594,6 @@ bool Reader::ReadFile(const char* data, unsigned size)
 {
     if(!ReadFileFBX(data, size))
         return false;
-    
-    int animStackCount = rootNode.Count("AnimationStack");
-    for(int i = 0; i < animStackCount; ++i)
-    {
-        AnimationStack animStack(rootNode, rootNode.Get("AnimationStack", i));
-        animStacks.push_back(animStack);
-    }
     
     int meshCount = rootNode.Count("Geometry");
     for(int i = 0; i < meshCount; ++i)

@@ -37,15 +37,21 @@ public:
     Axis GetFrontAxis();
     Axis GetRightAxis();
     
+    TIME_MODE GetTimeMode();
+    int GetTimeProtocol();
+    double GetCustomFrameRate();
+    double GetFrameRate();
+    
+    std::vector<AnimationStack> GetAnimationStacks();
+    
     void FlipAxis(Axis& axis);
     
     int MeshCount() { return meshes.size(); }
     Mesh& GetMesh(unsigned id) { return meshes[id]; }
     
-    int AnimationStackCount() { return animStacks.size(); }
-    AnimationStack& GetAnimationStack(unsigned id) { return animStacks[id]; }
-    
     std::vector<Bone> GetBones();
+    
+    Node& GetRootNode() { return rootNode; }
     
     void Print() { rootNode.Print(); }
 private:
@@ -66,7 +72,6 @@ private:
     Node rootNode;
     CoordSystem coordSys;
     std::vector<Mesh> meshes;
-    std::vector<AnimationStack> animStacks;
 };
 
 }

@@ -7,14 +7,43 @@ namespace Au{
 namespace Media{
 namespace FBX{
     
+enum TIME_MODE
+{
+    FRAMES_DEFAULT,
+    FRAMES_120,
+    FRAMES_100,
+    FRAMES_60,
+    FRAMES_50,
+    FRAMES_48,
+    FRAMES_30,
+    FRAMES_30_DROP,
+    FRAMES_NTSC_DROP,
+    FRAMES_NTSC_FULL,
+    FRAMES_PAL,
+    FRAMES_CINEMA,
+    FRAMES_1000m,
+    FRAMES_CINEMA_ND,
+    FRAMES_CUSTOM,
+    FRAMES_96,
+    FRAMES_72,
+    FRAMES_59dot94,
+    FRAMES_MODE_COUNT
+};
+    
+struct Keyframe
+{
+    Keyframe(int64_t frame, float value)
+    : frame(frame), value(value) {}
+    int64_t frame;
+    float value;
+};
+    
 class AnimationCurve
 {
 public:
     AnimationCurve(Node& root, Node& node, const std::string& name)
     : name(name)
     {
-        std::cout << node.Name() << std::endl;
-        std::cout << name << std::endl;
         std::vector<int64_t> keyTime =
             node.Get("KeyTime")[0].GetArray<int64_t>();
         std::vector<float> keyValue = 
@@ -22,11 +51,19 @@ public:
             
         for(unsigned i = 0; i < keyTime.size() && i < keyValue.size(); ++i)
         {
-            std::cout << keyTime[i] << ": " << keyValue[i] << std::endl;
+            //int frameTime = 46186158000 / FPS;
+            //int frame = keyTime[i] / frameTime;
+            //std::cout << keyTime[i] << ": " << keyValue[i] << std::endl;
+            keyframes.push_back(Keyframe(keyTime[i], keyValue[i]));
         }
     }
+    
+    std::string& GetName() { return name; }
+    unsigned KeyframeCount() { return keyframes.size(); }
+    Keyframe* GetKeyframe(unsigned id) { return &keyframes[id]; }
 private:
     std::string name;
+    std::vector<Keyframe> keyframes;
 };
     
 class AnimationCurveNode
@@ -34,7 +71,6 @@ class AnimationCurveNode
 public:
     AnimationCurveNode(Node& root, Node& node)
     {
-        std::cout << node.Name() << std::endl;
         int64_t uid = node[0].GetInt64();
         
         Node* conn = 0;
@@ -45,9 +81,6 @@ public:
             propName = (*conn)[3].GetString();
         }
         
-        std::cout << objectName << std::endl;
-        std::cout << propName << std::endl;
-        
         std::vector<Node*> conns;
         std::vector<Node*> nodes = 
             root.GetConnectedChildren("AnimationCurve", uid, conns);
@@ -57,6 +90,11 @@ public:
             curves.push_back(AnimationCurve(root, *(nodes[i]), connName));
         }
     }
+    
+    std::string& GetObjectName() { return objectName; }
+    std::string& GetPropertyName() { return propName; }
+    unsigned CurveCount() { return curves.size(); }
+    AnimationCurve* GetCurve(unsigned id) { return &curves[id]; }
 private:
     std::vector<AnimationCurve> curves;
     std::string objectName;
@@ -68,7 +106,6 @@ class AnimationLayer
 public:
     AnimationLayer(Node& root, Node& object)
     {
-        std::cout << object.Name() << std::endl;
         int64_t uid = object[0].GetInt64();
         
         std::vector<Node*> nodes = 
@@ -88,8 +125,8 @@ class AnimationStack
 public:
     AnimationStack(Node& root, Node& object)
     {
-        std::cout << object.Name() << std::endl;
         int64_t uid = object[0].GetInt64();
+        name = object[1].GetString();
         
         std::vector<Node*> nodes =
             root.GetConnectedChildren("AnimationLayer", uid);
@@ -97,9 +134,11 @@ public:
             layers.push_back(AnimationLayer(root, *(nodes[i])));
     }
     
+    std::string GetName() { return name; }
     unsigned LayerCount() { return layers.size(); }
     AnimationLayer* GetLayer(unsigned id) { return &layers[id]; }
 private:
+    std::string name;
     std::vector<AnimationLayer> layers;
 };
 

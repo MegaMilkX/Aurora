@@ -114,6 +114,13 @@ public:
         return *(int32_t*)(data.data());
     }
     
+    double GetDouble()
+    {
+        if(data.size() != sizeof(double))
+            return 0.0;
+        return *(double*)(data.data());
+    }
+    
     template<typename T>
     std::vector<T> GetArray()
     {
