@@ -187,6 +187,30 @@ public:
         return value;
     }
     
+    unsigned CurveCount() { return curves.size(); }
+    std::string GetCurveName(unsigned id) 
+    {
+        std::map<std::string, Curve>::iterator it = 
+            curves.begin();
+        for (unsigned i = 0; i < id; ++i) ++it;
+        return it->first; 
+    }
+    Curve* GetCurve(unsigned id) 
+    { 
+        std::map<std::string, Curve>::iterator it = 
+            curves.begin();
+        for (unsigned i = 0; i < id; ++i) ++it;
+        return &(it->second); 
+    }
+    Curve* GetCurve(const std::string& name) 
+    {
+        std::map<std::string, Curve>::iterator it =
+            curves.find(name);
+        if(it != curves.end())
+            return &(it->second);
+        return 0;
+    }
+    
     void Print()
     {
         if(curves.empty())
