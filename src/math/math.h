@@ -4,10 +4,11 @@
 #include <math.h>
 #include <assert.h>
 
-#define PI 3.14159265359f
-
 namespace Au{
 namespace Math{
+    
+const float PI = 3.14159265359f;
+const double dblPI = 3.14159265359;
     
 inline float QRSqrt(const float &n)
 {
