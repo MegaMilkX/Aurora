@@ -53,7 +53,11 @@ bool ReadString(std::string& out, const char* data, const char*& cursor, const c
 // MEMBER FUNCTIONS ====================
 
 void Reader::ConvertCoordSys(CoordSystem sys)
-{ 
+{
+    settings.convAxes.right = AXIS_X;
+    settings.convAxes.up = AXIS_Y;
+    settings.convAxes.front = AXIS_Z;
+    
     coordSys = sys;
     if(sys == OPENGL)
         for(unsigned i = 0; i < meshes.size(); ++i)
@@ -181,7 +185,7 @@ std::vector<AnimationStack> Reader::GetAnimationStacks()
     int animStackCount = rootNode.Count("AnimationStack");
     for(int i = 0; i < animStackCount; ++i)
     {
-        AnimationStack animStack(rootNode, rootNode.Get("AnimationStack", i));
+        AnimationStack animStack(rootNode, rootNode.Get("AnimationStack", i), settings);
         animStacks.push_back(animStack);
     }
     return animStacks;
@@ -594,6 +598,13 @@ bool Reader::ReadFile(const char* data, unsigned size)
 {
     if(!ReadFileFBX(data, size))
         return false;
+    
+    settings.scaleFactor = rootNode.Get("Properties70").GetWhere(0, "UnitScaleFactor")[4].GetDouble();
+    settings.origAxes.right = GetRightAxis();
+    settings.origAxes.up = GetUpAxis();
+    settings.origAxes.front = GetFrontAxis();
+    settings.convAxes = settings.origAxes;
+    
     
     int meshCount = rootNode.Count("Geometry");
     for(int i = 0; i < meshCount; ++i)

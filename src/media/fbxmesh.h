@@ -4,23 +4,12 @@
 #include <vector>
 #include <string>
 
+#include "fbxsettings.h"
+
 namespace Au{
 namespace Media{
 namespace FBX{
-    
-enum CoordSystem
-{
-    ORIGINAL,
-    OPENGL,
-    DIRECT3D
-};
-
-enum Axis
-{
-    AXIS_UNKNOWN = 3,
-    AXIS_X = 0, AXIS_Y = 1, AXIS_Z = 2,
-    AXIS_MX = -1, AXIS_MY = -2, AXIS_MZ = -3
-};
+   
 
 class SkinDeformer
 {

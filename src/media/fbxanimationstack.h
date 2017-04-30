@@ -3,6 +3,8 @@
 
 #include "fbxnode.h"
 
+#include "fbxsettings.h"
+
 namespace Au{
 namespace Media{
 namespace FBX{
@@ -39,24 +41,124 @@ struct Keyframe
     int64_t frame;
     float value;
 };
+
+inline std::string AxisToFBXName(Axis axis)
+{
+    static std::vector<std::string> axisName =
+        { "d|X", "d|Y", "d|Z" };
+        
+    int a = (int)axis;
+    if(a < 0)
+        a = -a - 1;
+    
+    return axisName[a];
+}
+
+inline std::string DirToFBXAxis(AxisSetup axes, int dir)
+{
+    std::vector<std::string> axisName =
+        { "" };
+        
+    axisName.push_back(AxisToFBXName(axes.right));
+    axisName.push_back(AxisToFBXName(axes.up));
+    axisName.push_back(AxisToFBXName(axes.front));
+    
+    return axisName[abs(dir)];
+}
+
+inline bool EqualsFBXAxis(Axis axis, const std::string& name)
+{
+    if(AxisToFBXName(axis) == name)
+        return true;
+    return false;
+}
+
+inline int DirFromFBXAxis(AxisSetup axes, const std::string& name)
+{
+    int dir = 0;
+    if(EqualsFBXAxis(axes.right, name))
+        if((int)(axes.right) < 0)
+            dir = -1;
+        else
+            dir = 1;
+    else if(EqualsFBXAxis(axes.up, name))
+        if((int)(axes.up) < 0)
+            dir = -2;
+        else
+            dir = 2;
+    else if(EqualsFBXAxis(axes.front, name))
+        if((int)(axes.front) < 0)
+            dir = -3;
+        else
+            dir = 3;
+    return dir;
+}
+
+inline void ConvertCurveName(Settings& settings, std::string& name)
+{
+    int origDir = DirFromFBXAxis(settings.origAxes, name);
+    int convDir = DirFromFBXAxis(settings.convAxes, name);
+
+    name = DirToFBXAxis(settings.origAxes, convDir);
+}
+
+inline void ConvertCurveMult(Settings& settings, const std::string& name, float& valMult)
+{
+    int origDir = DirFromFBXAxis(settings.origAxes, name);
+    int convDir = DirFromFBXAxis(settings.convAxes, name);
+    
+    if((origDir < 0) != (convDir < 0))
+        valMult = -1.0f;
+}
     
 class AnimationCurve
 {
 public:
-    AnimationCurve(Node& root, Node& node, const std::string& name)
+    AnimationCurve(
+        Node& root, 
+        Node& node, 
+        const std::string& name, 
+        const std::string& curveNodeName,
+        Settings& settings
+        )
     : name(name)
     {
         std::vector<int64_t> keyTime =
             node.Get("KeyTime")[0].GetArray<int64_t>();
         std::vector<float> keyValue = 
             node.Get("KeyValueFloat")[0].GetArray<float>();
+        
+        float valMult = 1.0f;
+        if(curveNodeName.compare(0, 11, "Lcl Translation") == 0 ||
+            curveNodeName.compare(0, 12, "Lcl Rotation") == 0)
+        {
+            ConvertCurveMult(settings, this->name, valMult);
+        }
+        
+        if(curveNodeName.compare(0, 11, "Lcl Scaling") == 0 ||
+            curveNodeName.compare(0, 12, "Lcl Rotation") == 0)
+        {
+            ConvertCurveName(settings, this->name);
+        }
             
         for(unsigned i = 0; i < keyTime.size() && i < keyValue.size(); ++i)
         {
             //int frameTime = 46186158000 / FPS;
             //int frame = keyTime[i] / frameTime;
             //std::cout << keyTime[i] << ": " << keyValue[i] << std::endl;
-            keyframes.push_back(Keyframe(keyTime[i], keyValue[i]));
+            
+            float val = keyValue[i] * valMult;
+            if(curveNodeName.compare(0, 11, "Lcl Scaling") == 0)
+            {
+                //std::cout << "hello" << std::endl;
+                //std::cout << settings.scaleFactor << std::endl;
+                //val = (float)(val / settings.scaleFactor);
+            }
+            else if(curveNodeName.compare(0, 12, "Lcl Rotation") == 0)
+            {
+                val = (val * Au::Math::PI) / 180.0f;
+            }
+            keyframes.push_back(Keyframe(keyTime[i], val));
         }
     }
     
@@ -71,7 +173,7 @@ private:
 class AnimationCurveNode
 {
 public:
-    AnimationCurveNode(Node& root, Node& node)
+    AnimationCurveNode(Node& root, Node& node, Settings& settings)
     {
         int64_t uid = node[0].GetInt64();
         
@@ -89,7 +191,7 @@ public:
         for(unsigned i = 0; i < nodes.size() && i < conns.size(); ++i)
         {
             std::string connName = (*conns[i])[3].GetString();
-            curves.push_back(AnimationCurve(root, *(nodes[i]), connName));
+            curves.push_back(AnimationCurve(root, *(nodes[i]), connName, propName, settings));
         }
     }
     
@@ -106,14 +208,14 @@ private:
 class AnimationLayer
 {
 public:
-    AnimationLayer(Node& root, Node& object)
+    AnimationLayer(Node& root, Node& object, Settings& settings)
     {
         int64_t uid = object[0].GetInt64();
         
         std::vector<Node*> nodes = 
             root.GetConnectedChildren("AnimationCurveNode", uid);
         for(unsigned i = 0; i < nodes.size(); ++i)
-            curveNodes.push_back(AnimationCurveNode(root, *(nodes[i])));
+            curveNodes.push_back(AnimationCurveNode(root, *(nodes[i]), settings));
     }
     
     unsigned CurveNodeCount() { return curveNodes.size(); }
@@ -125,7 +227,7 @@ private:
 class AnimationStack
 {
 public:
-    AnimationStack(Node& root, Node& object)
+    AnimationStack(Node& root, Node& object, Settings& settings)
     {
         int64_t uid = object[0].GetInt64();
         name = object[1].GetString();
@@ -133,7 +235,7 @@ public:
         std::vector<Node*> nodes =
             root.GetConnectedChildren("AnimationLayer", uid);
         for(unsigned i = 0; i < nodes.size(); ++i)
-            layers.push_back(AnimationLayer(root, *(nodes[i])));
+            layers.push_back(AnimationLayer(root, *(nodes[i]), settings));
         
         Node& prop70 = object.Get("Properties70");
         int pCount = prop70.Count("P");

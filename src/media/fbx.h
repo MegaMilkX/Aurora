@@ -5,6 +5,8 @@
 #include "fbxmesh.h"
 #include "fbxanimationstack.h"
 
+#include "fbxsettings.h"
+
 namespace Au{
 namespace Media{
 namespace FBX{
@@ -69,6 +71,7 @@ private:
     
     Axis FBXAxisToAxis(unsigned axis);
     
+    Settings settings;
     Node rootNode;
     CoordSystem coordSys;
     std::vector<Mesh> meshes;
