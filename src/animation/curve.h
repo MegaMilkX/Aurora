@@ -6,6 +6,8 @@
 #include <math.h>
 #include <float.h>
 
+#include "../math/math.h"
+
 namespace Au{
 
 template<typename Ret>
@@ -111,14 +113,22 @@ struct Keyframe
 class Curve
 {
 public:
-    Curve(): _func(0) {}
+    Curve(): _func(0), length(0.0) {}
+    Curve(const std::string& name)
+    : _func(0), length(0.0), name(name) {}
     ~Curve() { if(_func) delete _func; }
     
     Curve& operator[](const std::string& name)
     {
-        Curve& c = curves[name];
+        for(unsigned i = 0; i < curves.size(); ++i)
+        {
+            if(curves[i].Name() == name)
+                return curves[i];
+        }
+        
+        curves.push_back(Curve(name));
         curveValues.resize(curves.size());
-        return c;
+        return curves.back();
     }
     
     Keyframe& operator[](float frame)
@@ -150,6 +160,27 @@ public:
         _func = new FunctorMember<Class, Ret, Args...>(fn, thisPtr);
     }
     
+    void EvalOrder(const std::string& name, unsigned pos)
+    {
+        int oldpos = -1;
+        for(unsigned i = 0; i < curves.size(); ++i)
+        {
+            if(curves[i].Name() == name)
+                oldpos = (int)i;
+        }
+        
+        if(oldpos == -1)
+            return;
+        
+        if(oldpos == (int)pos)
+            return;
+        
+        Au::Curve copy;
+        copy = curves[pos];
+        curves[pos] = curves[oldpos];
+        curves[oldpos] = copy;
+    }
+    
     float Evaluate(float time)
     {   
         if(curves.empty())
@@ -160,25 +191,31 @@ public:
             {
                 k0 = &keyframes[i];
                 if(i == keyframes.size() - 1)
-                    k1 = &keyframes[0];
+                    k1 = k0;
                 else
                     k1 = &keyframes[i + 1];
                 if(k0->frame <= time)
                     break;
             }
             
-            if(k0)
+            if(k0 != k1)
+            {
+                float a = k0->value;
+                float b = k1->value;
+                float t = (time - k0->frame) / (k1->frame - k0->frame);
+                
+                value = a + t * (b - a);
+            }
+            else if(k0)
+            {
                 value = k0->value;
+            }
         }
         else
         {
-            std::map<std::string, Curve>::iterator it =
-                curves.begin();
-            unsigned i = 0;
-            for(it; it != curves.end(); ++it)
-            {
-                curveValues[i++] = it->second.Evaluate(time);
-            }
+            unsigned v = 0;
+            for(unsigned i = 0; i < curves.size(); ++i)
+                curveValues[v++] = curves[i].Evaluate(time);
         }
         
         if(_func)
@@ -190,52 +227,50 @@ public:
     unsigned CurveCount() { return curves.size(); }
     std::string GetCurveName(unsigned id) 
     {
-        std::map<std::string, Curve>::iterator it = 
-            curves.begin();
-        for (unsigned i = 0; i < id; ++i) ++it;
-        return it->first; 
+        return curves[id].Name();
     }
     Curve* GetCurve(unsigned id) 
     { 
-        std::map<std::string, Curve>::iterator it = 
-            curves.begin();
-        for (unsigned i = 0; i < id; ++i) ++it;
-        return &(it->second); 
+        return &curves[id];
     }
     Curve* GetCurve(const std::string& name) 
     {
-        std::map<std::string, Curve>::iterator it =
-            curves.find(name);
-        if(it != curves.end())
-            return &(it->second);
+        for(unsigned i = 0; i < curves.size(); ++i)
+        {
+            if(curves[i].Name() == name)
+                return &curves[i];
+        }
         return 0;
     }
     
     void Print()
     {
+        std::cout << name << ": ";
         if(curves.empty())
         {
-            std::cout << value << " ";
+            std::cout << value << std::endl;
             return;
         }
-            
-        std::map<std::string, Curve>::iterator it =
-            curves.begin();
-        for(it; it != curves.end(); ++it)
+
+        for(unsigned i = 0; i < curves.size(); ++i)
         {
-            std::cout << it->first << ": ";
-            it->second.Print();
+            curves[i].Print();
         }
-        
-        std::cout << std::endl;
     }
+    
+    void Length(float len) { length = len; }
+    float Length() { return length; }
+    
+    std::string& Name() { return name; }
     
     float value;
 private:
     IFunctor* _func;
     std::vector<Keyframe> keyframes;
     std::vector<float> curveValues;
-    std::map<std::string, Curve> curves;
+    std::vector<Curve> curves;
+    float length;
+    std::string name;
 };
 
 }
