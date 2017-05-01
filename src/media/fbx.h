@@ -4,6 +4,7 @@
 #include "fbxobject.h"
 #include "fbxmesh.h"
 #include "fbxanimationstack.h"
+#include "fbxbone.h"
 
 #include "fbxsettings.h"
 
@@ -14,17 +15,6 @@ namespace FBX{
 typedef uint8_t Byte;
 typedef uint32_t Word;
 typedef uint64_t DoubleWord;
-
-class Bone
-{
-public:
-    int64_t uid;
-    int64_t parentUID;
-    std::string name;
-    Math::Mat4f bindTransform;
-    std::vector<uint64_t> indices;
-    std::vector<float> weights;
-};
 
 class Reader
 {
@@ -48,10 +38,10 @@ public:
     
     void FlipAxis(Axis& axis);
     
+    std::vector<Bone> GetBones();
+    
     int MeshCount() { return meshes.size(); }
     Mesh& GetMesh(unsigned id) { return meshes[id]; }
-    
-    std::vector<Bone> GetBones();
     
     Node& GetRootNode() { return rootNode; }
     
