@@ -179,10 +179,14 @@ inline Vec3f Cross(const Vec3f &a, const Vec3f &b){
 }
 
 inline Vec3f Normalize(const Vec3f &a){
+    if(a.length() == 0.0f)
+        return a;
     return a / a.length();
 }
 
 inline Vec4f Normalize(const Vec4f &a){
+    if(a.length() == 0.0f)
+        return a;
     return a / a.length();
 }
 
