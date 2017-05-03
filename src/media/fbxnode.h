@@ -114,6 +114,13 @@ public:
         return *(int32_t*)(data.data());
     }
     
+    float GetFloat()
+    {
+        if(data.size() != sizeof(float))
+            return 0.0;
+        return *(float*)(data.data());
+    }
+    
     double GetDouble()
     {
         if(data.size() != sizeof(double))
