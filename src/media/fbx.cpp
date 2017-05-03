@@ -505,15 +505,17 @@ bool Reader::ReadVerticesAndIndices(Mesh& mesh, unsigned meshId)
 
 bool Reader::ReadNormals(Mesh& mesh, unsigned meshId)
 {
+    Node& geom = rootNode.Get("Geometry", meshId);
     std::vector<int32_t> fbxIndices = 
-        rootNode.Get("Geometry", meshId).Get("PolygonVertexIndex")[0].GetArray<int32_t>();
-    int normalLayerCount = rootNode.Get("Geometry", meshId).Count("LayerElementNormal");
+        geom.Get("PolygonVertexIndex")[0].GetArray<int32_t>();
+    int normalLayerCount = geom.Count("LayerElementNormal");
     for(int j = 0; j < normalLayerCount; ++j)
     {
+        Node& layerElemNormal = geom.Get("LayerElementNormal", j);
         std::vector<float> fbxNormals = 
-            rootNode.Get("Geometry", j).Get("LayerElementNormal").Get("Normals")[0].GetArray<float>();
+            layerElemNormal.Get("Normals")[0].GetArray<float>();
         std::string normalsMapping = 
-            rootNode.Get("Geometry", j).Get("LayerElementNormal").Get("MappingInformationType")[0].GetString();
+            layerElemNormal.Get("MappingInformationType")[0].GetString();
         
         std::vector<float> normals;
         
