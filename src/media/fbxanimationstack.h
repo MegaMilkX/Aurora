@@ -129,7 +129,7 @@ public:
             node.Get("KeyValueFloat")[0].GetArray<float>();
         
         float valMult = 1.0f;
-        if(curveNodeName.compare(0, 11, "Lcl Translation") == 0 ||
+        if(/*curveNodeName.compare(0, 15, "Lcl Translation") == 0 ||*/
             curveNodeName.compare(0, 12, "Lcl Rotation") == 0)
         {
             ConvertCurveMult(settings, this->name, valMult);
