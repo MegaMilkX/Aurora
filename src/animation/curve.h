@@ -113,10 +113,10 @@ struct Keyframe
 class Curve
 {
 public:
-    Curve(): _func(0), length(0.0) {}
+    Curve(): length(0.0) {}
     Curve(const std::string& name)
     : _func(0), length(0.0), name(name) {}
-    ~Curve() { if(_func) delete _func; }
+    ~Curve() {  }
     
     Curve& operator[](const std::string& name)
     {
@@ -144,41 +144,6 @@ public:
         keyframes.push_back(Keyframe(frame));
         std::sort(keyframes.begin(), keyframes.end());
         return operator[](frame);
-    }
-    
-    template<typename Ret, typename... Args>
-    void OnEvaluate(Ret(*fn)(Args...))
-    {
-        if(_func) delete _func;
-        _func = new Functor<Ret, Args...>(fn);
-    }
-    
-    template<typename Class, typename Ret, typename... Args>
-    void OnEvaluate(Ret(Class::*fn)(Args...), Class* thisPtr)
-    {
-        if(_func) delete _func;
-        _func = new FunctorMember<Class, Ret, Args...>(fn, thisPtr);
-    }
-    
-    void EvalOrder(const std::string& name, unsigned pos)
-    {
-        int oldpos = -1;
-        for(unsigned i = 0; i < curves.size(); ++i)
-        {
-            if(curves[i].Name() == name)
-                oldpos = (int)i;
-        }
-        
-        if(oldpos == -1)
-            return;
-        
-        if(oldpos == (int)pos)
-            return;
-        
-        Au::Curve copy;
-        copy = curves[pos];
-        curves[pos] = curves[oldpos];
-        curves[oldpos] = copy;
     }
     
     float Evaluate(float time)
@@ -217,9 +182,6 @@ public:
             for(unsigned i = 0; i < curves.size(); ++i)
                 curveValues[v++] = curves[i].Evaluate(time);
         }
-        
-        if(_func)
-            _func->operator()(curveValues.data());
         
         return value;
     }
@@ -265,7 +227,6 @@ public:
     
     float value;
 private:
-    IFunctor* _func;
     std::vector<Keyframe> keyframes;
     std::vector<float> curveValues;
     std::vector<Curve> curves;
