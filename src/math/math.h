@@ -563,6 +563,15 @@ inline Mat3f ToMat3(const Quat &q)
     return m;
 }
 
+inline Mat3f ToMat3(const Mat4f& m4)
+{
+    Mat3f m3;
+    for(unsigned i = 0; i < 3; ++i)
+        for(unsigned j = 0; j < 3; ++j)
+            m3[i][j] = m4[i][j];
+    return m3;
+}
+
 inline Mat4f ToMat4(const Quat &q)
 {
     Mat4f m(1.0f);
@@ -576,6 +585,18 @@ inline Quat EulerToQuat(Vec3f& euler)
     Au::Math::Quat qy = AngleAxis(euler.y, Au::Math::Vec3f(0.0f, 1.0f, 0.0f));
     Au::Math::Quat qz = AngleAxis(euler.z, Au::Math::Vec3f(0.0f, 0.0f, 1.0f));
     return qx * qy * qz;
+}
+
+inline Quat ToQuat(Mat3f& m)
+{
+    Quat q;
+    
+    q.w = QSqrt(1.0f + m[0][0] + m[1][1] + m[2][2]) / 2.0f;
+    q.x = (m[2][1] - m[1][2]) / (4.0f * q.w);
+    q.y = (m[0][2] - m[2][0]) / (4.0f * q.w);
+    q.z = (m[1][0] - m[0][1]) / (4.0f * q.w);
+    
+    return q;
 }
 
 ///////////////////////////////////////////////
