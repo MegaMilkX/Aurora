@@ -219,7 +219,7 @@ std::vector<Bone> Reader::GetBones()
         if(model[2].GetString() != "LimbNode")
             continue;
         
-        Bone bone(rootNode, model);
+        Bone bone(settings, rootNode, model);
         result.push_back(bone);
     }
     
