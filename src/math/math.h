@@ -75,7 +75,7 @@ struct Vec2
 {
     Vec2() : x(0), y(0){}
     Vec2(T x, T y) : x(x), y(y){}
-    Vec2(const Vec2<T>& v) : x(v.x), y(v.y){}
+    Vec2(const Vec3<T>& v) : x(v.x), y(v.y){}
     union { T x, r; };
     union { T y, g; };
     T operator[](const int &i) const {
