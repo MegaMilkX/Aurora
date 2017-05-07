@@ -571,11 +571,16 @@ inline bool Contains(const AABB3f& a, const AABB3f& b)
 ///////////////////////////////////////////////
 inline Mat3f ToMat3(const Quat &q)
 {
-    Mat3f m = { 1 - 2 * q.y * q.y - 2 * q.z * q.z, q.z * 2 * q.w + 2 * q.x * q.y, -q.y * 2 * q.w + 2 * q.x * q.z,
-
-        -q.z * 2 * q.w + 2 * q.x * q.y, 1 - 2 * q.x * q.x - 2 * q.z * q.z, q.x * 2 * q.w + 2 * q.y * q.z,
-
-        q.y * 2 * q.w + 2 * q.x * q.z, -q.x * 2 * q.w + 2 * q.y * q.z, 1 - 2 * q.x * q.x - 2 * q.y * q.y };
+    Mat3f m;
+    m[0].x = 1 - 2 * q.y * q.y - 2 * q.z * q.z;
+    m[0].y = q.z * 2 * q.w + 2 * q.x * q.y;
+    m[0].z = -q.y * 2 * q.w + 2 * q.x * q.z;
+    m[1].x = -q.z * 2 * q.w + 2 * q.x * q.y;
+    m[1].y = 1 - 2 * q.x * q.x - 2 * q.z * q.z;
+    m[1].z = q.x * 2 * q.w + 2 * q.y * q.z;
+    m[2].x = q.y * 2 * q.w + 2 * q.x * q.z;
+    m[2].y = -q.x * 2 * q.w + 2 * q.y * q.z;
+    m[2].z = 1 - 2 * q.x * q.x - 2 * q.y * q.y;
     return m;
 }
 
