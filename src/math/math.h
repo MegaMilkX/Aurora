@@ -174,6 +174,10 @@ inline float Dot(const Vec3f &a, const Vec3f &b){
     return a.x * b.x + a.y * b.y + a.z * b.z;
 }
 
+inline float Dot(const Vec4f &a, const Vec4f &b){
+    return a.x * b.x + a.y * b.y + a.z * b.z + a.w * b.w;
+}
+
 inline Vec3f Cross(const Vec3f &a, const Vec3f &b){
     return Vec3f(a.y * b.z - a.z * b.y, a.z * b.x - a.x * b.z, a.x * b.y - a.y * b.x);
 }
