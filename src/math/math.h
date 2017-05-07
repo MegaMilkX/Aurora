@@ -516,6 +516,17 @@ inline Quat AngleAxis(const float &a, const Vec3f &axis)
     return Quat(axis.x * s, axis.y * s, axis.z * s, cosf(a*0.5f));
 }
 
+inline Quat Inverse(const Quat& q)
+{
+    Quat i;
+    float dot = Dot(q, q);
+    i.x = -q.x / dot;
+    i.y = -q.y / dot;
+    i.z = -q.z / dot;
+    i.w = q.w / dot;
+    return i;
+}
+
 // Axis-aligned bounding box ====================================
 
 template<typename T>
