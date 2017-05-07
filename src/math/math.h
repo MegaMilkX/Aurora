@@ -588,8 +588,7 @@ inline Mat3f ToMat3(const Mat4f& m4)
 {
     Mat3f m3;
     for(unsigned i = 0; i < 3; ++i)
-        for(unsigned j = 0; j < 3; ++j)
-            m3[i][j] = m4[i][j];
+        m3[i] = m4[i];
     return m3;
 }
 
