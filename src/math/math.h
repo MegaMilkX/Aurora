@@ -668,6 +668,15 @@ inline float Smoothstep(float a, float b, float x)
     x = Clamp((x - a) / (b - a), 0.0f, 1.0f);
     return x * x * (3 - 2 * x);
 }
+
+// ============================
+// Util
+// ============================
+
+inline float Sign(float x)
+{
+    return (x >= 0.0f) ? 1.0f : -1.0f;
+}
    
 }
 }
