@@ -592,6 +592,16 @@ inline Mat3f ToMat3(const Mat4f& m4)
     return m3;
 }
 
+inline Mat3f ToOrientationMat3(const Mat4f& m)
+{
+    Mat3f mt = ToMat3(m);
+    
+    for(unsigned i = 0; i < 3; ++i)
+        mt[i] = Normalize(mt[i]);
+    
+    return mt;
+}
+
 inline Mat4f ToMat4(const Quat &q)
 {
     Mat4f m(1.0f);
