@@ -1,9 +1,13 @@
 #ifndef AU_FBXANIMSTACK_H
 #define AU_FBXANIMSTACK_H
 
+#include <algorithm>
+
 #include "fbxnode.h"
 
-#include "fbxsettings.h"
+#include "fbxutil.h"
+
+#include "fbxscenenode.h"
 
 namespace Au{
 namespace Media{
@@ -38,6 +42,8 @@ struct Keyframe
 {
     Keyframe(int64_t frame, float value)
     : frame(frame), value(value) {}
+    bool operator<(const Keyframe& other)
+    { return frame < other.frame; }
     int64_t frame;
     float value;
 };
@@ -160,7 +166,40 @@ public:
             }
             keyframes.push_back(Keyframe(keyTime[i], val));
         }
+        
+        std::sort(keyframes.begin(), keyframes.end());
     }
+    
+    void Evaluate(int64_t time)
+    {
+        Keyframe* k0 = 0, *k1 = 0;
+            
+        for(int i = keyframes.size() - 1; i >= 0; --i)
+        {
+            k0 = &keyframes[i];
+            if(i == keyframes.size() - 1)
+                k1 = k0;
+            else
+                k1 = &keyframes[i + 1];
+            if(k0->frame <= time)
+                break;
+        }
+        
+        if(k0 != k1)
+        {
+            float a = k0->value;
+            float b = k1->value;
+            float t = (float)(time - k0->frame) / (float)(k1->frame - k0->frame);
+            
+            value = a + t * (b - a);
+        }
+        else if(k0)
+        {
+            value = k0->value;
+        }
+    }
+    
+    float Value() { return value; }
     
     std::string& GetName() { return name; }
     unsigned KeyframeCount() { return keyframes.size(); }
@@ -168,6 +207,7 @@ public:
 private:
     std::string name;
     std::vector<Keyframe> keyframes;
+    float value;
 };
     
 class AnimationCurveNode
@@ -178,10 +218,10 @@ public:
         int64_t uid = node[0].GetInt64();
         
         Node* conn = 0;
-        Node* n = root.GetConnectedParent("Model", uid, &conn);
-        if(n && conn)
+        animatedNode = root.GetConnectedParent("Model", uid, &conn);
+        if(animatedNode && conn)
         {
-            objectName = (*n)[1].GetString();
+            objectName = (*animatedNode)[1].GetString();
             propName = (*conn)[3].GetString();
         }
         
@@ -191,18 +231,46 @@ public:
         for(unsigned i = 0; i < nodes.size() && i < conns.size(); ++i)
         {
             std::string connName = (*conns[i])[3].GetString();
-            curves.push_back(AnimationCurve(root, *(nodes[i]), connName, propName, settings));
+            curves.push_back(
+                AnimationCurve(
+                    root, 
+                    *(nodes[i]), 
+                    connName, 
+                    propName, 
+                    settings
+                )
+            );
         }
     }
+    
+    void Evaluate(int64_t time)
+    {
+        for(unsigned i = 0; i < curves.size(); ++i)
+        {
+            curves[i].Evaluate(time);
+        }
+    }
+    
+    Node* GetAnimatedNode() { return animatedNode; }
     
     std::string& GetObjectName() { return objectName; }
     std::string& GetPropertyName() { return propName; }
     unsigned CurveCount() { return curves.size(); }
     AnimationCurve* GetCurve(unsigned id) { return &curves[id]; }
+    AnimationCurve* GetCurve(const std::string& name)
+    {
+        for(unsigned i = 0; i < curves.size(); ++i)
+        {
+            if(curves[i].GetName() == name)
+                return &curves[i];
+        }
+        return 0;
+    }
 private:
     std::vector<AnimationCurve> curves;
     std::string objectName;
     std::string propName;
+    Node* animatedNode;
 };
 
 class AnimationLayer
@@ -215,13 +283,29 @@ public:
         std::vector<Node*> nodes = 
             root.GetConnectedChildren("AnimationCurveNode", uid);
         for(unsigned i = 0; i < nodes.size(); ++i)
+        {
             curveNodes.push_back(AnimationCurveNode(root, *(nodes[i]), settings));
+            animatedNodes.push_back(curveNodes.back().GetAnimatedNode());
+        }
     }
+    
+    std::vector<Node*>& GetAnimatedNodes() { return animatedNodes; }
     
     unsigned CurveNodeCount() { return curveNodes.size(); }
     AnimationCurveNode* GetCurveNode(unsigned id) { return &curveNodes[id]; }
+    AnimationCurveNode* GetCurveNode(const std::string& nodeName, const std::string& prop)
+    {
+        for(unsigned i = 0; i < curveNodes.size(); ++i)
+        {
+            if(curveNodes[i].GetObjectName() == nodeName &&
+                curveNodes[i].GetPropertyName() == prop)
+                return &curveNodes[i];
+        }
+        return 0;
+    }
 private:
     std::vector<AnimationCurveNode> curveNodes;
+    std::vector<Node*> animatedNodes;
 };
 
 class AnimationStack
@@ -229,13 +313,16 @@ class AnimationStack
 public:
     AnimationStack(Node& root, Node& object, Settings& settings)
     {
+        _settings = &settings;
         int64_t uid = object[0].GetInt64();
         name = object[1].GetString();
         
         std::vector<Node*> nodes =
             root.GetConnectedChildren("AnimationLayer", uid);
         for(unsigned i = 0; i < nodes.size(); ++i)
+        {
             layers.push_back(AnimationLayer(root, *(nodes[i]), settings));
+        }
         
         Node& prop70 = object.Get("Properties70");
         int pCount = prop70.Count("P");
@@ -253,14 +340,145 @@ public:
         }
     }
     
+    Au::Math::Mat4f EvaluateTransform(SceneNode& model, int64_t time)
+    {
+        Au::Math::Mat4f m(1.0f);
+        if(!model.SourceNode()) return m;
+        std::cout << model.Name() << std::endl;
+        
+        Au::Math::Vec3f p = EvaluatePosition(model, time);
+        Au::Math::Quat r = EvaluateRotation(model, time);
+        Au::Math::Vec3f s = EvaluateScale(model, time);
+        
+        m = 
+            Au::Math::Translate(Au::Math::Mat4f(1.0f), p) * 
+            Au::Math::ToMat4(r) * 
+            Au::Math::Scale(Au::Math::Mat4f(1.0f), s);
+        
+        return m;
+    }
+    
+    Au::Math::Vec3f EvaluatePosition(SceneNode& model, int64_t time)
+    {
+        Au::Math::Vec3f v(0.0f, 0.0f, 0.0f);
+        if(layers.empty())
+            return v;
+        AnimationLayer& layer = layers[0];
+        // TODO Take care of layer merging
+        
+        AnimationCurveNode* curveNode =
+            layer.GetCurveNode(model.Name(), "Lcl Translation");
+        
+        if(!curveNode)
+            return v;
+        curveNode->Evaluate(time);
+        
+        v = Au::Math::Vec3f(
+            curveNode->GetCurve("d|X")->Value(),
+            curveNode->GetCurve("d|Y")->Value(),
+            curveNode->GetCurve("d|Z")->Value()
+        );
+        
+        return v;
+    }
+    
+    Au::Math::Quat EvaluateRotation(SceneNode& model, int64_t time)
+    {
+        Au::Math::Quat q(0.0f, 0.0f, 0.0f, 1.0f);
+        if(layers.empty())
+            return q;
+        AnimationLayer& layer = layers[0];
+        // TODO Take care of layer merging
+        
+        AnimationCurveNode* curveNode =
+            layer.GetCurveNode(model.Name(), "Lcl Rotation");
+            
+        if(!curveNode)
+            return q;
+        curveNode->Evaluate(time);
+        
+        Au::Math::Vec3f v(
+            curveNode->GetCurve("d|X")->Value(),
+            curveNode->GetCurve("d|Y")->Value(),
+            curveNode->GetCurve("d|Z")->Value()
+        );
+        
+        Au::Math::Vec3f lclEuler = model.LclRotation();
+        
+        q = Au::Math::EulerToQuat(v);
+        
+        Au::Math::Quat pre = model.PreRotationQuat();
+        Au::Math::Quat post = model.PostRotationQuat();
+        
+        Au::Math::Quat lcl = Au::Math::EulerToQuat(lclEuler);
+        //if(model.LclRotationAnimMode() == SceneNode::ANIMATED_ADD)
+
+        return q;
+    }
+    
+    Au::Math::Vec3f EvaluateScale(SceneNode& model, int64_t time)
+    {
+        Au::Math::Vec3f v(1.0f, 1.0f, 1.0f);
+        if(layers.empty())
+            return v;
+        
+        AnimationLayer& layer = layers[0];
+        // TODO Take care of layer merging
+        
+        AnimationCurveNode* curveNode = 
+            layer.GetCurveNode(model.Name(), "Lcl Scaling");
+        
+        if(!curveNode)
+            return v;
+        curveNode->Evaluate(time);
+        
+        v = Au::Math::Vec3f(
+            curveNode->GetCurve("d|X")->Value(),
+            curveNode->GetCurve("d|Y")->Value(),
+            curveNode->GetCurve("d|Z")->Value()
+        );
+        
+        return v;
+    }
+    
+    std::vector<SceneNode> GetAnimatedNodes() 
+    { 
+        for(unsigned i = 0; i < layers.size(); ++i)
+        {
+            std::vector<Node*>& layerNodes =
+                layers[i].GetAnimatedNodes();
+            for(unsigned j = 0; j < layerNodes.size(); ++j)
+                _addAnimatedNodeIfNotExists(layerNodes[j]);
+        }
+        
+        std::vector<SceneNode> nodes;
+        for(unsigned i = 0; i < animatedNodes.size(); ++i)
+            nodes.push_back(SceneNode(*_settings, *animatedNodes[i]));
+        
+        return nodes;
+    }
+    
     int64_t GetLength() { return length; }
     std::string GetName() { return name; }
     unsigned LayerCount() { return layers.size(); }
     AnimationLayer* GetLayer(unsigned id) { return &layers[id]; }
 private:
+    void _addAnimatedNodeIfNotExists(Node* n)
+    {
+        for(unsigned i = 0; i < animatedNodes.size(); ++i)
+        {
+            if(animatedNodes[i] == n)
+                return;
+        }
+        animatedNodes.push_back(n);
+    }
+    
     std::string name;
     std::vector<AnimationLayer> layers;
     int64_t length;
+    
+    std::vector<Node*> animatedNodes;
+    Settings* _settings;
 };
 
 }

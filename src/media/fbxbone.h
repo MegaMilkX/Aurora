@@ -60,23 +60,19 @@ public:
         }
         else
         {
-            Node& lclTrans = node.Get("Properties70").GetWhere(0, "Lcl Translation");
-            pos.x = (float)lclTrans[4].GetDouble();
-            pos.y = (float)lclTrans[5].GetDouble();
-            pos.z = (float)lclTrans[6].GetDouble();
-            
-            ConvertVector(settings, pos);
-            
-            Node& lclRot = node.Get("Properties70").GetWhere(0, "Lcl Rotation");
-            rot.x = ((float)lclRot[4].GetDouble() * Au::Math::PI) / 180.0f;
-            rot.y = ((float)lclRot[5].GetDouble() * Au::Math::PI) / 180.0f;
-            rot.z = ((float)lclRot[6].GetDouble() * Au::Math::PI) / 180.0f;
-            
-            ConvertVector(settings, rot);
+            SceneNode sn(settings, node);
+
+            pos = sn.LclTranslation();            
+            qrot = Au::Math::EulerToQuat(sn.LclRotation());
+            scale = sn.LclScaling();
+
+            _position = pos;
+            _rotation = qrot;
+            _scale = scale;
             
             transform = 
                 Au::Math::Translate(Au::Math::Mat4f(1.0f), pos) * 
-                Au::Math::ToMat4(Au::Math::EulerToQuat(rot)) * 
+                Au::Math::ToMat4(qrot) * 
                 Au::Math::Scale(Au::Math::Mat4f(1.0f), scale);
         }
         
@@ -86,7 +82,10 @@ public:
     int64_t uid;
     int64_t puid;
     std::string name;
-    Math::Mat4f transform;
+    Au::Math::Vec3f _position;
+    Au::Math::Quat _rotation;
+    Au::Math::Vec3f _scale;
+    Au::Math::Mat4f transform;
 }; 
 
 }

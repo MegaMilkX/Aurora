@@ -69,9 +69,11 @@ void Reader::ConvertCoordSys(CoordSystem sys)
 
 Axis Reader::GetUpAxis()
 {
-    int axis = (int)rootNode.Get("Properties70", 0).GetWhere(0, "UpAxis")[4].GetInt32();
+    Node* upAxis = rootNode.Get("Properties70", 0).GetWhere(0, "UpAxis");
+    int axis = (int)(*upAxis)[4].GetInt32();
     Axis up = FBXAxisToAxis(axis);
-    int sign = (int)rootNode.Get("Properties70", 0).GetWhere(0, "UpAxisSign")[4].GetInt32();
+    Node* upAxisSign = rootNode.Get("Properties70", 0).GetWhere(0, "UpAxisSign");
+    int sign = (int)(*upAxisSign)[4].GetInt32();
     if(sign != 1)
         FlipAxis(up);
     return up;
@@ -79,9 +81,11 @@ Axis Reader::GetUpAxis()
 
 Axis Reader::GetFrontAxis()
 {
-    int axis = (int)rootNode.Get("Properties70", 0).GetWhere(0, "FrontAxis")[4].GetInt32();
+    Node* frontAxis = rootNode.Get("Properties70", 0).GetWhere(0, "FrontAxis");
+    int axis = (int)(*frontAxis)[4].GetInt32();
     Axis front = FBXAxisToAxis(axis);
-    int sign = -(int)rootNode.Get("Properties70", 0).GetWhere(0, "FrontAxisSign")[4].GetInt32();
+    Node* frontAxisSign = rootNode.Get("Properties70", 0).GetWhere(0, "FrontAxisSign");
+    int sign = -(int)(*frontAxisSign)[4].GetInt32();
     if(sign != 1)
         FlipAxis(front);
     return front;
@@ -89,9 +93,11 @@ Axis Reader::GetFrontAxis()
 
 Axis Reader::GetRightAxis()
 {
-    int axis = (int)rootNode.Get("Properties70", 0).GetWhere(0, "CoordAxis")[4].GetInt32();
+    Node* coordAxis = rootNode.Get("Properties70", 0).GetWhere(0, "CoordAxis");
+    int axis = (int)(*coordAxis)[4].GetInt32();
     Axis right = FBXAxisToAxis(axis);
-    int sign = (int)rootNode.Get("Properties70", 0).GetWhere(0, "CoordAxisSign")[4].GetInt32();
+    Node* coordAxisSign = rootNode.Get("Properties70", 0).GetWhere(0, "CoordAxisSign");
+    int sign = (int)(*coordAxisSign)[4].GetInt32();
     if(sign != 1)
         FlipAxis(right);
     return right;
@@ -99,19 +105,22 @@ Axis Reader::GetRightAxis()
 
 TIME_MODE Reader::GetTimeMode()
 {
-    int timeMode = rootNode.Get("Properties70", 0).GetWhere(0, "TimeMode")[4].GetInt32();
+    Node* node = rootNode.Get("Properties70", 0).GetWhere(0, "TimeMode");
+    int timeMode = (*node)[4].GetInt32();
     return (TIME_MODE)timeMode;
 }
 
 int Reader::GetTimeProtocol()
 {
-    int timeMode = rootNode.Get("Properties70", 0).GetWhere(0, "TimeProtocol")[4].GetInt32();
+    Node* node = rootNode.Get("Properties70", 0).GetWhere(0, "TimeProtocol");
+    int timeMode = (*node)[4].GetInt32();
     return timeMode;
 }
 
 double Reader::GetCustomFrameRate()
 {
-    double fps = rootNode.Get("Properties70", 0).GetWhere(0, "CustomFrameRate")[4].GetDouble();
+    Node* node = rootNode.Get("Properties70", 0).GetWhere(0, "CustomFrameRate");
+    double fps = (*node)[4].GetDouble();
     return fps;
 }
 
@@ -662,7 +671,8 @@ bool Reader::ReadFile(const char* data, unsigned size)
     if(!ReadFileFBX(data, size))
         return false;
     
-    settings.scaleFactor = rootNode.Get("Properties70").GetWhere(0, "UnitScaleFactor")[4].GetDouble();
+    Node* unitScaleFactor = rootNode.Get("Properties70").GetWhere(0, "UnitScaleFactor");
+    if(unitScaleFactor) settings.scaleFactor = (*unitScaleFactor)[4].GetDouble();
     settings.origAxes.right = GetRightAxis();
     settings.origAxes.up = GetUpAxis();
     settings.origAxes.front = GetFrontAxis();

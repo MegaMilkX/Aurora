@@ -316,16 +316,16 @@ public:
         return 0;
     }
     
-    Node& GetWhere(unsigned propId, const std::string& value)
+    Node* GetWhere(unsigned propId, const std::string& value)
     {
         for(unsigned i = 0; i < children.size(); ++i)
         {
             if(children[i][propId].GetString() == value)
             {
-                return children[i];
+                return &children[i];
             }
         }
-        return children[0];
+        return 0;
     }
     
     std::vector<Node> GetAll(const std::string& name)
