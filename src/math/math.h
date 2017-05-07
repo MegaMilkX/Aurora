@@ -614,7 +614,8 @@ inline Quat EulerToQuat(Vec3f& euler)
     Au::Math::Quat qx = AngleAxis(euler.x, Au::Math::Vec3f(1.0f, 0.0f, 0.0f));
     Au::Math::Quat qy = AngleAxis(euler.y, Au::Math::Vec3f(0.0f, 1.0f, 0.0f));
     Au::Math::Quat qz = AngleAxis(euler.z, Au::Math::Vec3f(0.0f, 0.0f, 1.0f));
-    return qx * qy * qz;
+    return Normalize(qz * qy * qx);
+}
 }
 
 inline Quat ToQuat(Mat3f& m)
