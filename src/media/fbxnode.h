@@ -316,6 +316,17 @@ public:
         return 0;
     }
     
+    Node* GetWhere(const std::string& name, unsigned propId, const std::string& value)
+    {
+        for(unsigned i = 0; i < children.size(); ++i)
+        {
+            if(children[i].Name() == name)
+                if(children[i][propId].GetString() == value)
+                    return &children[i];
+        }
+        return 0;
+    }
+    
     Node* GetWhere(unsigned propId, const std::string& value)
     {
         for(unsigned i = 0; i < children.size(); ++i)
