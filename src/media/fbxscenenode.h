@@ -17,6 +17,7 @@ public:
         ANIMATED,
         ANIMATED_ADD
     };
+    SceneNode(): uid(0), source(0) {}
     SceneNode(Settings& settings, Node& n)
     {
         _settings = &settings;
