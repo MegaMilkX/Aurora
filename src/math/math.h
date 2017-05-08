@@ -309,14 +309,20 @@ inline Vec3f operator*(const Mat3f &m, const Vec3f &v)
 //
 inline Mat3f Transpose(const Mat3f &m)
 {
-    //TODO
-    return Mat3f();
+    Mat3f r(1.0f);
+    for(unsigned i = 0; i < 3; ++i)
+        for(unsigned j = 0; j < 3; ++j)
+            r[i][j] = m[j][i];
+    return r;
 }
 
 inline Mat4f Transpose(const Mat4f &m)
 {
-    //TODO
-    return Mat4f();
+    Mat4f r(1.0f);
+    for(unsigned i = 0; i < 4; ++i)
+        for(unsigned j = 0; j < 4; ++j)
+            r[i][j] = m[j][i];
+    return r;
 }
 
 inline Mat4f Scale(const Mat4f &m, const Vec3f &v)
