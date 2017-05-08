@@ -7,6 +7,8 @@
 
 #include "fbxutil.h"
 
+#include "fbxpose.h"
+
 namespace Au{
 namespace Media{
 namespace FBX{
@@ -26,15 +28,17 @@ public:
         Node* parent = 
             root.GetConnectedParent("Model", uid, &conn);
             
+        Node* poseData = root.GetWhere("Pose", 2, "BindPose");
+        Pose pose(settings, &root, poseData);
+        
         if(parent)
             puid = (*parent)[0].GetInt64();
         
         Au::Math::Vec3f pos(0.0f, 0.0f, 0.0f);
-        Au::Math::Vec3f rot(0.0f, 0.0f, 0.0f);
         Au::Math::Quat qrot(0.0f, 0.0f, 0.0f, 1.0f);
         Au::Math::Vec3f scale(1.0f, 1.0f, 1.0f);
-        
-        if(false/*deformer*/)
+        /*
+        if(deformer)
         {
             std::vector<double> mat =
                 deformer->Get("TransformLink")[0].GetArray<double>();
@@ -48,27 +52,16 @@ public:
             
             ConvertMatrix(settings, mat4f);
             
-            pos = Au::Math::Vec3f(mat4f[3].x, mat4f[3].y, mat4f[3].z);
-            qrot = Au::Math::ToQuat(ToMat3(mat4f));
-            
-            //ConvertVector(settings, pos);
-            
-            transform = 
-                Au::Math::Translate(Au::Math::Mat4f(1.0f), pos) * 
-                Au::Math::ToMat4(qrot) * 
-                Au::Math::Scale(Au::Math::Mat4f(1.0f), scale);
-        }
-        else
+            transform = mat4f;
+        }*/
+        
+        if(!pose.GetPoseTransform(uid, transform))
         {
             SceneNode sn(settings, node);
 
             pos = sn.LclTranslation();            
             qrot = Au::Math::EulerToQuat(sn.LclRotation());
             scale = sn.LclScaling();
-
-            _position = pos;
-            _rotation = qrot;
-            _scale = scale;
             
             transform = 
                 Au::Math::Translate(Au::Math::Mat4f(1.0f), pos) * 
@@ -82,9 +75,6 @@ public:
     int64_t uid;
     int64_t puid;
     std::string name;
-    Au::Math::Vec3f _position;
-    Au::Math::Quat _rotation;
-    Au::Math::Vec3f _scale;
     Au::Math::Mat4f transform;
 }; 
 
