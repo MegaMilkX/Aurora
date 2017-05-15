@@ -213,6 +213,7 @@ class MouseHandler
 public:
     virtual ~MouseHandler();
     bool Init(Au::Window* window);
+    bool Init(HWND hWnd);
     
     virtual void Move(int x, int y);
     virtual void KeyUp(KEYCODE key);
@@ -225,6 +226,7 @@ class KeyboardHandler
 public:
     virtual ~KeyboardHandler();
     bool Init(Au::Window* window);
+    bool Init(HWND hWnd);
     
     virtual void KeyUp(KEYCODE key);
     virtual void KeyDown(KEYCODE key);

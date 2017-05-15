@@ -92,11 +92,11 @@ LRESULT CALLBACK InputWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
     return 0;
 }
 
-bool ReplaceWindowProc(Window* window)
+bool ReplaceWindowProc(HWND hWnd)
 {
     if(!OldWndProc)
     {
-        OldWndProc = (WNDPROC)SetWindowLongPtr(*window, GWLP_WNDPROC, (LONG_PTR)InputWndProc);
+        OldWndProc = (WNDPROC)SetWindowLongPtr(hWnd, GWLP_WNDPROC, (LONG_PTR)InputWndProc);
         if(!OldWndProc)
             return false;
     }
@@ -111,15 +111,20 @@ MouseHandler::~MouseHandler()
 
 bool MouseHandler::Init(Au::Window* window)
 {
-    if(!ReplaceWindowProc(window))
+    return Init(*window);
+}
+
+bool MouseHandler::Init(HWND hWnd)
+{
+    if(!ReplaceWindowProc(hWnd))
         return false;
     
     mouseHandler = this;
     RAWINPUTDEVICE device;
     device.usUsagePage = 0x01;
     device.usUsage = 0x02; //RID_MOUSE ?
-    device.dwFlags = 0;//RIDEV_NOLEGACY don't use
-    device.hwndTarget = *window;
+    device.dwFlags = 0;// don't use RIDEV_NOLEGACY
+    device.hwndTarget = hWnd;
     winapiRawInputDevices.push_back(device);
     
     if(!RegisterRawInputDevices(winapiRawInputDevices.data(), winapiRawInputDevices.size(), sizeof(RAWINPUTDEVICE)))
@@ -141,7 +146,12 @@ KeyboardHandler::~KeyboardHandler()
 
 bool KeyboardHandler::Init(Au::Window* window)
 {
-    if(!ReplaceWindowProc(window))
+    return Init(*window);
+}
+
+bool KeyboardHandler::Init(HWND hWnd)
+{
+    if(!ReplaceWindowProc(hWnd))
         return false;
     
     keyboardHandler = this;
@@ -149,8 +159,8 @@ bool KeyboardHandler::Init(Au::Window* window)
     RAWINPUTDEVICE device;
     device.usUsagePage = 0x01;
     device.usUsage = 0x06; //RID_KEYBOARD ?
-    device.dwFlags = 0;//RIDEV_NOLEGACY don't use
-    device.hwndTarget = *window;
+    device.dwFlags = 0;// don't use RIDEV_NOLEGACY 
+    device.hwndTarget = hWnd;
     winapiRawInputDevices.push_back(device);
     
     if(!RegisterRawInputDevices(winapiRawInputDevices.data(), winapiRawInputDevices.size(), sizeof(RAWINPUTDEVICE)))
