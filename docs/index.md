@@ -1,4 +1,7 @@
 ## Introduction
+// Under construction
+
+![screenshot](index_pic.jpg "screenshot")
 
 ## Library components
 
@@ -9,6 +12,6 @@
 * [Au::Lua](#)
 * [Au::Math](#)
 * [Au::Timer](#)
-* [Au::Window](#)
+* [Au::Window](window)
 
 ## How to build
