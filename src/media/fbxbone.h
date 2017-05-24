@@ -37,23 +37,6 @@ public:
         Au::Math::Vec3f pos(0.0f, 0.0f, 0.0f);
         Au::Math::Quat qrot(0.0f, 0.0f, 0.0f, 1.0f);
         Au::Math::Vec3f scale(1.0f, 1.0f, 1.0f);
-        /*
-        if(deformer)
-        {
-            std::vector<double> mat =
-                deformer->Get("TransformLink")[0].GetArray<double>();
-            if(mat.size() < 16)
-                return;
-            std::vector<float> matf(mat.size());
-            for(unsigned i = 0; i < mat.size(); ++i)
-                matf[i] = (float)mat[i];
-            
-            Au::Math::Mat4f mat4f = *(Math::Mat4f*)matf.data();
-            
-            ConvertMatrix(settings, mat4f);
-            
-            transform = mat4f;
-        }*/
         
         if(!pose.GetPoseTransform(uid, transform))
         {
@@ -69,13 +52,22 @@ public:
                 Au::Math::Scale(Au::Math::Mat4f(1.0f), scale);
         }
         
-        
+        if(deformer)
+        {
+            indices = deformer->Get("Indexes")[0].GetArray<int32_t>();
+            std::vector<double> w = 
+                deformer->Get("Weights")[0].GetArray<double>();
+            for(unsigned i = 0; i < w.size(); ++i)
+                weights.push_back((float)w[i]);
+        }
     }
     
     int64_t uid;
     int64_t puid;
     std::string name;
     Au::Math::Mat4f transform;
+    std::vector<int32_t> indices;
+    std::vector<float> weights;
 }; 
 
 }
