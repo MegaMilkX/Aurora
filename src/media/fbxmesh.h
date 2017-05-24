@@ -56,8 +56,6 @@ public:
         return result;
     }
     
-    Skin& GetSkin() { return skin; }
-    
     void ConvertCoordSystem(Axis new_right, Axis new_up, Axis new_front)
     {
         ConvertVertexArray3(vertices, right, up, front,
@@ -160,19 +158,18 @@ public:
         for(unsigned i = 0; i < indices.size(); ++i)
             if(indices[i] >= id)
                 indices[i]--;
+            
         vertices.erase(vertices.begin() + id * 3, vertices.begin() + id * 3 + 3);
+        origVertIndices.erase(origVertIndices.begin() + id);
+        
         for(unsigned i = 0; i < normalLayers.size(); ++i)
-        {
             normalLayers[i].erase(normalLayers[i].begin() + id * 3, normalLayers[i].begin() + id * 3 + 3);
-        }
+        
         for(unsigned i = 0; i < uvLayers.size(); ++i)
-        {
             uvLayers[i].erase(uvLayers[i].begin() + id * 2, uvLayers[i].begin() + id * 2 + 2);
-        }
+        
         for(unsigned i = 0; i < rgbaLayers.size(); ++i)
-        {
             rgbaLayers[i].erase(rgbaLayers[i].begin() + id * 4, rgbaLayers[i].begin() + id * 4 + 4);
-        }
     }
     
     int64_t uid;
@@ -182,10 +179,10 @@ public:
     
     std::vector<int> indices;
     std::vector<float> vertices;
+    std::vector<int32_t> origVertIndices;
     std::vector<std::vector<float>> normalLayers;
     std::vector<std::vector<float>> uvLayers;
     std::vector<std::vector<unsigned char>> rgbaLayers;
-    Skin skin;
 };
 
 }}}

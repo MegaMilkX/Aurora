@@ -507,6 +507,7 @@ bool Reader::ReadVerticesAndIndices(Mesh& mesh, unsigned meshId)
         mesh.vertices.push_back(fbxVertices[idx * 3 + 1]);
         mesh.vertices.push_back(fbxVertices[idx * 3 + 2]);
         mesh.indices.push_back(j);
+        mesh.origVertIndices.push_back(idx);
     }
     
     return true;
