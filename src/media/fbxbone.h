@@ -9,6 +9,8 @@
 
 #include "fbxpose.h"
 
+#include "fbxmesh.h"
+
 namespace Au{
 namespace Media{
 namespace FBX{
@@ -16,7 +18,7 @@ namespace FBX{
 class Bone
 {
 public:
-    Bone(Settings& settings, Node& root, Node& node)
+    Bone(Settings& settings, Node& root, Node& node, Mesh* meshTgt)
     : transform(1.0f), uid(0), puid(0)
     {
         uid = node[0].GetInt64();
@@ -50,33 +52,50 @@ public:
                 Au::Math::Scale(Au::Math::Mat4f(1.0f), scale);
         }
         
+        if(!meshTgt)
+            return;
+        
+        meshName = meshTgt->name;
+        
         Node* deformer = 
             root.GetConnectedParent("Deformer", uid, &conn);
         if(!deformer)
             return;
-        
-        Node* skinDeformer = 
-            root.GetConnectedParent("Deformer", (*deformer)[0].GetInt64(), &conn);
-        if(!skinDeformer)
-            return;
-        
-        Node* geometryNode = 
-            root.GetConnectedParent("Geometry", (*skinDeformer)[0].GetInt64(), &conn);
-        if(!geometryNode)
-            return;
-        
-        Node* modelNode =
-            root.GetConnectedParent("Model", (*geometryNode)[0].GetInt64(), &conn);
-        if(!modelNode)
-            return;
-        
-        meshName = (*modelNode)[1].GetString();
         
         indices = deformer->Get("Indexes")[0].GetArray<int32_t>();
         std::vector<double> w = 
             deformer->Get("Weights")[0].GetArray<double>();
         for(unsigned i = 0; i < w.size(); ++i)
             weights.push_back((float)w[i]);
+        
+        if(indices.size() != weights.size())
+        {
+            std::cout 
+            << "Warning! " 
+            << name 
+            << " fbx bone has unequal index and weight counts" 
+            << std::endl;
+            indices.clear();
+            weights.clear();
+            return;
+        }
+        
+        std::vector<int32_t> newIndices;
+        std::vector<float> newWeights;
+        for(unsigned i = 0; i < indices.size(); ++i)
+        {
+            for(unsigned j = 0; j < meshTgt->origVertIndices.size(); ++j)
+            {
+                if(meshTgt->origVertIndices[j] == indices[i])
+                {
+                    newIndices.push_back(j);
+                    newWeights.push_back(weights[i]);
+                }
+            }
+        }
+        
+        indices = newIndices;
+        weights = newWeights;
     }
     
     int64_t uid;

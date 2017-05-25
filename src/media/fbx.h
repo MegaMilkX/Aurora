@@ -42,6 +42,13 @@ public:
     
     int MeshCount() { return meshes.size(); }
     Mesh& GetMesh(unsigned id) { return meshes[id]; }
+    Mesh* GetMesh(const std::string& name)
+    {
+        for(unsigned i = 0; i < meshes.size(); ++i)
+            if(meshes[i].name == name)
+                return &meshes[i];
+        return 0;
+    }
     
     Node& GetRootNode() { return rootNode; }
     
@@ -60,6 +67,8 @@ private:
     std::vector<Node> GetConnectedChildren(const std::string& childName, Node& node);
     
     Axis FBXAxisToAxis(unsigned axis);
+    
+    Mesh* GetBoneDeformTarget(Node* bone);
     
     Settings settings;
     Node rootNode;

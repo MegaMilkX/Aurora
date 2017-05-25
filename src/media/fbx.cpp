@@ -216,6 +216,36 @@ void Reader::FlipAxis(Axis& axis)
         axis = AXIS_Z;
 }
 
+Mesh* Reader::GetBoneDeformTarget(Node* bone)
+{
+    int64_t uid = (*bone)[0].GetInt64();
+    Node* conn = 0;
+    
+    Node* deformer = 
+        rootNode.GetConnectedParent("Deformer", uid, &conn);
+    if(!deformer)
+        return 0;
+    
+    Node* skinDeformer = 
+        rootNode.GetConnectedParent("Deformer", (*deformer)[0].GetInt64(), &conn);
+    if(!skinDeformer)
+        return 0;
+    
+    Node* geometryNode = 
+        rootNode.GetConnectedParent("Geometry", (*skinDeformer)[0].GetInt64(), &conn);
+    if(!geometryNode)
+        return 0;
+    
+    Node* modelNode =
+        rootNode.GetConnectedParent("Model", (*geometryNode)[0].GetInt64(), &conn);
+    if(!modelNode)
+        return 0;
+    
+    std::string meshName = (*modelNode)[1].GetString();
+    
+    return GetMesh(meshName);
+}
+
 std::vector<Bone> Reader::GetBones()
 {
     std::vector<Bone> result;
@@ -228,7 +258,9 @@ std::vector<Bone> Reader::GetBones()
         if(model[2].GetString() != "LimbNode")
             continue;
         
-        Bone bone(settings, rootNode, model);
+        Mesh* meshTgt = GetBoneDeformTarget(&model);
+        
+        Bone bone(settings, rootNode, model, meshTgt);
         result.push_back(bone);
     }
     
@@ -652,6 +684,13 @@ bool Reader::ReadFile(const char* data, unsigned size)
         ReadSkin(mesh, i);
         
         mesh.OptimizeDuplicates();
+        
+        Node* conn = 0;
+        Node* mdlNode = rootNode.GetConnectedParent("Model", uid, &conn);
+        if(!mdlNode)
+            continue;
+        mesh.name = (*mdlNode)[1].GetString();
+        
         meshes.push_back(mesh);
     }    
     

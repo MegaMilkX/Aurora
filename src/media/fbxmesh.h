@@ -177,6 +177,8 @@ public:
     CoordSystem coordSys;
     Axis right, up, front;
     
+    std::string name;
+    
     std::vector<int> indices;
     std::vector<float> vertices;
     std::vector<int32_t> origVertIndices;
