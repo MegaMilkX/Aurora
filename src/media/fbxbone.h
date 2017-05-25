@@ -22,9 +22,7 @@ public:
         uid = node[0].GetInt64();
         name = node[1].GetString();
         
-        Node* conn;
-        Node* deformer = 
-            root.GetConnectedParent("Deformer", uid, &conn);
+        Node* conn = 0;
         Node* parent = 
             root.GetConnectedParent("Model", uid, &conn);
             
@@ -52,19 +50,39 @@ public:
                 Au::Math::Scale(Au::Math::Mat4f(1.0f), scale);
         }
         
-        if(deformer)
-        {
-            indices = deformer->Get("Indexes")[0].GetArray<int32_t>();
-            std::vector<double> w = 
-                deformer->Get("Weights")[0].GetArray<double>();
-            for(unsigned i = 0; i < w.size(); ++i)
-                weights.push_back((float)w[i]);
-        }
+        Node* deformer = 
+            root.GetConnectedParent("Deformer", uid, &conn);
+        if(!deformer)
+            return;
+        
+        Node* skinDeformer = 
+            root.GetConnectedParent("Deformer", (*deformer)[0].GetInt64(), &conn);
+        if(!skinDeformer)
+            return;
+        
+        Node* geometryNode = 
+            root.GetConnectedParent("Geometry", (*skinDeformer)[0].GetInt64(), &conn);
+        if(!geometryNode)
+            return;
+        
+        Node* modelNode =
+            root.GetConnectedParent("Model", (*geometryNode)[0].GetInt64(), &conn);
+        if(!modelNode)
+            return;
+        
+        meshName = (*modelNode)[1].GetString();
+        
+        indices = deformer->Get("Indexes")[0].GetArray<int32_t>();
+        std::vector<double> w = 
+            deformer->Get("Weights")[0].GetArray<double>();
+        for(unsigned i = 0; i < w.size(); ++i)
+            weights.push_back((float)w[i]);
     }
     
     int64_t uid;
     int64_t puid;
     std::string name;
+    std::string meshName;
     Au::Math::Mat4f transform;
     std::vector<int32_t> indices;
     std::vector<float> weights;
