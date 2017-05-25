@@ -232,48 +232,6 @@ std::vector<Bone> Reader::GetBones()
         result.push_back(bone);
     }
     
-    //std::vector<Node> poseNodes = rootNode.Get("Pose").GetAll("PoseNode");
-    
-    /*
-    for(unsigned i = 0; i < rootNode.ChildCount(); ++i)
-    {
-        Node node = rootNode.Get(i);
-        
-        if(node.Name() == "Model")
-        {
-            if(node[2].GetString() == "LimbNode")
-            {
-                Bone bone;
-                bone.name = node[1].GetString();
-                bone.uid = node[0].GetInt64();
-                
-                for(unsigned j = 0; j < poseNodes.size(); ++j)
-                {
-                    int64_t node_uid = poseNodes[j].Get("Node")[0].GetInt64();
-                    
-                    if(bone.uid == node_uid)
-                    {
-                        std::vector<float> mat = poseNodes[j].Get("Matrix")[0].GetArray<float>();
-                        bone.bindTransform = *(Math::Mat4f*)mat.data();
-                    }
-                }
-                
-                std::vector<Node> connections = rootNode.GetAll("C");
-                for(unsigned j = 0; j < connections.size(); ++j)
-                {
-                    if(connections[j][0].GetString() == "OO" &&
-                        connections[j][1].GetInt64() == bone.uid)
-                    {
-                        bone.parentUID = connections[j][2].GetInt64();
-                    }
-                }
-                
-                result.push_back(bone);
-            }
-        }
-    }
-    */
-    
     return result;
 }
 
