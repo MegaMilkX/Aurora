@@ -36,6 +36,8 @@ public:
     Mesh(int64_t uid, Axis right, Axis up, Axis front)
     : uid(uid), right(right), up(up), front(front) {}
     
+    int VertexCount() { return vertices.size() / 3; }
+    
     std::vector<float> GetVertices()
     {
         std::vector<float> result = vertices;
