@@ -98,6 +98,11 @@ public:
         weights = newWeights;
     }
     
+    bool operator<(const Bone& other)
+    {
+        return name < other.name;
+    }
+    
     int64_t uid;
     int64_t puid;
     std::string name;

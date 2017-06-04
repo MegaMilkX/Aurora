@@ -264,6 +264,8 @@ std::vector<Bone> Reader::GetBones()
         result.push_back(bone);
     }
     
+    std::sort(result.begin(), result.end());
+    
     return result;
 }
 
