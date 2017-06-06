@@ -147,7 +147,7 @@ inline void UniformInterface<Math::Mat3f>::Upload(unsigned int location, unsigne
         location,
         count,
         GL_FALSE,
-        (GLfloat*)&(UniformStorage<Math::Mat3f>::data[dataIndex][0])
+        (GLfloat*)&UniformStorage<Math::Mat3f>::data[dataIndex][0][0]
     );
 }
 template<>
@@ -157,7 +157,7 @@ inline void UniformInterface<Math::Mat4f>::Upload(unsigned int location, unsigne
         location, 
         count, 
         GL_FALSE, 
-        (GLfloat*)&(UniformStorage<Math::Mat4f>::data[dataIndex][0])
+        (GLfloat*)&UniformStorage<Math::Mat4f>::data[dataIndex][0][0]
     );
 }
 
