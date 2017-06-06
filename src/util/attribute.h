@@ -164,7 +164,7 @@ AU_DEF_ATTRIB(ColorRGBA, float, 4);
 AU_DEF_ATTRIB(ColorRGB, float, 3);
 
 AU_DEF_ATTRIB(BoneWeight4, float, 4);
-AU_DEF_ATTRIB(BoneIndex4, int, 4);
+AU_DEF_ATTRIB(BoneIndex4, float, 4);
 
 }
 
