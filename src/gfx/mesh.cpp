@@ -42,6 +42,8 @@ Mesh::Mesh()
     vertexBuffer.Bind();
     indexBuffer = GLBuffer::Create(GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW);
     indexBuffer.Bind();
+    
+    subMeshes.push_back(SubMesh("", this, 0, 0));
 }
 
 Mesh::~Mesh()
@@ -176,6 +178,8 @@ void Mesh::IndexData(void* data, unsigned int count)
     indexBuffer.Data(data, sizeof(unsigned short) * count);
     indexCount = count;
     //index_type = GL_UNSIGNED_SHORT;
+    
+    subMeshes[0].indexCount = indexCount;
 }
 
 void Mesh::Bind()
@@ -183,9 +187,9 @@ void Mesh::Bind()
     glBindVertexArray(vao);
 }
 
-void Mesh::Render()
+void Mesh::Render(unsigned int indexCount, unsigned int offset)
 {
-    glDrawElements(primitive, indexCount, GL_UNSIGNED_SHORT, 0);
+    glDrawElements(primitive, indexCount, GL_UNSIGNED_SHORT, (void*)offset);
 }
 
 void Mesh::PrintFormat()

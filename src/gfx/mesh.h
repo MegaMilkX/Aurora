@@ -21,6 +21,32 @@ public:
         TRIANGLE
     };
     
+    struct SubMesh
+    {
+    friend Mesh;
+        SubMesh(const std::string& name, Mesh* mesh, unsigned int indexCount, unsigned int offset)
+        : name(name), mesh(mesh), indexCount(indexCount), offset(offset)
+        {}
+
+        void Bind()
+        {
+            mesh->Bind();
+        }
+        void Render()
+        {
+            mesh->Render(indexCount, offset);
+        }
+        
+        void SetIndexCount(unsigned int value) { indexCount = value; }
+        void SetOffset(unsigned int value) { offset = value; }
+        
+    private:
+        std::string name;
+        Mesh* mesh;
+        unsigned int indexCount;
+        unsigned int offset;
+    };
+    
     void PrimitiveType(PRIMITIVE prim);
     void Format(const std::vector<AttribInfo>& vertexFormat);
     std::vector<AttribInfo>& Format();
@@ -34,9 +60,34 @@ public:
     void IndexData(const std::vector<unsigned short>& data);
     void IndexData(void* data, unsigned int count);
     
+    unsigned int IndexCount() { return indexCount; }
+    
+    void SetSubMesh(const std::string& name, unsigned int indexCount, unsigned int offset)
+    {
+        SubMesh* sm = GetSubMesh(name);
+        sm->SetIndexCount(indexCount);
+        sm->SetOffset(offset);
+    }
+    SubMesh* FindSubMesh(const std::string& name)
+    {
+        for(unsigned i = 0; i < subMeshes.size(); ++i)
+            if(subMeshes[i].name == name)
+                return &subMeshes[i];
+        return 0;
+    }
+    SubMesh* GetSubMesh(const std::string& name)
+    {
+        SubMesh* sm = FindSubMesh(name);
+        if(sm) return sm;
+        subMeshes.push_back(SubMesh(name, this, 0, indexCount));
+        return &(subMeshes[subMeshes.size() - 1]);
+    }
+    SubMesh* GetSubMesh(unsigned int i) { return &subMeshes[i]; }
+    unsigned int SubMeshCount() { return subMeshes.size(); }
+    
     void Bind();
     
-    void Render();
+    void Render(unsigned int indexCount, unsigned int offset = 0);
     
     void PrintFormat();
 private:
@@ -48,6 +99,8 @@ private:
     unsigned int indexCount;
     
     GLenum primitive;
+    
+    std::vector<SubMesh> subMeshes;
     
     template<typename T, typename OrigT>
     void BlitAttribToBuffer(

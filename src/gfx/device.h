@@ -25,6 +25,7 @@ public:
     void Destroy(Shader* shader);
     
     void Bind(Mesh* mesh);
+    void Bind(Mesh::SubMesh* subMesh);
     void Bind(RenderState* state);
     template<typename T>
     void Set(Uniform uniform, const T& data)
@@ -51,7 +52,7 @@ private:
     HGLRC threadingContext;
     int contextVersion = 0;
     
-    Mesh* boundMesh;
+    Mesh::SubMesh* boundSubMesh;
     RenderState* boundState;
     Uniform currentUniform;
 };

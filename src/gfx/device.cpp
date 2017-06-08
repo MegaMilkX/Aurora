@@ -118,7 +118,7 @@ void Device::Clear()
 void Device::Render()
 {
     boundState->Bind();
-    boundMesh->Render();
+    boundSubMesh->Render();
 }
 
 void Device::SwapBuffers()
@@ -161,8 +161,13 @@ void Device::Destroy(Shader* shader)
 
 void Device::Bind(Mesh* mesh)
 {
-    boundMesh = mesh;
-    mesh->Bind();
+    Bind(mesh->GetSubMesh(0));
+}
+
+void Device::Bind(Mesh::SubMesh* subMesh)
+{
+    boundSubMesh = subMesh;
+    boundSubMesh->Bind();
 }
 
 void Device::Bind(RenderState* state)
