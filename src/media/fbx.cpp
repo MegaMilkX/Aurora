@@ -58,13 +58,7 @@ void Reader::ConvertCoordSys(CoordSystem sys)
     settings.convAxes.up = AXIS_Y;
     settings.convAxes.front = AXIS_Z;
     
-    coordSys = sys;/*
-    if(sys == OPENGL)
-        for(unsigned i = 0; i < meshes.size(); ++i)
-            meshes[i].ConvertCoordSystem(AXIS_X, AXIS_Y, AXIS_Z);
-    else if(sys == DIRECT3D)
-        for(unsigned i = 0; i < meshes.size(); ++i)
-            meshes[i].ConvertCoordSystem(AXIS_X, AXIS_Y, AXIS_MZ);*/
+    coordSys = sys;
 }
 
 Axis Reader::GetUpAxis()
@@ -246,10 +240,8 @@ Mesh* Reader::GetBoneDeformTarget(Node* bone)
     return GetMesh(meshName);
 }
 
-std::vector<Bone> Reader::GetBones()
-{
-    std::vector<Bone> result;
-    
+void Reader::_loadBones()
+{    
     std::vector<Node> models = rootNode.GetAll("Model");
     
     for(unsigned i = 0; i < models.size(); ++i)
@@ -261,12 +253,20 @@ std::vector<Bone> Reader::GetBones()
         Mesh* meshTgt = GetBoneDeformTarget(&model);
         
         Bone bone(settings, rootNode, model, meshTgt);
-        result.push_back(bone);
+        bones.push_back(bone);
     }
     
-    std::sort(result.begin(), result.end());
+    std::sort(bones.begin(), bones.end());
     
-    return result;
+    for(unsigned i = 0; i < bones.size(); ++i)
+    {
+        bones[i].Index(i);
+    }
+}
+
+std::vector<Bone>& Reader::GetBones() 
+{ 
+    return bones; 
 }
 
 void Reader::ReadData(Prop& prop, std::vector<char>& out, const char* data, const char*& cursor, const char* end)
@@ -530,27 +530,11 @@ bool Reader::ReadFile(const char* data, unsigned size)
     {
         Node& geometry = rootNode.Get("Geometry", i);
         Mesh mesh(settings, rootNode, geometry);
-        /*
-        int64_t uid = rootNode.Get("Geometry", i)[0].GetInt64();
-        Mesh mesh(uid, GetRightAxis(), GetUpAxis(), GetFrontAxis());
-        mesh.coordSys = coordSys;
         
-        ReadVerticesAndIndices(mesh, i);
-        ReadNormals(mesh, i);
-        ReadUV(mesh, i);
-        
-        ReadSkin(mesh, i);
-        
-        mesh.OptimizeDuplicates();
-        
-        Node* conn = 0;
-        Node* mdlNode = rootNode.GetConnectedParent("Model", uid, &conn);
-        if(!mdlNode)
-            continue;
-        mesh.name = (*mdlNode)[1].GetString();
-        */
         meshes.push_back(mesh);
-    }    
+    }
+    
+    _loadBones();
     
     return true;
 }

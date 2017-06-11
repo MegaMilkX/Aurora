@@ -38,7 +38,16 @@ public:
     
     void FlipAxis(Axis& axis);
     
-    std::vector<Bone> GetBones();
+    std::vector<Bone>& GetBones();
+    Bone* GetBoneByUID(int64_t uid)
+    {
+        for(unsigned i = 0; i < bones.size(); ++i)
+        {
+            if(bones[i].deformerUID == uid)
+                return &bones[i];
+        }
+        return 0;
+    }
     
     int MeshCount() { return meshes.size(); }
     Mesh& GetMesh(unsigned id) { return meshes[id]; }
@@ -64,6 +73,8 @@ private:
     bool ReadWeights(Mesh& mesh, unsigned meshId);
     bool ReadSkin(Mesh& mesh, unsigned meshId);
     
+    void _loadBones();
+    
     std::vector<Node> GetConnectedChildren(const std::string& childName, Node& node);
     
     Axis FBXAxisToAxis(unsigned axis);
@@ -74,6 +85,7 @@ private:
     Node rootNode;
     CoordSystem coordSys;
     std::vector<Mesh> meshes;
+    std::vector<Bone> bones;
 };
 
 }

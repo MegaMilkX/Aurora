@@ -61,6 +61,7 @@ public:
             root.GetConnectedParent("Deformer", uid, &conn);
         if(!deformer)
             return;
+        deformerUID = (*deformer)[0].GetInt64();
         
         indices = deformer->Get("Indexes")[0].GetArray<int32_t>();
         std::vector<double> w = 
@@ -98,18 +99,24 @@ public:
         weights = newWeights;
     }
     
+    void Index(unsigned i) { index = i; }
+    unsigned Index() { return index; }
+    
     bool operator<(const Bone& other)
     {
         return name < other.name;
     }
     
     int64_t uid;
+    int64_t deformerUID;
     int64_t puid;
     std::string name;
     std::string meshName;
     Au::Math::Mat4f transform;
     std::vector<int32_t> indices;
     std::vector<float> weights;
+    
+    unsigned index;
 }; 
 
 }

@@ -8,35 +8,16 @@
 
 #include "fbxnode.h"
 
+#include "fbxskin.h"
+
 namespace Au{
 namespace Media{
 namespace FBX{
-   
-
-class SkinDeformer
-{
-public:
-private:
-    std::string name;
-    std::vector<int64_t> indices;
-    std::vector<float> weights;
-};
-
-class Skin
-{
-public:
-    int DeformerCount() { return deformers.size(); }
-    SkinDeformer* GetDeformer(unsigned index) { return &deformers[index]; }
-private:
-    std::vector<SkinDeformer> deformers;
-};
 
 class Mesh
 {
 public:
     Mesh() {}
-    Mesh(int64_t uid, Axis right, Axis up, Axis front)
-    : uid(uid), right(right), up(up), front(front) {}
     Mesh(Settings& settings, Node& rootNode, Node& geom)
     {
         uid = geom[0].GetInt64();
@@ -54,115 +35,8 @@ public:
         _getUV(rootNode, geom);
         
         OptimizeDuplicates();
-    }
-    
-    void _getVerticesAndIndices(Settings& settings, Node& rootNode, Node& geom)
-    {
-        std::vector<int32_t> fbxIndices = 
-            geom.Get("PolygonVertexIndex")[0].GetArray<int32_t>();
-        std::vector<float> fbxVertices =
-            geom.Get("Vertices")[0].GetArray<float>();
-            
-        for(unsigned j = 0; j < fbxIndices.size(); ++j)
-        {
-            int32_t idx = fbxIndices[j] < 0 ? -fbxIndices[j] - 1 : fbxIndices[j];
-            Au::Math::Vec3f vert(
-                fbxVertices[idx * 3],
-                fbxVertices[idx * 3 + 1],
-                fbxVertices[idx * 3 + 2]
-            );
-            vert = settings.convMatrix * Au::Math::Vec4f(vert.x, vert.y, vert.z, 1.0f);
-            vertices.push_back(vert.x);
-            vertices.push_back(vert.y);
-            vertices.push_back(vert.z);
-            indices.push_back(j);
-            origVertIndices.push_back(idx);
-        }
-    }
-    
-    void _getNormals(Settings& settings, Node& rootNode, Node& geom)
-    {
-        std::vector<int32_t> fbxIndices = 
-            geom.Get("PolygonVertexIndex")[0].GetArray<int32_t>();
         
-        int normalLayerCount = geom.Count("LayerElementNormal");
-        for(int j = 0; j < normalLayerCount; ++j)
-        {
-            Node& layerElemNormal = geom.Get("LayerElementNormal", j);
-            std::vector<float> fbxNormals = 
-                layerElemNormal.Get("Normals")[0].GetArray<float>();
-            std::string normalsMapping = 
-                layerElemNormal.Get("MappingInformationType")[0].GetString();
-            
-            std::vector<float> normals;
-            
-            if(normalsMapping == "ByVertex" || normalsMapping == "ByVertice")
-            {
-                for(unsigned l = 0; l < fbxIndices.size(); ++l)
-                {
-                    int32_t idx = fbxIndices[l] < 0 ? -fbxIndices[l] - 1 : fbxIndices[l];
-                    Au::Math::Vec3f norm(
-                        fbxNormals[idx * 3],
-                        fbxNormals[idx * 3 + 1],
-                        fbxNormals[idx * 3 + 2]
-                    );
-                    norm = settings.convMatrix * Au::Math::Vec4f(norm.x, norm.y, norm.z, 1.0f);
-                    normals.push_back(norm.x);
-                    normals.push_back(norm.y);
-                    normals.push_back(norm.z);
-                }
-            }
-            else if(normalsMapping == "ByPolygon")
-            {
-                normals = std::vector<float>(vertices.size());
-                
-                unsigned index = 0;
-                for(unsigned k = 0; k < fbxNormals.size() / 3; ++k)
-                {
-                    std::vector<unsigned> polyIndices;
-                    for(unsigned l = index; l < fbxIndices.size(); ++l)
-                        polyIndices.push_back(l);
-                    
-                    for(unsigned l = 0; l < polyIndices.size(); ++l)
-                    {
-                        Au::Math::Vec3f norm(
-                            fbxNormals[k * 3],
-                            fbxNormals[k * 3 + 1],
-                            fbxNormals[k * 3 + 2]
-                        );
-                        norm = settings.convMatrix * Au::Math::Vec4f(norm.x, norm.y, norm.z, 1.0f);
-                        normals[polyIndices[l] * 3] = norm.x;
-                        normals[polyIndices[l] * 3 + 1] = norm.y;
-                        normals[polyIndices[l] * 3 + 2] = norm.z;
-                    }
-                }
-            }
-            else if(normalsMapping == "ByPolygonVertex")
-            {
-                normals = std::vector<float>(vertices.size());
-                
-                for(unsigned k = 0; k < fbxIndices.size(); ++k)
-                {
-                    int32_t idx = fbxIndices[k] < 0 ? -fbxIndices[k] - 1 : fbxIndices[k];
-                    Au::Math::Vec3f norm(
-                        fbxNormals[k * 3],
-                        fbxNormals[k * 3 + 1],
-                        fbxNormals[k * 3 + 2]
-                    );
-                    norm = settings.convMatrix * Au::Math::Vec4f(norm.x, norm.y, norm.z, 1.0f);
-                    normals[k * 3] = norm.x;
-                    normals[k * 3 + 1] = norm.y;
-                    normals[k * 3 + 2] = norm.z;
-                }
-            }
-            
-            normalLayers.push_back(normals);
-        }
-    }
-    
-    void _getUV(Node& rootNode, Node& geom)
-    {
-        
+        skin = Skin(rootNode, geom);
     }
     
     int VertexCount() { return vertices.size() / 3; }
@@ -185,6 +59,11 @@ public:
         for(unsigned i = 0; i < indices.size(); ++i)
             result.push_back((T)indices[i]);
         return result;
+    }
+    
+    Skin& GetSkin()
+    {
+        return skin;
     }
     
     void ConvertCoordSystem(Axis new_right, Axis new_up, Axis new_front)
@@ -316,6 +195,117 @@ public:
     std::vector<std::vector<float>> normalLayers;
     std::vector<std::vector<float>> uvLayers;
     std::vector<std::vector<unsigned char>> rgbaLayers;
+    
+    Skin skin;
+private:
+    void _getVerticesAndIndices(Settings& settings, Node& rootNode, Node& geom)
+    {
+        std::vector<int32_t> fbxIndices = 
+            geom.Get("PolygonVertexIndex")[0].GetArray<int32_t>();
+        std::vector<float> fbxVertices =
+            geom.Get("Vertices")[0].GetArray<float>();
+            
+        for(unsigned j = 0; j < fbxIndices.size(); ++j)
+        {
+            int32_t idx = fbxIndices[j] < 0 ? -fbxIndices[j] - 1 : fbxIndices[j];
+            Au::Math::Vec3f vert(
+                fbxVertices[idx * 3],
+                fbxVertices[idx * 3 + 1],
+                fbxVertices[idx * 3 + 2]
+            );
+            vert = settings.convMatrix * Au::Math::Vec4f(vert.x, vert.y, vert.z, 1.0f);
+            vertices.push_back(vert.x);
+            vertices.push_back(vert.y);
+            vertices.push_back(vert.z);
+            indices.push_back(j);
+            origVertIndices.push_back(idx);
+        }
+    }
+    
+    void _getNormals(Settings& settings, Node& rootNode, Node& geom)
+    {
+        std::vector<int32_t> fbxIndices = 
+            geom.Get("PolygonVertexIndex")[0].GetArray<int32_t>();
+        
+        int normalLayerCount = geom.Count("LayerElementNormal");
+        for(int j = 0; j < normalLayerCount; ++j)
+        {
+            Node& layerElemNormal = geom.Get("LayerElementNormal", j);
+            std::vector<float> fbxNormals = 
+                layerElemNormal.Get("Normals")[0].GetArray<float>();
+            std::string normalsMapping = 
+                layerElemNormal.Get("MappingInformationType")[0].GetString();
+            
+            std::vector<float> normals;
+            
+            if(normalsMapping == "ByVertex" || normalsMapping == "ByVertice")
+            {
+                for(unsigned l = 0; l < fbxIndices.size(); ++l)
+                {
+                    int32_t idx = fbxIndices[l] < 0 ? -fbxIndices[l] - 1 : fbxIndices[l];
+                    Au::Math::Vec3f norm(
+                        fbxNormals[idx * 3],
+                        fbxNormals[idx * 3 + 1],
+                        fbxNormals[idx * 3 + 2]
+                    );
+                    norm = settings.convMatrix * Au::Math::Vec4f(norm.x, norm.y, norm.z, 1.0f);
+                    normals.push_back(norm.x);
+                    normals.push_back(norm.y);
+                    normals.push_back(norm.z);
+                }
+            }
+            else if(normalsMapping == "ByPolygon")
+            {
+                normals = std::vector<float>(vertices.size());
+                
+                unsigned index = 0;
+                for(unsigned k = 0; k < fbxNormals.size() / 3; ++k)
+                {
+                    std::vector<unsigned> polyIndices;
+                    for(unsigned l = index; l < fbxIndices.size(); ++l)
+                        polyIndices.push_back(l);
+                    
+                    for(unsigned l = 0; l < polyIndices.size(); ++l)
+                    {
+                        Au::Math::Vec3f norm(
+                            fbxNormals[k * 3],
+                            fbxNormals[k * 3 + 1],
+                            fbxNormals[k * 3 + 2]
+                        );
+                        norm = settings.convMatrix * Au::Math::Vec4f(norm.x, norm.y, norm.z, 1.0f);
+                        normals[polyIndices[l] * 3] = norm.x;
+                        normals[polyIndices[l] * 3 + 1] = norm.y;
+                        normals[polyIndices[l] * 3 + 2] = norm.z;
+                    }
+                }
+            }
+            else if(normalsMapping == "ByPolygonVertex")
+            {
+                normals = std::vector<float>(vertices.size());
+                
+                for(unsigned k = 0; k < fbxIndices.size(); ++k)
+                {
+                    int32_t idx = fbxIndices[k] < 0 ? -fbxIndices[k] - 1 : fbxIndices[k];
+                    Au::Math::Vec3f norm(
+                        fbxNormals[k * 3],
+                        fbxNormals[k * 3 + 1],
+                        fbxNormals[k * 3 + 2]
+                    );
+                    norm = settings.convMatrix * Au::Math::Vec4f(norm.x, norm.y, norm.z, 1.0f);
+                    normals[k * 3] = norm.x;
+                    normals[k * 3 + 1] = norm.y;
+                    normals[k * 3 + 2] = norm.z;
+                }
+            }
+            
+            normalLayers.push_back(normals);
+        }
+    }
+    
+    void _getUV(Node& rootNode, Node& geom)
+    {
+        
+    }
 };
 
 }}}
