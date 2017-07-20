@@ -80,7 +80,7 @@ public:
             transform = parent->invWorldTransform * Au::Math::Inverse(transform);
         else
             transform = Au::Math::Inverse(transform);
-        
+        /*
         transform = 
             transform * 
             Au::Math::ToMat4(
@@ -96,7 +96,7 @@ public:
                     pn.sceneNode.PreRotationQuat()
                 )
             );
-        
+        */
         return true;
     }
 private:
