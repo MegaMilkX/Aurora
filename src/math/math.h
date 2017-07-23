@@ -608,7 +608,12 @@ inline Mat3f ToOrientationMat3(const Mat4f& m)
     Mat3f mt = ToMat3(m);
     
     for(unsigned i = 0; i < 3; ++i)
-        mt[i] = Normalize(mt[i]);
+    {
+        Vec3f vec3 = mt[i];
+        vec3 = Normalize(vec3);
+        Vec4f vec4 = Vec4f(vec3.x, vec3.y, vec3.z, 0.0f);
+        mt[i] = vec4;
+    }
     
     return mt;
 }
