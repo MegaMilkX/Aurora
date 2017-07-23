@@ -251,6 +251,8 @@ void Reader::_loadBones()
             continue;
         
         Mesh* meshTgt = GetBoneDeformTarget(&model);
+        if(!meshTgt)
+            continue;
         
         Bone bone(settings, rootNode, model, meshTgt);
         bones.push_back(bone);

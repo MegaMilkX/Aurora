@@ -10,6 +10,8 @@
 
 #include "fbxskin.h"
 
+#include "fbxpose.h"
+
 namespace Au{
 namespace Media{
 namespace FBX{
@@ -30,7 +32,14 @@ public:
             name = (*model)[1].GetString();
         }
         
-        _getVerticesAndIndices(settings, rootNode, geom);
+        Math::Mat4f bindTransform = Math::Mat4f(1.0f);
+        Node* poseData = rootNode.GetWhere("Pose", 2, "BindPose");
+        Pose pose(settings, &rootNode, poseData);
+        
+        if(!pose.GetPoseTransform((*model)[0].GetInt64(), bindTransform))
+            bindTransform = settings.convMatrix;
+        
+        _getVerticesAndIndices(settings, rootNode, geom, bindTransform);
         _getNormals(settings, rootNode, geom);
         _getUV(rootNode, geom);
         
@@ -198,8 +207,8 @@ public:
     
     Skin skin;
 private:
-    void _getVerticesAndIndices(Settings& settings, Node& rootNode, Node& geom)
-    {
+    void _getVerticesAndIndices(Settings& settings, Node& rootNode, Node& geom, const Math::Mat4f& transform)
+    {        
         std::vector<int32_t> fbxIndices = 
             geom.Get("PolygonVertexIndex")[0].GetArray<int32_t>();
         std::vector<float> fbxVertices =
@@ -213,7 +222,7 @@ private:
                 fbxVertices[idx * 3 + 1],
                 fbxVertices[idx * 3 + 2]
             );
-            vert = settings.convMatrix * Au::Math::Vec4f(vert.x, vert.y, vert.z, 1.0f);
+            vert = transform * Au::Math::Vec4f(vert.x, vert.y, vert.z, 1.0f);
             vertices.push_back(vert.x);
             vertices.push_back(vert.y);
             vertices.push_back(vert.z);

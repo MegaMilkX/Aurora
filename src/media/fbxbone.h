@@ -19,7 +19,7 @@ class Bone
 {
 public:
     Bone(Settings& settings, Node& root, Node& node, Mesh* meshTgt)
-    : transform(1.0f), uid(0), puid(0)
+    : transform(1.0f), uid(0), puid(0), deformerUID(0)
     {
         uid = node[0].GetInt64();
         name = node[1].GetString();
@@ -38,8 +38,26 @@ public:
         Au::Math::Quat qrot(0.0f, 0.0f, 0.0f, 1.0f);
         Au::Math::Vec3f scale(1.0f, 1.0f, 1.0f);
         
+        Node* deformer = 
+            root.GetConnectedParent("Deformer", uid, &conn);
+        if(!deformer)
+            return;
+        deformerUID = (*deformer)[0].GetInt64();
+        
         if(!pose.GetPoseTransform(uid, transform))
-        {
+        {/*
+            std::vector<double> transformLinkD =
+                deformer->Get("TransformLink")[0].GetArray<double>();
+            
+            if(transformLinkD.size() < 16)
+                return;
+            std::vector<float> transformLinkF;
+            for(unsigned i = 0; i < transformLinkD.size(); ++i)
+                transformLinkF.push_back((float)transformLinkD[i]);
+            Au::Math::Mat4f mat4f = *(Math::Mat4f*)transformLinkF.data();
+            
+            transform = mat4f;*/
+            
             SceneNode sn(settings, node);
 
             pos = sn.LclTranslation();            
@@ -50,6 +68,7 @@ public:
                 Au::Math::Translate(Au::Math::Mat4f(1.0f), pos) * 
                 Au::Math::ToMat4(qrot) * 
                 Au::Math::Scale(Au::Math::Mat4f(1.0f), scale);
+            
         }
         
         if(!meshTgt)
@@ -57,11 +76,6 @@ public:
         
         meshName = meshTgt->name;
         
-        Node* deformer = 
-            root.GetConnectedParent("Deformer", uid, &conn);
-        if(!deformer)
-            return;
-        deformerUID = (*deformer)[0].GetInt64();
         
         indices = deformer->Get("Indexes")[0].GetArray<int32_t>();
         std::vector<double> w = 
@@ -101,6 +115,8 @@ public:
     
     void Index(unsigned i) { index = i; }
     unsigned Index() { return index; }
+    
+    bool IsDeformer() { return deformerUID != 0 ? true : false; }
     
     bool operator<(const Bone& other)
     {
