@@ -1,5 +1,5 @@
-#ifndef MESH_H
-#define MESH_H
+#ifndef AU_GFX_MESH_H
+#define AU_GFX_MESH_H
 
 #include "gl/glbuffer.h"
 
