@@ -3,6 +3,7 @@
 
 #include "../window/window.h"
 #include "mesh.h"
+#include "texture2d.h"
 #include "render-state.h"
 
 namespace Au{
@@ -19,9 +20,11 @@ public:
     void SwapBuffers();
     
     Mesh* CreateMesh();
+    Texture2D* CreateTexture2D();
     Shader* CreateShader(Shader::STAGE stage);
     RenderState* CreateRenderState();
     void Destroy(Mesh* mesh);
+    void Destroy(Texture2D* texture);
     void Destroy(Shader* shader);
     
     void Bind(Mesh* mesh);

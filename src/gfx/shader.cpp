@@ -28,6 +28,8 @@ void Shader::Source(const std::string& source)
     else
         return;
     
+    this->source = source;
+    
     glShader = glCreateShader(type);
     
     const char* csource = source.c_str();

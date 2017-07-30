@@ -44,8 +44,26 @@ void RenderState::AttribFormat(const std::vector<AttribInfo>& vertexFormat)
 void RenderState::SetShader(Shader* shaderStage)
 {
     shaders.insert(std::make_pair(shaderStage->Stage(), shaderStage->_uniqueIndex()));
-
+    if(shaderStage->Stage() == Au::GFX::Shader::VERTEX)
+        _deductAttribFormat(shaderStage->Source());
     _linkProgram();
+}
+
+void RenderState::AddSampler2D(const std::string& name, int layer)
+{
+    samplerLayers[layer] = name;
+}
+
+int RenderState::GetSampler2DLayer(const std::string& name)
+{
+    std::map<int, std::string>::iterator it;
+    for(it = samplerLayers.begin(); it != samplerLayers.end(); ++it)
+    {
+        if(it->second == name)
+            return it->first;
+    }
+    
+    return 0;
 }
 
 void RenderState::DepthTest(bool flag)
@@ -107,6 +125,84 @@ void RenderState::_linkProgram()
     {
         glDetachShader(shaderProgram, it->second);
     }
+    
+    Bind();
+    std::map<int, std::string>::iterator itSampler;
+    for(itSampler = samplerLayers.begin(); itSampler != samplerLayers.end(); ++itSampler)
+    {
+        glUniform1i(glGetUniformLocation(shaderProgram, itSampler->second.c_str()), itSampler->first);
+    }
+}
+
+void RenderState::_deductAttribFormat(const std::string& source)
+{
+    Au::GLSLStitch::Snippet snip =
+        Au::GLSLStitch::MakeSnippet(source);
+    Au::AttribFormat attribFormat;
+    std::vector<Au::AttribInfo> attribs = _getAttribList();
+            
+    for(unsigned i = 0; i < snip.inputs.size(); ++i)
+    {
+        Au::GLSLStitch::Variable& var =
+            snip.inputs[i];
+    
+        for(unsigned j = 0; j < attribs.size(); ++j)
+        {
+            Au::AttribInfo& attr = attribs[j];
+            int r = _tryMatchStr(var.name, attr.name);
+            if(r)
+            {
+                attribFormat << attr;
+                break;
+            }
+        }
+    }
+    //attribFormat.Print();
+    AttribFormat(attribFormat);
+}
+
+std::vector<Au::AttribInfo>& RenderState::_getAttribList()
+{
+    static std::vector<Au::AttribInfo> attribs =
+        _getAttribListInit();
+    return attribs;
+}
+
+bool RenderState::_compareAttribByNameLen(const Au::AttribInfo& first, const Au::AttribInfo& second)
+{ return first.name.size() > second.name.size(); }
+
+std::vector<Au::AttribInfo> RenderState::_getAttribListInit()
+{
+    std::vector<Au::AttribInfo> result;
+    
+    result.push_back(Au::Position());
+    result.push_back(Au::Normal());
+    result.push_back(Au::Tangent());
+    result.push_back(Au::Bitangent());
+    result.push_back(Au::UV());
+    result.push_back(Au::UVW());
+    result.push_back(Au::ColorRGBA());
+    result.push_back(Au::ColorRGB());
+    result.push_back(Au::BoneWeight4());
+    result.push_back(Au::BoneIndex4());
+    
+    std::sort(result.begin(), result.end(), &_compareAttribByNameLen);
+    
+    return result;
+}
+
+int RenderState::_tryMatchStr(const std::string& str, std::string& token)
+{
+    if(str.size() < token.size())
+        return 0;
+    
+    for(unsigned i = 0; i < token.size(); ++i)
+    {
+        if(token[i] != str[i])
+            return 0;
+    }
+
+    return token.size();
 }
 
 }

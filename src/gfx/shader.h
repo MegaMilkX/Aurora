@@ -19,12 +19,14 @@ public:
     ~Shader();
     
     void Source(const std::string& source);
+    std::string& Source() { return source; }
     std::string StatusString(){ return statusString; }
     
     STAGE Stage() { return stage; }
     
     unsigned int _uniqueIndex() { return glShader; }
 private:
+    std::string source;
     STAGE stage;
     GLuint glShader;
     std::string statusString;

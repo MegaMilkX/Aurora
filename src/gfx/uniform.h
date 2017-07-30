@@ -199,6 +199,11 @@ public:
     {
         impl->Upload(location, dataIndex, offset, count);
     }
+    
+    bool operator<(const Uniform& other) const
+    {
+        return (impl + dataIndex) < (other.impl + other.dataIndex);
+    }
 private:
     unsigned dataIndex;
     unsigned offset;

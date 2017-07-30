@@ -133,6 +133,13 @@ Mesh* Device::CreateMesh()
     return mesh;
 }
 
+Texture2D* Device::CreateTexture2D()
+{
+    wglMakeCurrent(deviceContext, context);
+    Texture2D* texture = new Texture2D();
+    return texture;
+}
+
 Shader* Device::CreateShader(Shader::STAGE stage)
 {
     wglMakeCurrent(deviceContext, context);
@@ -151,6 +158,12 @@ void Device::Destroy(Mesh* mesh)
 {
     wglMakeCurrent(deviceContext, context);
     delete mesh;
+}
+
+void Device::Destroy(Texture2D* texture)
+{
+    wglMakeCurrent(deviceContext, context);
+    delete texture;
 }
 
 void Device::Destroy(Shader* shader)
