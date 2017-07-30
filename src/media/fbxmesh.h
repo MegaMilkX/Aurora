@@ -61,6 +61,12 @@ public:
             return std::vector<float>();
         return normalLayers[layer];
     }
+    std::vector<float> GetUV(unsigned layer)
+    {
+        if(layer >= uvLayers.size())
+            return std::vector<float>();
+        return uvLayers[layer];
+    }
     template<typename T>
     std::vector<T> GetIndices()
     {
@@ -313,7 +319,78 @@ private:
     
     void _getUV(Node& rootNode, Node& geom)
     {
-        
+        std::vector<int32_t> fbxIndices = 
+            geom.Get("PolygonVertexIndex")[0].GetArray<int32_t>();
+            
+        int layerCount = geom.Count("LayerElementUV");
+        for(int i = 0; i < layerCount; ++i)
+        {
+            Node& layer = geom.Get("LayerElementUV", i);
+            std::vector<float> fbxUV =
+                layer.Get("UV")[0].GetArray<float>();
+            std::vector<int32_t> fbxUVIndex =
+                layer.Get("UVIndex")[0].GetArray<int32_t>();
+            std::string mapping =
+                layer.Get("MappingInformationType")[0].GetString();
+            std::string refType =
+                layer.Get("ReferenceInformationType")[0].GetString();
+            
+            std::vector<float> uv;
+            
+            if(mapping == "ByVertex" || mapping == "ByVertice")
+            {
+                for(unsigned j = 0; j < fbxIndices.size(); ++j)
+                {
+                    int32_t idx = fbxIndices[j] < 0 ? -fbxIndices[j] - 1 : fbxIndices[j];
+                    
+                    uv.push_back(fbxUV[idx * 2]);
+                    uv.push_back(fbxUV[idx * 2 + 1]);
+                }
+            }
+            else if(mapping == "ByPolygon")
+            {
+                uv.resize(vertices.size() / 3 * 2);
+                
+                unsigned index = 0;
+                for(unsigned k = 0; k < fbxUV.size() / 2; ++k)
+                {
+                    std::vector<unsigned> polyIndices;
+                    for(unsigned l = index; l < fbxUV.size(); ++l)
+                        polyIndices.push_back(l);
+                    
+                    for(unsigned l = 0; l < polyIndices.size(); ++l)
+                    {
+                        uv[polyIndices[l] * 2] = fbxUV[k * 2];
+                        uv[polyIndices[l] * 2 + 1] = fbxUV[k * 2 + 1];
+                    }
+                }
+            }
+            else if(mapping == "ByPolygonVertex")
+            {
+                uv.resize(vertices.size() / 3 * 2);
+                
+                if(refType == "Direct")
+                {
+                    for(unsigned k = 0; k < fbxIndices.size(); ++k)
+                    {
+                        int32_t idx = fbxIndices[k] < 0 ? -fbxIndices[k] - 1 : fbxIndices[k];
+                        uv[k * 2] = fbxUV[k * 2];
+                        uv[k * 2 + 1] = fbxUV[k * 2 + 1];
+                    }
+                }
+                else if(refType == "IndexToDirect")
+                {
+                    for(unsigned k = 0; k < fbxIndices.size(); ++k)
+                    {
+                        int32_t idx = fbxIndices[k] < 0 ? -fbxIndices[k] - 1 : fbxIndices[k];
+                        uv[k * 2] = fbxUV[fbxUVIndex[k] * 2];
+                        uv[k * 2 + 1] = fbxUV[fbxUVIndex[k] * 2 + 1];
+                    }
+                }
+            }
+            
+            uvLayers.push_back(uv);
+        }
     }
 };
 
