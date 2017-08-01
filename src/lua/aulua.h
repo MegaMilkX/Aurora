@@ -76,11 +76,11 @@ public:
         file.close();
     }
     
-    void PushArgs() {}
+    void PushArgs() { }
     
     template<typename Arg, typename... Args>
     void PushArgs(const Arg& arg, const Args&... args)
-    {
+    { 
         LuaType::GetPtr<Arg>()->LuaPush(L, (void*)&arg);
         PushArgs(args...);
     }
@@ -88,9 +88,14 @@ public:
     template<typename... Args>
     void Call(const std::string& funcName, const Args&... args)
     {
+        lua_pop(L, lua_gettop(L)); // TODO find out why stack is not empty
         lua_getglobal(L, funcName.c_str());
+        if(lua_isfunction(L, -1) == 0)
+            return;
         PushArgs(args...);
-        lua_pcall(L, sizeof...(Args), 0, 0);
+        lua_pcall(L, sizeof...(Args), LUA_MULTRET, 0);
+        
+        lua_pop(L, lua_gettop(L));
     }
     
     // Type shenanigans ==================
