@@ -88,14 +88,14 @@ public:
     template<typename... Args>
     void Call(const std::string& funcName, const Args&... args)
     {
-        lua_pop(L, lua_gettop(L)); // TODO find out why stack is not empty
         lua_getglobal(L, funcName.c_str());
         if(lua_isfunction(L, -1) == 0)
+        {
+            lua_pop(L, 1);
             return;
+        }
         PushArgs(args...);
         lua_pcall(L, sizeof...(Args), LUA_MULTRET, 0);
-        
-        lua_pop(L, lua_gettop(L));
     }
     
     // Type shenanigans ==================
