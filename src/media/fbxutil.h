@@ -64,7 +64,7 @@ inline void GetConvertedAxisIndices(Settings& settings, unsigned (&indices)[3], 
     
 inline void ConvertVector(Settings& settings, Au::Math::Vec3f& vec, bool dir = true)
 {
-    unsigned indices[3];
+    unsigned indices[3] = { 0, 0, 0 };
     float multipliers[3] = { 1.0f, 1.0f, 1.0f };
     
     GetConvertedAxisIndices(settings, indices, multipliers);
