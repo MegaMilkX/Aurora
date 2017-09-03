@@ -1,6 +1,9 @@
 #ifndef FBX_H
 #define FBX_H
 
+#include <sstream>
+#include <fstream>
+
 #include "fbxobject.h"
 #include "fbxmesh.h"
 #include "fbxanimationstack.h"
@@ -61,7 +64,21 @@ public:
     
     Node& GetRootNode() { return rootNode; }
     
-    void Print() { rootNode.Print(); }
+    void Print() 
+    {
+        std::ostringstream sstr;
+        rootNode.Print(sstr);
+        std::cout << sstr.str();
+    }
+    void DumpFile(const std::string& filename)
+    {
+        std::ostringstream sstr;
+        rootNode.Print(sstr);
+        
+        std::ofstream file(filename + ".dump", std::ios::out);
+        file << sstr.str();
+        file.close();
+    }
 private:
     void ReadData(Prop& prop, std::vector<char>& out, const char* data, const char*& cursor, const char* end);
     bool ReadBlock(Node& node, const char* data, const char*& cursor, const char* end, Word flags);

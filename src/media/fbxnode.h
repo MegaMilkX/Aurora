@@ -4,6 +4,7 @@
 #include <stdint.h>
 
 #include <iostream>
+#include <sstream>
 #include <string>
 #include <vector>
 
@@ -16,64 +17,64 @@ namespace FBX{
 class Prop
 {
 public:
-    void Print(unsigned level = 0)
+    void Print(std::ostringstream& sstr, unsigned level = 0)
     {
         for(unsigned i = 0; i < level; ++i)
-            std::cout << "  ";
+            sstr << "  ";
         int stride = 0;
         switch(type)
         {
         // 16 bit int
         case 'Y':
-            std::cout << *(int16_t*)(data.data());
+            sstr << *(int16_t*)(data.data());
             break;
         // 1 bit bool
         case 'C':
-            std::cout << "1 bit bool";
+            sstr << "1 bit bool";
             break;
         // 32 bit int
         case 'I':
-            std::cout << *(int32_t*)(data.data());
+            sstr << *(int32_t*)(data.data());
             break;
         case 'F':
-            std::cout << *(float*)(data.data());
+            sstr << *(float*)(data.data());
             break;
         // double
         case 'D':
-            std::cout << *(double*)(data.data());
+            sstr << *(double*)(data.data());
             break;
         // 64 bit int
         case 'L':
-            std::cout << *(int64_t*)(data.data());
+            sstr << *(int64_t*)(data.data());
             break;
         // Binary data
         case 'R':
-            std::cout << "Just binary data";
+            sstr << "Just binary data";
             break;
         case 'b':
             break;
         case 'f':
             stride = 4;
-            std::cout << "Float array, size: " << data.size() / stride;
+            sstr << "Float array, size: " << data.size() / stride;
             break;
         case 'i':
             stride = 4;
-            std::cout << "Int32 array, size: " << data.size() / stride;
+            sstr << "Int32 array, size: " << data.size() / stride;
             break;
         case 'd':
             stride = 8;
-            std::cout << "Double array, size: " << data.size() / stride;
+            sstr << "Double array, size: " << data.size() / stride;
             break;
         case 'l':
             stride = 8;
-            std::cout << "Int64 array, size: " << data.size() / stride;
+            sstr << "Int64 array, size: " << data.size() / stride;
             break;
         case 'S':
-            std::cout << std::string(data.data(), data.data() + data.size());
+            sstr << std::string(data.data(), data.data() + data.size());
             break;
         }
         
-        std::cout << std::endl;
+        sstr << std::endl;
     }
     void Type(char type)
     {
@@ -384,16 +385,16 @@ public:
         return props[index];
     }
     
-    void Print(unsigned level = 0)
+    void Print(std::ostringstream& sstr, unsigned level = 0)
     {
         for(unsigned i = 0; i < level; ++i)
-            std::cout << "  ";
-        std::cout << name << " | " << "Prop count: " << propCount << std::endl;
+            sstr << "  ";
+        sstr << name << " | " << "Prop count: " << propCount << std::endl;
         ++level;
         for(unsigned i = 0; i < props.size(); ++i)
-            props[i].Print(level);
+            props[i].Print(sstr, level);
         for(unsigned i = 0; i < children.size(); ++i)
-            children[i].Print(level);
+            children[i].Print(sstr, level);
     }
     
 private:
