@@ -373,17 +373,23 @@ public:
             return v;
         curveNode->Evaluate(time);
         
-        v = Au::Math::Vec3f(
-            curveNode->GetCurve("d|X")->Value(),
-            curveNode->GetCurve("d|Y")->Value(),
-            curveNode->GetCurve("d|Z")->Value()
-        );
+        AnimationCurve* c = 0;
+        c = curveNode->GetCurve("d|X");
+        if(c)
+            v.x = c->Value();
+        c = curveNode->GetCurve("d|Y");
+        if(c)
+            v.y = c->Value();
+        c = curveNode->GetCurve("d|Z");
+        if(c)
+            v.z = c->Value();
         
         return v;
     }
     
     Au::Math::Quat EvaluateRotation(SceneNode& model, int64_t time)
     {
+        Au::Math::Vec3f v(0.0f, 0.0f, 0.0f);
         Au::Math::Quat q(0.0f, 0.0f, 0.0f, 1.0f);
         if(layers.empty())
             return q;
@@ -397,11 +403,16 @@ public:
             return q;
         curveNode->Evaluate(time);
         
-        Au::Math::Vec3f v(
-            curveNode->GetCurve("d|X")->Value(),
-            curveNode->GetCurve("d|Y")->Value(),
-            curveNode->GetCurve("d|Z")->Value()
-        );
+        AnimationCurve* c = 0;
+        c = curveNode->GetCurve("d|X");
+        if(c)
+            v.x = c->Value();
+        c = curveNode->GetCurve("d|Y");
+        if(c)
+            v.y = c->Value();
+        c = curveNode->GetCurve("d|Z");
+        if(c)
+            v.z = c->Value();
         
         Au::Math::Vec3f lclEuler = model.LclRotation();
         
@@ -432,11 +443,16 @@ public:
             return v;
         curveNode->Evaluate(time);
         
-        v = Au::Math::Vec3f(
-            curveNode->GetCurve("d|X")->Value(),
-            curveNode->GetCurve("d|Y")->Value(),
-            curveNode->GetCurve("d|Z")->Value()
-        );
+        AnimationCurve* c = 0;
+        c = curveNode->GetCurve("d|X");
+        if(c)
+            v.x = c->Value();
+        c = curveNode->GetCurve("d|Y");
+        if(c)
+            v.y = c->Value();
+        c = curveNode->GetCurve("d|Z");
+        if(c)
+            v.z = c->Value();
         
         return v;
     }
