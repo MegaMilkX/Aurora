@@ -40,7 +40,7 @@ public:
             bindTransform = settings.convMatrix;
         
         _getVerticesAndIndices(settings, rootNode, geom, bindTransform);
-        _getNormals(settings, rootNode, geom);
+        _getNormals(settings, rootNode, geom, bindTransform);
         _getUV(rootNode, geom);
         
         OptimizeDuplicates();
@@ -237,7 +237,7 @@ private:
         }
     }
     
-    void _getNormals(Settings& settings, Node& rootNode, Node& geom)
+    void _getNormals(Settings& settings, Node& rootNode, Node& geom, const Math::Mat4f& transform)
     {
         std::vector<int32_t> fbxIndices = 
             geom.Get("PolygonVertexIndex")[0].GetArray<int32_t>();
@@ -263,7 +263,7 @@ private:
                         fbxNormals[idx * 3 + 1],
                         fbxNormals[idx * 3 + 2]
                     );
-                    norm = settings.convMatrix * Au::Math::Vec4f(norm.x, norm.y, norm.z, 1.0f);
+                    norm = transform * Au::Math::Vec4f(norm.x, norm.y, norm.z, 1.0f);
                     normals.push_back(norm.x);
                     normals.push_back(norm.y);
                     normals.push_back(norm.z);
@@ -287,7 +287,7 @@ private:
                             fbxNormals[k * 3 + 1],
                             fbxNormals[k * 3 + 2]
                         );
-                        norm = settings.convMatrix * Au::Math::Vec4f(norm.x, norm.y, norm.z, 1.0f);
+                        norm = transform * Au::Math::Vec4f(norm.x, norm.y, norm.z, 1.0f);
                         normals[polyIndices[l] * 3] = norm.x;
                         normals[polyIndices[l] * 3 + 1] = norm.y;
                         normals[polyIndices[l] * 3 + 2] = norm.z;
@@ -306,7 +306,7 @@ private:
                         fbxNormals[k * 3 + 1],
                         fbxNormals[k * 3 + 2]
                     );
-                    norm = settings.convMatrix * Au::Math::Vec4f(norm.x, norm.y, norm.z, 1.0f);
+                    norm = transform * Au::Math::Vec4f(norm.x, norm.y, norm.z, 1.0f);
                     normals[k * 3] = norm.x;
                     normals[k * 3 + 1] = norm.y;
                     normals[k * 3 + 2] = norm.z;
