@@ -305,12 +305,12 @@ struct LuaType
         lua_createtable(L, 0, 0);
         
         lua_createtable(L, 0, 0);
-        /*
+        
         for(unsigned i = 0; i < members.size(); ++i)
         {
             _luaPushMember(L, data, members[i]);            
         }
-        */
+        
         for(unsigned i = 0; i < functions.size(); ++i)
         {
             lua_pushnumber(L, functions[i].fnIndex);
@@ -350,8 +350,9 @@ struct LuaType
         {
             lua_pushstring(L, members[i].name.c_str());
             lua_gettable(L, -2);
-            members[i].type->LuaPop(L, (void*)((char*)data + (int)members[i].offset));
-        }*/
+            members[i].type->LuaPop(L, (void*)((char*)data.Ptr() + (int)members[i].offset));
+        }
+        */
     }
 private:
     int (*_push)(lua_State*, void*);
