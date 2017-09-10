@@ -96,6 +96,11 @@ public:
         }
         PushArgs(args...);
         lua_pcall(L, sizeof...(Args), LUA_MULTRET, 0);
+        
+        if(lua_gettop(L) && lua_isstring(L, -1))
+        {
+            std::cout << lua_tostring(L, -1) << std::endl;
+        }
     }
     
     // Type shenanigans ==================
