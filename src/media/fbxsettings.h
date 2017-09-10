@@ -69,6 +69,14 @@ struct Settings
     
     Au::Math::Mat4f convMatrix;
     
+    void Init(Node& rootNode)
+    {
+        Node* unitScaleFactorNode = 
+            rootNode.Get("Properties70", 0).GetWhere(0, "UnitScaleFactor");
+        scaleFactor = (*unitScaleFactorNode)[4].GetDouble();
+        BuildConversionMatrix(rootNode);
+    }
+    
     void BuildConversionMatrix(Node& rootNode)
     {
         Au::Math::Mat4f defaultMatrix(1.0f);
