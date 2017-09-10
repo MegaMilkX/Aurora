@@ -133,18 +133,21 @@ public:
             node.Get("KeyTime")[0].GetArray<int64_t>();
         std::vector<float> keyValue = 
             node.Get("KeyValueFloat")[0].GetArray<float>();
+        defaultValue = 
+            node.Get("Default")[0].GetFloat();
         
         float valMult = 1.0f;
         if(/*curveNodeName.compare(0, 15, "Lcl Translation") == 0 ||*/
             curveNodeName.compare(0, 12, "Lcl Rotation") == 0)
         {
-            ConvertCurveMult(settings, this->name, valMult);
+            defaultValue = (defaultValue * Au::Math::PI) / 180.0f;
+            //ConvertCurveMult(settings, this->name, valMult);
         }
         
         if(curveNodeName.compare(0, 11, "Lcl Scaling") == 0 ||
             curveNodeName.compare(0, 12, "Lcl Rotation") == 0)
         {
-            ConvertCurveName(settings, this->name);
+            //ConvertCurveName(settings, this->name);
         }
             
         for(unsigned i = 0; i < keyTime.size() && i < keyValue.size(); ++i)
@@ -197,6 +200,10 @@ public:
         {
             value = k0->value;
         }
+        else
+        {
+            value = defaultValue;
+        }
     }
     
     float Value() { return value; }
@@ -207,6 +214,7 @@ public:
 private:
     std::string name;
     std::vector<Keyframe> keyframes;
+    float defaultValue;
     float value;
 };
     
@@ -360,7 +368,8 @@ public:
     
     Au::Math::Vec3f EvaluatePosition(SceneNode& model, int64_t time)
     {
-        Au::Math::Vec3f v(0.0f, 0.0f, 0.0f);
+        Au::Math::Vec3f v = 
+            model.LclTranslation();
         if(layers.empty())
             return v;
         AnimationLayer& layer = layers[0];
@@ -389,7 +398,8 @@ public:
     
     Au::Math::Quat EvaluateRotation(SceneNode& model, int64_t time)
     {
-        Au::Math::Vec3f v(0.0f, 0.0f, 0.0f);
+        Au::Math::Vec3f v =
+            model.LclRotation();
         Au::Math::Quat q(0.0f, 0.0f, 0.0f, 1.0f);
         if(layers.empty())
             return q;
@@ -400,7 +410,10 @@ public:
             layer.GetCurveNode(model.Name(), "Lcl Rotation");
             
         if(!curveNode)
+        {
+            q = Au::Math::EulerToQuat(v);
             return q;
+        }
         curveNode->Evaluate(time);
         
         AnimationCurve* c = 0;
@@ -424,12 +437,13 @@ public:
         Au::Math::Quat lcl = Au::Math::EulerToQuat(lclEuler);
         //if(model.LclRotationAnimMode() == SceneNode::ANIMATED_ADD)
 
-        return q;
+        return pre * q * post;
     }
     
     Au::Math::Vec3f EvaluateScale(SceneNode& model, int64_t time)
     {
-        Au::Math::Vec3f v(1.0f, 1.0f, 1.0f);
+        Au::Math::Vec3f v =
+            model.LclScaling();
         if(layers.empty())
             return v;
         
