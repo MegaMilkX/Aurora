@@ -86,7 +86,7 @@ private:
         lclTranslation.y = (float)n[5].GetDouble();
         lclTranslation.z = (float)n[6].GetDouble();
         
-        ConvertVector(*_settings, lclTranslation);
+        //ConvertVector(*_settings, lclTranslation);
         
         _getAnimMode(n, lclTranslationAnimMode);
     }
@@ -102,7 +102,7 @@ private:
         lclRotation.y = ((float)n[5].GetDouble() * Au::Math::PI) / 180.0f;
         lclRotation.z = ((float)n[6].GetDouble() * Au::Math::PI) / 180.0f;
         
-        ConvertVector(*_settings, lclRotation, false);
+        //ConvertVector(*_settings, lclRotation, false);
         
         _getAnimMode(n, lclRotationAnimMode);
     }
@@ -118,7 +118,7 @@ private:
         lclScaling.y = (float)n[5].GetDouble();
         lclScaling.z = (float)n[6].GetDouble();
         
-        ConvertVector(*_settings, lclScaling, false);
+        //ConvertVector(*_settings, lclScaling, false);
         
         _getAnimMode(n, lclScalingAnimMode);
     }
@@ -134,7 +134,7 @@ private:
         preRotation.y = ((float)n[5].GetDouble() * Au::Math::PI) / 180.0f;
         preRotation.z = ((float)n[6].GetDouble() * Au::Math::PI) / 180.0f;
         
-        ConvertVector(*_settings, preRotation);
+        //ConvertVector(*_settings, preRotation);
     }
     void _getPostRotation()
     {
@@ -147,7 +147,7 @@ private:
         postRotation.y = ((float)n[5].GetDouble() * Au::Math::PI) / 180.0f;
         postRotation.z = ((float)n[6].GetDouble() * Au::Math::PI) / 180.0f;
         
-        ConvertVector(*_settings, postRotation);
+        //ConvertVector(*_settings, postRotation);
     }
 
     int64_t uid;
