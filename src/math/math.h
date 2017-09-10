@@ -524,7 +524,7 @@ inline Vec3f Rotate(const Quat &q, const Vec3f &v)
 inline Quat AngleAxis(const float &a, const Vec3f &axis)
 {
     float s = sinf(a * 0.5f);
-    return Quat(axis.x * s, axis.y * s, axis.z * s, cosf(a*0.5f));
+    return Normalize(Quat(axis.x * s, axis.y * s, axis.z * s, cosf(a*0.5f)));
 }
 
 inline Quat Inverse(const Quat& q)
