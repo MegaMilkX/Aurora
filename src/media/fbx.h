@@ -4,6 +4,7 @@
 #include <sstream>
 #include <fstream>
 
+#include "fbxmodel.h"
 #include "fbxobject.h"
 #include "fbxmesh.h"
 #include "fbxanimationstack.h"
@@ -52,6 +53,10 @@ public:
         return 0;
     }
     
+    unsigned ModelCount();
+    Model* GetModel(unsigned id);
+    Model* GetModelByUID(int64_t uid);
+    
     int MeshCount() { return meshes.size(); }
     Mesh& GetMesh(unsigned id) { return meshes[id]; }
     Mesh* GetMesh(const std::string& name)
@@ -90,6 +95,7 @@ private:
     bool ReadWeights(Mesh& mesh, unsigned meshId);
     bool ReadSkin(Mesh& mesh, unsigned meshId);
     
+    void _loadModels();
     void _loadBones();
     
     std::vector<Node> GetConnectedChildren(const std::string& childName, Node& node);
@@ -101,6 +107,7 @@ private:
     Settings settings;
     Node rootNode;
     CoordSystem coordSys;
+    std::vector<Model> models;
     std::vector<Mesh> meshes;
     std::vector<Bone> bones;
 };

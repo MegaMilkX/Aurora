@@ -240,6 +240,40 @@ Mesh* Reader::GetBoneDeformTarget(Node* bone)
     return GetMesh(meshName);
 }
 
+void Reader::_loadModels()
+{
+    unsigned modelCount = rootNode.Count("Model");
+    for(unsigned i = 0; i < modelCount; ++i)
+    {
+        Node& modelNode = rootNode.Get("Model", i);
+        
+        Model model(&settings, &rootNode, &modelNode);
+        models.push_back(model);
+    }
+}
+
+unsigned Reader::ModelCount()
+{
+    return models.size();
+}
+
+Model* Reader::GetModel(unsigned id)
+{
+    if(id >= models.size())
+        return 0;
+    return &models[id];
+}
+
+Model* Reader::GetModelByUID(int64_t uid)
+{
+    for(unsigned i = 0; i < models.size(); ++i)
+    {
+        if(models[i].uid == uid)
+            return &models[i];
+    }
+    return 0;
+}
+
 void Reader::_loadBones()
 {    
     std::vector<Node> models = rootNode.GetAll("Model");
@@ -247,7 +281,8 @@ void Reader::_loadBones()
     for(unsigned i = 0; i < models.size(); ++i)
     {
         Node& model = models[i];
-        if(model[2].GetString() != "LimbNode")
+        std::string type = model[2].GetString();
+        if(type != "LimbNode")
             continue;
         
         Mesh* meshTgt = GetBoneDeformTarget(&model);
@@ -518,14 +553,11 @@ bool Reader::ReadFile(const char* data, unsigned size)
     if(!ReadFileFBX(data, size))
         return false;
     
-    Node* unitScaleFactor = rootNode.Get("Properties70").GetWhere(0, "UnitScaleFactor");
-    if(unitScaleFactor) settings.scaleFactor = (*unitScaleFactor)[4].GetDouble();
     settings.origAxes.right = GetRightAxis();
     settings.origAxes.up = GetUpAxis();
     settings.origAxes.front = GetFrontAxis();
     settings.convAxes = settings.origAxes;
-    
-    settings.BuildConversionMatrix(rootNode);
+    settings.Init(rootNode);
     
     int meshCount = rootNode.Count("Geometry");
     for(int i = 0; i < meshCount; ++i)
@@ -536,6 +568,7 @@ bool Reader::ReadFile(const char* data, unsigned size)
         meshes.push_back(mesh);
     }
     
+    _loadModels();
     _loadBones();
     
     return true;
