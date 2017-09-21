@@ -538,6 +538,23 @@ inline Quat Inverse(const Quat& q)
     return i;
 }
 
+// Ray
+
+struct Ray
+{
+	Ray()
+	{}
+	Ray(float x, float y, float z, float dx, float dy, float dz)
+	: origin(Vec3f(x, y, z)), direction(dx, dy, dz)
+	{}
+	Ray(Vec3f& origin, Vec3f& direction)
+	: origin(origin), direction(direction)
+	{}
+	
+	Vec3f origin;
+	Vec3f direction;
+};
+
 // Axis-aligned bounding box ====================================
 
 template<typename T>
