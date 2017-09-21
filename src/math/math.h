@@ -510,10 +510,10 @@ typedef Vec4f Quat;
 
 inline Quat operator*(const Quat &q0, const Quat &q1)
 {
-    return Quat((q0.w * q1.x + q1.w * q0.x) + (q0.y * q1.z - q1.y * q0.z),
+    return Normalize(Quat((q0.w * q1.x + q1.w * q0.x) + (q0.y * q1.z - q1.y * q0.z),
         (q0.w * q1.y + q1.w * q0.y) + (q1.x * q0.z - q0.x * q1.z), //Inverted, since y axis rotation is inverted
         (q0.w * q1.z + q1.w * q0.z) + (q0.x * q1.y - q1.x * q0.y),
-        (q1.w * q0.w) - (q1.x * q0.x) - (q1.y * q0.y) - (q1.z * q0.z));
+        (q1.w * q0.w) - (q1.x * q0.x) - (q1.y * q0.y) - (q1.z * q0.z)));
 }
 
 inline Vec3f Rotate(const Quat &q, const Vec3f &v)
