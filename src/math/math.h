@@ -702,6 +702,47 @@ inline float Smoothstep(float a, float b, float x)
     return x * x * (3 - 2 * x);
 }
 
+inline float Lerp(float a, float b, float x)
+{
+    return (a * (1.0f - x)) + (b * x);
+}
+
+inline Vec3f Lerp(Vec3f& a, Vec3f& b, float x)
+{
+    return Vec3f(Lerp(a.x, b.x, x), Lerp(a.y, b.y, x), Lerp(a.z, b.z, x));
+}
+
+inline Quat Lerp(Quat& a, Quat& b, float x)
+{
+    return Normalize(a * (1.0f - x) + b * x);
+}
+
+inline Quat Slerp(Quat& a, Quat& b, float x)
+{
+    Quat r = Quat(0.0f, 0.0f, 0.0f, 1.0f);
+    float dot = Dot(a, b);
+    
+    if(dot < 0.0f)
+    {
+        dot = -dot;
+        r = -b;
+    }
+    else
+    {
+        r = b;
+    }
+    
+    if(dot < 0.95f)
+    {
+        float angle = acosf(dot);
+        return (a * sinf(angle * (1.0f - x)) + r * sinf(angle * x)) / sinf(angle);
+    }
+    else
+    {
+        return Lerp(a, b, x);
+    }
+}
+
 // ============================
 // Util
 // ============================
