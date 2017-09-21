@@ -710,6 +710,17 @@ inline float Sign(float x)
 {
     return (x >= 0.0f) ? 1.0f : -1.0f;
 }
+inline float AngleNormal(Quat& a, Quat& b)
+{
+	Quat inv = Inverse(a);
+	Quat res = b * inv;
+	return fabsf(res.w);
+}
+
+inline float Angle(Quat& a, Quat& b)
+{
+	return acosf(AngleNormal(a, b));
+}
    
 }
 }
