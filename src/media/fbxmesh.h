@@ -7,6 +7,7 @@
 #include "fbxsettings.h"
 
 #include "fbxnode.h"
+#include "fbxmodel.h"
 
 #include "fbxskin.h"
 
@@ -37,7 +38,10 @@ public:
         Pose pose(settings, &rootNode, poseData);
         
         if(!pose.GetPoseTransform((*model)[0].GetInt64(), bindTransform))
-            bindTransform = settings.convMatrix;
+        {
+            Model model(&settings, &rootNode, model);
+            bindTransform = model.transform;
+        }
         
         _getVerticesAndIndices(settings, rootNode, geom, bindTransform);
         _getNormals(settings, rootNode, geom, bindTransform);
@@ -263,7 +267,7 @@ private:
                         fbxNormals[idx * 3 + 1],
                         fbxNormals[idx * 3 + 2]
                     );
-                    norm = transform * Au::Math::Vec4f(norm.x, norm.y, norm.z, 1.0f);
+                    norm = transform * Au::Math::Vec4f(norm.x, norm.y, norm.z, 0.0f);
                     normals.push_back(norm.x);
                     normals.push_back(norm.y);
                     normals.push_back(norm.z);
@@ -287,7 +291,7 @@ private:
                             fbxNormals[k * 3 + 1],
                             fbxNormals[k * 3 + 2]
                         );
-                        norm = transform * Au::Math::Vec4f(norm.x, norm.y, norm.z, 1.0f);
+                        norm = transform * Au::Math::Vec4f(norm.x, norm.y, norm.z, 0.0f);
                         normals[polyIndices[l] * 3] = norm.x;
                         normals[polyIndices[l] * 3 + 1] = norm.y;
                         normals[polyIndices[l] * 3 + 2] = norm.z;
@@ -306,7 +310,7 @@ private:
                         fbxNormals[k * 3 + 1],
                         fbxNormals[k * 3 + 2]
                     );
-                    norm = transform * Au::Math::Vec4f(norm.x, norm.y, norm.z, 1.0f);
+                    norm = transform * Au::Math::Vec4f(norm.x, norm.y, norm.z, 0.0f);
                     normals[k * 3] = norm.x;
                     normals[k * 3 + 1] = norm.y;
                     normals[k * 3 + 2] = norm.z;
