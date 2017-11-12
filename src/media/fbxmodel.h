@@ -52,13 +52,15 @@ public:
         {            
             SceneNode sn(*settings, *node);
 
-            pos = sn.LclTranslation();            
+            pos = sn.LclTranslation();
+            Au::Math::Quat pre = sn.PreRotationQuat();
+            Au::Math::Quat post = sn.PostRotationQuat();
             qrot = Au::Math::EulerToQuat(sn.LclRotation());
             scale = sn.LclScaling();
             
             transform = 
                 Au::Math::Translate(Au::Math::Mat4f(1.0f), pos) * 
-                Au::Math::ToMat4(qrot) * 
+                Au::Math::ToMat4(pre * qrot * post) *
                 Au::Math::Scale(Au::Math::Mat4f(1.0f), scale);
         }
     }
