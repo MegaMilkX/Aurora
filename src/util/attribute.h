@@ -42,6 +42,9 @@
             result << (*this); \
             return result; \
         } \
+        ELEMTYPE& operator[](unsigned i) \
+        { return data[i]; } \
+        ELEMTYPE data[ELEMCOUNT]; \
     }
 
 namespace Au{
