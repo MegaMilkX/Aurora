@@ -2,6 +2,7 @@
 #define AU_TIMER_H
 
 #include <windows.h>
+#include <stdint.h>
 
 namespace Au{
     
