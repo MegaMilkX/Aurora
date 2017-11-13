@@ -116,16 +116,17 @@ public:
         type->LuaPush(L, value);
         lua_setglobal(L, name.c_str());
     }
-    /*
+    
     template<typename T>
     T GetGlobal(const std::string& name)
     {
+        LuaType* type = LuaType::GetPtr<T*>();
         LuaValue val = T();
         lua_getglobal(L, name.c_str());
-        val.LuaPop(L);
+        type->LuaPop(L, val);
         return val.Get<T>();
     }
-    */
+    
     LuaFunc& GetFunction(unsigned id)
     { return _funcs[id]; }
     template<typename Ret, typename... Args>
