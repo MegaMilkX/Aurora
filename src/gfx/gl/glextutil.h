@@ -106,6 +106,16 @@ extern PFNGLACTIVETEXTUREPROC glActiveTexture;
 //========================
 extern PFNGLGENFRAMEBUFFERSPROC glGenFramebuffers;
 extern PFNGLBINDFRAMEBUFFERPROC glBindFramebuffer;
+extern PFNGLCHECKFRAMEBUFFERSTATUSPROC glCheckFramebufferStatus;
+extern PFNGLDELETEFRAMEBUFFERSPROC glDeleteFramebuffers;
+
+extern PFNGLGENRENDERBUFFERSPROC glGenRenderbuffers;
+extern PFNGLBINDRENDERBUFFERPROC glBindRenderbuffer;
+extern PFNGLRENDERBUFFERSTORAGEPROC glRenderbufferStorage;
+extern PFNGLFRAMEBUFFERTEXTUREPROC glFramebufferTexture;
+extern PFNGLFRAMEBUFFERRENDERBUFFERPROC glFramebufferRenderbuffer;
+extern PFNGLDRAWBUFFERSPROC glDrawBuffers;
+extern PFNGLDELETERENDERBUFFERSPROC glDeleteRenderbuffers;
 
 void WGLEXTLoadFunctions();
 void GLEXTLoadFunctions();
