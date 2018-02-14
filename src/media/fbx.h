@@ -25,7 +25,7 @@ class Reader
 public:
     Reader()
     {}
-    bool ReadFile(const char* data, unsigned size);
+    bool ReadMemory(const char* data, unsigned size);
     
     void ConvertCoordSys(CoordSystem sys);
     

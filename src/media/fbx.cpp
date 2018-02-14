@@ -548,7 +548,7 @@ Axis Reader::FBXAxisToAxis(unsigned axis)
         return AXIS_UNKNOWN;
 }
 
-bool Reader::ReadFile(const char* data, unsigned size)
+bool Reader::ReadMemory(const char* data, unsigned size)
 {
     if(!ReadFileFBX(data, size))
         return false;
@@ -563,8 +563,8 @@ bool Reader::ReadFile(const char* data, unsigned size)
     for(int i = 0; i < meshCount; ++i)
     {
         Node& geometry = rootNode.Get("Geometry", i);
-        Mesh mesh(settings, rootNode, geometry);
         
+        Mesh mesh(settings, rootNode, geometry);
         meshes.push_back(mesh);
     }
     
