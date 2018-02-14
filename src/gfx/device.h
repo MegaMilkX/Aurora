@@ -19,6 +19,8 @@ public:
     void Render();
     void SwapBuffers();
     
+    void SetContextCurrent() { wglMakeCurrent(deviceContext, context); }
+    
     Mesh* CreateMesh();
     Texture2D* CreateTexture2D();
     Shader* CreateShader(Shader::STAGE stage);
