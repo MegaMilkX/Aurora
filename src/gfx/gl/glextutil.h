@@ -117,6 +117,8 @@ extern PFNGLFRAMEBUFFERRENDERBUFFERPROC glFramebufferRenderbuffer;
 extern PFNGLDRAWBUFFERSPROC glDrawBuffers;
 extern PFNGLDELETERENDERBUFFERSPROC glDeleteRenderbuffers;
 
+extern PFNGLBINDFRAGDATALOCATIONPROC glBindFragDataLocation;
+
 void WGLEXTLoadFunctions();
 void GLEXTLoadFunctions();
 
