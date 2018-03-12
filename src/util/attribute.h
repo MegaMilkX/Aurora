@@ -153,6 +153,8 @@ private:
 };
 
 AttribIndex GetGlobalAttribIndex(typeindex type, unsigned int instance);
+
+AU_DEF_ATTRIB(Empty, float, 1);
     
 AU_DEF_ATTRIB(Position, float, 3);
 
