@@ -100,6 +100,7 @@ extern PFNGLTEXPARAMETERIUIVPROC glTexParameterIuiv;
 extern PFNGLGETTEXPARAMETERIIVPROC glGetTexParameterIiv;
 extern PFNGLGETTEXPARAMETERIUIVPROC glGetTexParameterIuiv;
 extern PFNGLACTIVETEXTUREPROC glActiveTexture;
+extern PFNGLTEXIMAGE3DPROC glTexImage3D;
 
 //========================
 // Framebuffers
