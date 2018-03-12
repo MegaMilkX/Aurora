@@ -21,6 +21,10 @@ LRESULT CALLBACK InputWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
     {
     case WM_MOUSEMOVE:
         break;
+    case WM_CHAR:
+        if (keyboardHandler)
+            keyboardHandler->OnChar((int)wParam);
+        break;
     case WM_INPUT:
         {
             UINT sz = 0;
@@ -171,5 +175,6 @@ bool KeyboardHandler::Init(HWND hWnd)
     
 void KeyboardHandler::KeyUp(KEYCODE key){}
 void KeyboardHandler::KeyDown(KEYCODE key){}
+void KeyboardHandler::OnChar(int charCode){}
 
 }}

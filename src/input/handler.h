@@ -230,6 +230,7 @@ public:
     
     virtual void KeyUp(KEYCODE key);
     virtual void KeyDown(KEYCODE key);
+    virtual void OnChar(int charCode);
 };
 
 inline void LoadDeviceList()
