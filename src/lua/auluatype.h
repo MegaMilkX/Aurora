@@ -292,7 +292,7 @@ struct LuaType
         functions.push_back(func);
     }
     
-    void LuaPush(lua_State* L, void* data)
+    void LuaPush(lua_State* L, void* data, bool member = false)
     {
         if(!_push)
         {
@@ -321,14 +321,16 @@ struct LuaType
         
         lua_setfield(L, -2, "__index");
         
-        if(_pushDeleter) _pushDeleter(L);
+        if(!member)
+            if(_pushDeleter) 
+                _pushDeleter(L);
         
         lua_setmetatable(L, -2);
     }
     
     void _luaPushMember(lua_State* L, void* data, MemberField& m)
     {
-        m.type->LuaPush(L, (void*)((char*)data + (int)m.offset));
+        m.type->LuaPush(L, (void*)((char*)data + (int)m.offset), true);
         lua_setfield(L, -2, m.name.c_str());
     }
     
