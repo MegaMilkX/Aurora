@@ -219,6 +219,8 @@ public:
     virtual void KeyUp(KEYCODE key);
     virtual void KeyDown(KEYCODE key);
     virtual void Wheel(short value);
+protected:
+    HWND hWnd;
 };
 
 class KeyboardHandler

@@ -122,6 +122,7 @@ bool MouseHandler::Init(HWND hWnd)
 {
     if(!ReplaceWindowProc(hWnd))
         return false;
+    this->hWnd = hWnd;
     
     mouseHandler = this;
     RAWINPUTDEVICE device;
