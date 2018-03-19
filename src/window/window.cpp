@@ -77,13 +77,18 @@ Window* Window::Create(const std::string& title, int width, int height)
     rect.right = width;
     rect.bottom = height;
 
-	AdjustWindowRectEx(&rect, WS_OVERLAPPEDWINDOW, false, 0);
+	AdjustWindowRectEx(
+        &rect, 
+        WS_POPUP|WS_VISIBLE|WS_SYSMENU,
+        false, 
+        0
+    );
     
     w->hWnd = CreateWindowExW(
         0,
         w_class_name.c_str(),
         w_name.c_str(),
-        WS_OVERLAPPEDWINDOW,
+        WS_POPUP|WS_VISIBLE|WS_SYSMENU,
         CW_USEDEFAULT, CW_USEDEFAULT, rect.right - rect.left, rect.bottom - rect.top,
         NULL, NULL, hInstance, NULL
     );
