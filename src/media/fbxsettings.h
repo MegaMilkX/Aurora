@@ -64,6 +64,7 @@ struct AxisSetup
 struct Settings
 {
     double scaleFactor;
+    Au::Math::Mat4f scaleMat;
     AxisSetup origAxes;
     AxisSetup convAxes;
     
@@ -73,7 +74,8 @@ struct Settings
     {
         Node* unitScaleFactorNode = 
             rootNode.Get("Properties70", 0).GetWhere(0, "UnitScaleFactor");
-        scaleFactor = (*unitScaleFactorNode)[4].GetDouble();
+        scaleFactor = (*unitScaleFactorNode)[4].GetDouble() * 0.01;
+        scaleMat = Au::Math::Mat3f((float)scaleFactor);
         BuildConversionMatrix(rootNode);
     }
     

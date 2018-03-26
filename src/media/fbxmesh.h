@@ -228,9 +228,9 @@ private:
         {
             int32_t idx = fbxIndices[j] < 0 ? -fbxIndices[j] - 1 : fbxIndices[j];
             Au::Math::Vec3f vert(
-                fbxVertices[idx * 3],
-                fbxVertices[idx * 3 + 1],
-                fbxVertices[idx * 3 + 2]
+                fbxVertices[idx * 3] * (float)settings.scaleFactor,
+                fbxVertices[idx * 3 + 1] * (float)settings.scaleFactor,
+                fbxVertices[idx * 3 + 2] * (float)settings.scaleFactor
             );
             vert = transform * Au::Math::Vec4f(vert.x, vert.y, vert.z, 1.0f);
             vertices.push_back(vert.x);

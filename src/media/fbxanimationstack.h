@@ -137,18 +137,15 @@ public:
             node.Get("Default")[0].GetFloat();
         
         float valMult = 1.0f;
-        if(/*curveNodeName.compare(0, 15, "Lcl Translation") == 0 ||*/
-            curveNodeName.compare(0, 12, "Lcl Rotation") == 0)
+        if(curveNodeName.compare(0, 15, "Lcl Translation") == 0)
+        {
+            valMult = (float)settings.scaleFactor;
+        }
+        else if(curveNodeName.compare(0, 12, "Lcl Rotation") == 0)
         {
             defaultValue = (defaultValue * Au::Math::PI) / 180.0f;
-            //ConvertCurveMult(settings, this->name, valMult);
-        }
-        
-        if(curveNodeName.compare(0, 11, "Lcl Scaling") == 0 ||
-            curveNodeName.compare(0, 12, "Lcl Rotation") == 0)
-        {
-            //ConvertCurveName(settings, this->name);
-        }
+            valMult = Au::Math::PI / 180.0f;
+        }        
             
         for(unsigned i = 0; i < keyTime.size() && i < keyValue.size(); ++i)
         {
@@ -157,16 +154,6 @@ public:
             //std::cout << keyTime[i] << ": " << keyValue[i] << std::endl;
             
             float val = keyValue[i] * valMult;
-            if(curveNodeName.compare(0, 11, "Lcl Scaling") == 0)
-            {
-                //std::cout << "hello" << std::endl;
-                //std::cout << settings.scaleFactor << std::endl;
-                //val = (float)(val / settings.scaleFactor);
-            }
-            else if(curveNodeName.compare(0, 12, "Lcl Rotation") == 0)
-            {
-                val = (val * Au::Math::PI) / 180.0f;
-            }
             keyframes.push_back(Keyframe(keyTime[i], val));
         }
         

@@ -47,6 +47,13 @@ public:
             for(unsigned i = 0; i < md.size(); ++i)
                 mf.push_back((float)md[i]);
             Au::Math::Mat4f mat4f = *(Math::Mat4f*)mf.data();
+            mat4f[3] = 
+                Au::Math::Vec4f(
+                    mat4f[3].x * (float)settings.scaleFactor,
+                    mat4f[3].y * (float)settings.scaleFactor,
+                    mat4f[3].z * (float)settings.scaleFactor,
+                    1.0f
+                );
             
             PoseNode& p = poses[nodeUid];
             p.uid = nodeUid;

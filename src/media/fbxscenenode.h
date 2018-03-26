@@ -82,9 +82,9 @@ private:
         if(!ptr)
             return;
         Node& n = *ptr;
-        lclTranslation.x = (float)n[4].GetDouble();
-        lclTranslation.y = (float)n[5].GetDouble();
-        lclTranslation.z = (float)n[6].GetDouble();
+        lclTranslation.x = (float)n[4].GetDouble() * (float)_settings->scaleFactor;
+        lclTranslation.y = (float)n[5].GetDouble() * (float)_settings->scaleFactor;
+        lclTranslation.z = (float)n[6].GetDouble() * (float)_settings->scaleFactor;
         
         //ConvertVector(*_settings, lclTranslation);
         
