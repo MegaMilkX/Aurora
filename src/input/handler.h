@@ -219,8 +219,14 @@ public:
     virtual void KeyUp(KEYCODE key);
     virtual void KeyDown(KEYCODE key);
     virtual void Wheel(short value);
+    void Visible(bool b);
+    void Locked(bool b);
+    bool Visible();
+    bool Locked();
 protected:
     HWND hWnd;
+    bool visible;
+    bool locked;
 };
 
 class KeyboardHandler

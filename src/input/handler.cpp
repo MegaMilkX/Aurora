@@ -86,6 +86,11 @@ LRESULT CALLBACK InputWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
                         RI_MOUSE_BUTTON_5_UP) mouseHandler->KeyUp(KEY_XBUTTON2);
                     if(raw->data.mouse.usButtonFlags & 
                         RI_MOUSE_WHEEL) mouseHandler->Wheel(raw->data.mouse.usButtonData);
+
+                    if(mouseHandler->Locked())
+                    {
+                        SetCursorPos(0, 0);
+                    }
                 }
             }
         }
@@ -120,6 +125,8 @@ bool MouseHandler::Init(Au::Window* window)
 
 bool MouseHandler::Init(HWND hWnd)
 {
+    visible = true;
+    locked = false;
     if(!ReplaceWindowProc(hWnd))
         return false;
     this->hWnd = hWnd;
@@ -142,6 +149,15 @@ void MouseHandler::Move(int x, int y){}
 void MouseHandler::KeyUp(KEYCODE key){}
 void MouseHandler::KeyDown(KEYCODE key){}
 void MouseHandler::Wheel(short value){}
+
+void MouseHandler::Visible(bool b) 
+{ 
+    visible = b;
+    ShowCursor(b ? TRUE : FALSE); 
+}
+void MouseHandler::Locked(bool b) { locked = b; }
+bool MouseHandler::Visible() { return visible; }
+bool MouseHandler::Locked() { return locked; }
 
 KeyboardHandler::~KeyboardHandler()
 {
