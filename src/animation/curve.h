@@ -113,9 +113,9 @@ struct Keyframe
 class Curve
 {
 public:
-    Curve(): length(0.0) {}
+    Curve(): length(0.0f), prevTime(0.0f) {}
     Curve(const std::string& name)
-    : length(0.0), name(name) {}
+    : length(0.0), name(name), delta(0.0f) {}
     ~Curve() {  }
     
     Curve& operator[](const std::string& name)
@@ -145,36 +145,50 @@ public:
         std::sort(keyframes.begin(), keyframes.end());
         return operator[](frame);
     }
+
+    float ValueAt(float time)
+    {
+        if(keyframes.empty())
+            return 0.0f;
+        Keyframe* k0 = 0, *k1 = 0;
+        for(int i = keyframes.size() - 1; i >= 0; --i)
+        {
+            k0 = &keyframes[i];
+            if(i == keyframes.size() - 1)
+                k1 = k0;
+            else
+                k1 = &keyframes[i + 1];
+            if(k0->frame <= time)
+                break;
+        }
+        if(k0 == 0)
+            return 0.0f;
+        if(k0 == k1)
+            return k0->value;
+        float a = k0->value;
+        float b = k1->value;
+        float t = (time - k0->frame) / (k1->frame - k0->frame);
+        return a + t * (b - a);
+    }
     
     float Evaluate(float time)
     {   
         if(curves.empty())
         {
-            Keyframe* k0 = 0, *k1 = 0;
-            
-            for(int i = keyframes.size() - 1; i >= 0; --i)
+            float prevValue = ValueAt(prevTime);
+            value = ValueAt(time);
+
+            if(time < prevTime)
             {
-                k0 = &keyframes[i];
-                if(i == keyframes.size() - 1)
-                    k1 = k0;
-                else
-                    k1 = &keyframes[i + 1];
-                if(k0->frame <= time)
-                    break;
+                float d0 = keyframes.back().value - prevValue;
+                float d1 = value - keyframes.front().value;
+                delta = d0 + d1;
             }
-            
-            if(k0 != k1)
+            else
             {
-                float a = k0->value;
-                float b = k1->value;
-                float t = (time - k0->frame) / (k1->frame - k0->frame);
-                
-                value = a + t * (b - a);
+                delta = value - prevValue;
             }
-            else if(k0)
-            {
-                value = k0->value;
-            }
+            prevTime = time;
         }
         else
         {
@@ -226,7 +240,9 @@ public:
     std::string& Name() { return name; }
     
     float value;
+    float delta;
 private:
+    float prevTime;
     std::vector<Keyframe> keyframes;
     std::vector<float> curveValues;
     std::vector<Curve> curves;
