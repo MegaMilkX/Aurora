@@ -102,6 +102,30 @@ public:
             std::cout << lua_tostring(L, -1) << std::endl;
         }
     }
+
+    template<typename... Args>
+    void CallMember(const std::string& tableName, const std::string& funcName, const Args&... args)
+    {
+        lua_getglobal(L, tableName.c_str());
+        if(lua_isnil(L, -1) == 1)
+        {
+            lua_pop(L, 1);
+            return;
+        }
+        lua_getfield(L, -1, funcName.c_str());
+        if(lua_isfunction(L, -1) == 0)
+        {
+            lua_pop(L, 2);
+            return;
+        }
+        PushArgs(args...);
+        lua_pcall(L, sizeof...(Args), LUA_MULTRET, 0);
+        if(lua_gettop(L) && lua_isstring(L, -1))
+        {
+            std::cout << lua_tostring(L, -1) << std::endl;
+        }
+        lua_pop(L, 1);
+    }
     
     // Type shenanigans ==================
     
@@ -110,10 +134,18 @@ public:
     { return LuaType::Get<T>(); }
     
     template<typename T>
-    void SetGlobal(T* value, const std::string& name)
+    void SetGlobal(const std::string& name, T* value)
     {
         LuaType* type = LuaType::GetPtr<T*>();
-        type->LuaPush(L, value);
+        type->LuaPush(L, (void*)value);
+        lua_setglobal(L, name.c_str());
+    }
+
+    template<typename T>
+    void SetGlobal(const std::string& name, const T& value)
+    {
+        LuaType* type = LuaType::GetPtr<T*>();
+        type->LuaPush(L, (void*)value);
         lua_setglobal(L, name.c_str());
     }
     
