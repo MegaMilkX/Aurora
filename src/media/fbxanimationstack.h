@@ -352,6 +352,52 @@ public:
         
         return m;
     }
+
+    bool HasPositionCurve(SceneNode& model)
+    {
+        if(layers.empty())
+            return false;
+        AnimationLayer& layer = layers[0];
+        // TODO Take care of layer merging
+        
+        AnimationCurveNode* curveNode =
+            layer.GetCurveNode(model.Name(), "Lcl Translation");
+        if(!curveNode)
+            return false;
+        else
+            return true;
+    }
+
+    bool HasRotationCurve(SceneNode& model)
+    {
+        if(layers.empty())
+            return false;
+        AnimationLayer& layer = layers[0];
+        // TODO Take care of layer merging
+        
+        AnimationCurveNode* curveNode =
+            layer.GetCurveNode(model.Name(), "Lcl Rotation");
+        if(!curveNode)
+            return false;
+        else
+            return true;
+    }
+
+    bool HasScaleCurve(SceneNode& model)
+    {
+        if(layers.empty())
+            return false;
+        
+        AnimationLayer& layer = layers[0];
+        // TODO Take care of layer merging
+        
+        AnimationCurveNode* curveNode = 
+            layer.GetCurveNode(model.Name(), "Lcl Scaling");
+        if(!curveNode)
+            return false;
+        else
+            return true;
+    }
     
     Au::Math::Vec3f EvaluatePosition(SceneNode& model, int64_t time)
     {
