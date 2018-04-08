@@ -182,14 +182,16 @@ double Reader::GetFrameRate()
     return fps;
 }
 
-std::vector<AnimationStack> Reader::GetAnimationStacks()
+std::vector<AnimationStack>& Reader::GetAnimationStacks()
 {
-    std::vector<AnimationStack> animStacks;
-    int animStackCount = rootNode.Count("AnimationStack");
-    for(int i = 0; i < animStackCount; ++i)
+    if(animStacks.empty())
     {
-        AnimationStack animStack(rootNode, rootNode.Get("AnimationStack", i), settings);
-        animStacks.push_back(animStack);
+        int animStackCount = rootNode.Count("AnimationStack");
+        for(int i = 0; i < animStackCount; ++i)
+        {
+            AnimationStack animStack(rootNode, rootNode.Get("AnimationStack", i), settings);
+            animStacks.push_back(animStack);
+        }
     }
     return animStacks;
 }

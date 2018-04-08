@@ -38,7 +38,7 @@ public:
     double GetCustomFrameRate();
     double GetFrameRate();
     
-    std::vector<AnimationStack> GetAnimationStacks();
+    std::vector<AnimationStack>& GetAnimationStacks();
     
     void FlipAxis(Axis& axis);
     
@@ -110,6 +110,7 @@ private:
     std::vector<Model> models;
     std::vector<Mesh> meshes;
     std::vector<Bone> bones;
+    std::vector<AnimationStack> animStacks;
 };
 
 }
