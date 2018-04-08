@@ -535,6 +535,7 @@ inline Quat Inverse(const Quat& q)
     i.y = -q.y / dot;
     i.z = -q.z / dot;
     i.w = q.w / dot;
+    i = Normalize(i);
     return i;
 }
 
