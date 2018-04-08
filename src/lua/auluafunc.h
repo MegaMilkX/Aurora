@@ -272,29 +272,29 @@ public:
     
     template<typename Class, typename Ret>
     static void CallMR(int fnIdx, void* this_, LuaValue& ret, std::vector<LuaValue>& args)
-    { ret = MStorage<Class, Ret>::CallR(fnIdx, this_); }
+    { ret.operator=<bare_type<remove_ptr<Ret>::type>::type>(MStorage<Class, Ret>::CallR(fnIdx, this_)); }
     template<typename Class, typename Ret, typename Arg0>
     static void CallMR(int fnIdx, void* this_, LuaValue& ret, std::vector<LuaValue>& args)
-    { ret = MStorage<Class, Ret, Arg0>::CallR(fnIdx, this_, args[0].Get<Arg0>()); }
+    { ret.operator=<bare_type<remove_ptr<Ret>::type>::type>(MStorage<Class, Ret, Arg0>::CallR(fnIdx, this_, args[0].Get<Arg0>())); }
     template<typename Class, typename Ret, typename Arg0, 
         typename Arg1>
     static void CallMR(int fnIdx, void* this_, LuaValue& ret, std::vector<LuaValue>& args)
     { 
-        ret = MStorage<Class, Ret, Arg0, Arg1>::CallR(fnIdx, this_, 
+        ret.operator=<bare_type<remove_ptr<Ret>::type>::type>(MStorage<Class, Ret, Arg0, Arg1>::CallR(fnIdx, this_, 
             args[0].Get<Arg0>(),
             args[1].Get<Arg1>()
-        );
+        ));
     }
     template<typename Class, typename Ret, typename Arg0, 
         typename Arg1, 
         typename Arg2>
     static void CallMR(int fnIdx, void* this_, LuaValue& ret, std::vector<LuaValue>& args)
     { 
-        ret = MStorage<Class, Ret, Arg0, Arg1, Arg2>::CallR(fnIdx, this_, 
+        ret.operator=<bare_type<remove_ptr<Ret>::type>::type>(MStorage<Class, Ret, Arg0, Arg1, Arg2>::CallR(fnIdx, this_, 
             args[0].Get<Arg0>(), 
             args[1].Get<Arg1>(), 
             args[2].Get<Arg2>()
-        ); 
+        )); 
     }
     template<typename Class, typename Ret, typename Arg0, 
         typename Arg1, 
@@ -302,12 +302,12 @@ public:
         typename Arg3>
     static void CallMR(int fnIdx, void* this_, LuaValue& ret, std::vector<LuaValue>& args)
     { 
-        ret = MStorage<Class, Ret, Arg0, Arg1, Arg2, Arg3>::CallR(fnIdx, this_, 
+        ret.operator=<bare_type<remove_ptr<Ret>::type>::type>(MStorage<Class, Ret, Arg0, Arg1, Arg2, Arg3>::CallR(fnIdx, this_, 
             args[0].Get<Arg0>(), 
             args[1].Get<Arg1>(), 
             args[2].Get<Arg2>(), 
             args[3].Get<Arg3>()
-        ); 
+        )); 
     }
     template<typename Class, typename Ret, typename Arg0, 
         typename Arg1, 
@@ -316,13 +316,13 @@ public:
         typename Arg4>
     static void CallMR(int fnIdx, void* this_, LuaValue& ret, std::vector<LuaValue>& args)
     { 
-        ret = MStorage<Class, Ret, Arg0, Arg1, Arg2, Arg3, Arg4>::CallR(fnIdx, this_, 
+        ret.operator=<bare_type<remove_ptr<Ret>::type>::type>(MStorage<Class, Ret, Arg0, Arg1, Arg2, Arg3, Arg4>::CallR(fnIdx, this_, 
             args[0].Get<Arg0>(), 
             args[1].Get<Arg1>(), 
             args[2].Get<Arg2>(), 
             args[3].Get<Arg3>(), 
             args[4].Get<Arg4>()
-        ); 
+        )); 
     }
     template<typename Class, typename Ret, typename Arg0, 
         typename Arg1, 
@@ -332,14 +332,14 @@ public:
         typename Arg5>
     static void CallMR(int fnIdx, void* this_, LuaValue& ret, std::vector<LuaValue>& args)
     { 
-        ret = MStorage<Class, Ret, Arg0, Arg1, Arg2, Arg3, Arg4, Arg5>::CallR(fnIdx, this_, 
+        ret.operator=<bare_type<remove_ptr<Ret>::type>::type>(MStorage<Class, Ret, Arg0, Arg1, Arg2, Arg3, Arg4, Arg5>::CallR(fnIdx, this_, 
             args[0].Get<Arg0>(), 
             args[1].Get<Arg1>(), 
             args[2].Get<Arg2>(), 
             args[3].Get<Arg3>(), 
             args[4].Get<Arg4>(), 
             args[5].Get<Arg5>()
-        ); 
+        )); 
     }
 };
 template<typename Ret, typename... Args>

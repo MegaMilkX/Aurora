@@ -27,21 +27,9 @@ public:
         if(_delete) _delete(_data);
         _delete = 0;
     }
-    
-    template<typename T>
-    LuaValue(T& value)
-    : _data(new T(value)),
-    _delete(&_deleteFn<T>)
-    {}
-    
-    template<typename T>
-    LuaValue(T* value)
-    : _data(value),
-    _delete(0)
-    {}
 
     template<typename T>
-    LuaValue& operator=(T& value)
+    LuaValue& operator=(const T& value)
     {
         _data = new T(value);
         _delete = &_deleteFn<T>;
