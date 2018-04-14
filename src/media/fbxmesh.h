@@ -395,6 +395,11 @@ private:
             
             uvLayers.push_back(uv);
         }
+
+        if(uvLayers.empty())
+        {
+            uvLayers.push_back(std::vector<float>(vertices.size() / 3 * 2));
+        }
     }
 };
 
