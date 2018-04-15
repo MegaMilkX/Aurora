@@ -12,6 +12,8 @@
 
 #include "fbxsettings.h"
 
+#include "../timer.h"
+
 namespace Au{
 namespace Media{
 namespace FBX{

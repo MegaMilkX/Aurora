@@ -47,7 +47,7 @@ public:
         _getNormals(settings, rootNode, geom, bindTransform);
         _getUV(rootNode, geom);
         
-        OptimizeDuplicates();
+        //OptimizeDuplicates();
         
         skin = Skin(rootNode, geom);
     }
@@ -207,8 +207,14 @@ public:
     Axis right, up, front;
     
     std::string name;
+
+    struct polygon
+    {
+        std::vector<int32_t> indices;
+    };
     
     std::vector<int> indices;
+    std::vector<polygon> polys;
     std::vector<float> vertices;
     std::vector<int32_t> origVertIndices;
     std::vector<std::vector<float>> normalLayers;
@@ -218,33 +224,64 @@ public:
     Skin skin;
 private:
     void _getVerticesAndIndices(Settings& settings, Node& rootNode, Node& geom, const Math::Mat4f& transform)
-    {        
+    {
         std::vector<int32_t> fbxIndices = 
             geom.Get("PolygonVertexIndex")[0].GetArray<int32_t>();
         std::vector<float> fbxVertices =
             geom.Get("Vertices")[0].GetArray<float>();
-            
-        for(unsigned j = 0; j < fbxIndices.size(); ++j)
+
+        for(unsigned i = 0; i < fbxVertices.size() / 3; ++i)
         {
-            int32_t idx = fbxIndices[j] < 0 ? -fbxIndices[j] - 1 : fbxIndices[j];
-            Au::Math::Vec3f vert(
-                fbxVertices[idx * 3] * (float)settings.scaleFactor,
-                fbxVertices[idx * 3 + 1] * (float)settings.scaleFactor,
-                fbxVertices[idx * 3 + 2] * (float)settings.scaleFactor
+            Au::Math::Vec3f v(
+                fbxVertices[i * 3] * (float)settings.scaleFactor,
+                fbxVertices[i * 3 + 1] * (float)settings.scaleFactor,
+                fbxVertices[i * 3 + 2] * (float)settings.scaleFactor
             );
-            vert = transform * Au::Math::Vec4f(vert.x, vert.y, vert.z, 1.0f);
-            vertices.push_back(vert.x);
-            vertices.push_back(vert.y);
-            vertices.push_back(vert.z);
-            indices.push_back(j);
-            origVertIndices.push_back(idx);
+            v = transform * Au::Math::Vec4f(v.x, v.y, v.z, 1.0f);
+            vertices.push_back(v.x);
+            vertices.push_back(v.y);
+            vertices.push_back(v.z);
         }
+
+        int polySize = 0;
+        for(unsigned i = 0; i < fbxIndices.size(); ++i)
+        {
+            int32_t fidx = fbxIndices[i];
+            int32_t nfidx = fidx < 0 ? -fidx - 1 : fidx;
+            polySize++;
+            if(fidx < 0)
+            {
+                int32_t polyStart = i - polySize + 1;
+                int32_t polyEnd = i;
+
+                polygon poly;
+                for(int32_t p = polyStart; p < polyEnd; ++p)
+                    poly.indices.push_back(p);
+                poly.indices.push_back(nfidx);
+                polys.push_back(poly);
+                
+                for(int32_t p = polyStart; p <= polyEnd - 2; ++p)
+                {
+                    indices.push_back(fbxIndices[polyStart]);
+                    indices.push_back(fbxIndices[p + 1]);
+                    int32_t lastIdx = fbxIndices[p + 2] < 0 ? -fbxIndices[p + 2] - 1 : fbxIndices[p + 2];
+                    indices.push_back(lastIdx);
+                }
+
+                polySize = 0;
+            }
+        }
+        origVertIndices = indices;
     }
     
     void _getNormals(Settings& settings, Node& rootNode, Node& geom, const Math::Mat4f& transform)
     {
         std::vector<int32_t> fbxIndices = 
             geom.Get("PolygonVertexIndex")[0].GetArray<int32_t>();
+
+        //normalLayers.resize(1);
+        //normalLayers[0] = std::vector<float>(vertices.size());
+        //return;
         
         int normalLayerCount = geom.Count("LayerElementNormal");
         for(int j = 0; j < normalLayerCount; ++j)
@@ -252,49 +289,50 @@ private:
             Node& layerElemNormal = geom.Get("LayerElementNormal", j);
             std::vector<float> fbxNormals = 
                 layerElemNormal.Get("Normals")[0].GetArray<float>();
+            std::vector<int32_t> fbxNormalsIndex =
+                layerElemNormal.Get("NormalsIndex")[0].GetArray<int32_t>();
             std::string normalsMapping = 
                 layerElemNormal.Get("MappingInformationType")[0].GetString();
+            std::string refType =
+                layerElemNormal.Get("ReferenceInformationType")[0].GetString();
+
+            //std::cout << normalsMapping << ", " << refType << std::endl;
             
             std::vector<float> normals;
             
             if(normalsMapping == "ByVertex" || normalsMapping == "ByVertice")
             {
-                for(unsigned l = 0; l < fbxIndices.size(); ++l)
+                normals.resize(fbxNormals.size());
+                for(unsigned l = 0; l < fbxNormals.size() / 3; ++l)
                 {
-                    int32_t idx = fbxIndices[l] < 0 ? -fbxIndices[l] - 1 : fbxIndices[l];
                     Au::Math::Vec3f norm(
-                        fbxNormals[idx * 3],
-                        fbxNormals[idx * 3 + 1],
-                        fbxNormals[idx * 3 + 2]
+                        fbxNormals[l * 3],
+                        fbxNormals[l * 3 + 1],
+                        fbxNormals[l * 3 + 2]
                     );
                     norm = transform * Au::Math::Vec4f(norm.x, norm.y, norm.z, 0.0f);
-                    normals.push_back(norm.x);
-                    normals.push_back(norm.y);
-                    normals.push_back(norm.z);
+                    normals[l * 3] = norm.x;
+                    normals[l * 3 + 1] = norm.y;
+                    normals[l * 3 + 2] = norm.z;
                 }
             }
             else if(normalsMapping == "ByPolygon")
             {
                 normals = std::vector<float>(vertices.size());
-                
-                unsigned index = 0;
-                for(unsigned k = 0; k < fbxNormals.size() / 3; ++k)
+                for(unsigned k = 0; k < polys.size(); ++k)
                 {
-                    std::vector<unsigned> polyIndices;
-                    for(unsigned l = index; l < fbxIndices.size(); ++l)
-                        polyIndices.push_back(l);
-                    
-                    for(unsigned l = 0; l < polyIndices.size(); ++l)
+                    Au::Math::Vec3f norm(
+                        fbxNormals[k * 3],
+                        fbxNormals[k * 3 + 1],
+                        fbxNormals[k * 3 + 2]
+                    );
+                    norm = transform * Au::Math::Vec4f(norm.x, norm.y, norm.z, 0.0f);
+                    for(unsigned l = 0; l < polys[k].indices.size(); ++l)
                     {
-                        Au::Math::Vec3f norm(
-                            fbxNormals[k * 3],
-                            fbxNormals[k * 3 + 1],
-                            fbxNormals[k * 3 + 2]
-                        );
-                        norm = transform * Au::Math::Vec4f(norm.x, norm.y, norm.z, 0.0f);
-                        normals[polyIndices[l] * 3] = norm.x;
-                        normals[polyIndices[l] * 3 + 1] = norm.y;
-                        normals[polyIndices[l] * 3 + 2] = norm.z;
+                        int32_t idx = polys[k].indices[l];
+                        normals[idx * 3] = norm.x;
+                        normals[idx * 3 + 1] = norm.y;
+                        normals[idx * 3 + 2] = norm.z;
                     }
                 }
             }
@@ -302,22 +340,49 @@ private:
             {
                 normals = std::vector<float>(vertices.size());
                 
-                for(unsigned k = 0; k < fbxIndices.size(); ++k)
+                if(refType == "Direct")
                 {
-                    int32_t idx = fbxIndices[k] < 0 ? -fbxIndices[k] - 1 : fbxIndices[k];
-                    Au::Math::Vec3f norm(
-                        fbxNormals[k * 3],
-                        fbxNormals[k * 3 + 1],
-                        fbxNormals[k * 3 + 2]
-                    );
-                    norm = transform * Au::Math::Vec4f(norm.x, norm.y, norm.z, 0.0f);
-                    normals[k * 3] = norm.x;
-                    normals[k * 3 + 1] = norm.y;
-                    normals[k * 3 + 2] = norm.z;
+                    for(unsigned k = 0; k < fbxIndices.size(); ++k)
+                    {
+                        int32_t idx = fbxIndices[k];
+                        idx = idx < 0 ? -idx - 1 : idx;
+                        Au::Math::Vec3f norm(
+                            fbxNormals[k * 3],
+                            fbxNormals[k * 3 + 1],
+                            fbxNormals[k * 3 + 2]
+                        );
+                        norm = transform * Au::Math::Vec4f(norm.x, norm.y, norm.z, 0.0f);
+                        normals[idx * 3] = norm.x;
+                        normals[idx * 3 + 1] = norm.y;
+                        normals[idx * 3 + 2] = norm.z;
+                    }
                 }
+                else if(refType == "IndexToDirect" || refType == "Index")
+                {
+                    for(unsigned k = 0; k < fbxIndices.size(); ++k)
+                    {
+                        int32_t idx = fbxNormalsIndex[k];
+                        int32_t fidx = fbxIndices[k];
+                        fidx = fidx < 0 ? -fidx - 1 : fidx;
+                        Au::Math::Vec3f norm(
+                            fbxNormals[k * 3],
+                            fbxNormals[k * 3 + 1],
+                            fbxNormals[k * 3 + 2]
+                        );
+                        norm = transform * Au::Math::Vec4f(norm.x, norm.y, norm.z, 0.0f);
+                        normals[fidx * 3] = norm.x;
+                        normals[fidx * 3 + 1] = norm.y;
+                        normals[fidx * 3 + 2] = norm.z;
+                    }
+                } 
             }
             
             normalLayers.push_back(normals);
+        }
+
+        if(normalLayers.empty())
+        {
+            normalLayers.push_back(std::vector<float>(vertices.size()));
         }
     }
     
@@ -325,6 +390,10 @@ private:
     {
         std::vector<int32_t> fbxIndices = 
             geom.Get("PolygonVertexIndex")[0].GetArray<int32_t>();
+
+        //uvLayers.resize(1);
+        //uvLayers[0] = std::vector<float>(vertices.size() / 3 * 2);
+        //return;
             
         int layerCount = geom.Count("LayerElementUV");
         for(int i = 0; i < layerCount; ++i)
@@ -343,29 +412,26 @@ private:
             
             if(mapping == "ByVertex" || mapping == "ByVertice")
             {
-                for(unsigned j = 0; j < fbxIndices.size(); ++j)
+                for(unsigned l = 0; l < vertices.size() / 3; l += 3)
                 {
-                    int32_t idx = fbxIndices[j] < 0 ? -fbxIndices[j] - 1 : fbxIndices[j];
-                    
-                    uv.push_back(fbxUV[idx * 2]);
-                    uv.push_back(fbxUV[idx * 2 + 1]);
+                    uv.push_back(fbxUV[l / 3 * 2]);
+                    uv.push_back(fbxUV[l / 3 * 2 + 1]);
                 }
             }
             else if(mapping == "ByPolygon")
             {
                 uv.resize(vertices.size() / 3 * 2);
-                
-                unsigned index = 0;
-                for(unsigned k = 0; k < fbxUV.size() / 2; ++k)
+                for(unsigned k = 0; k < polys.size(); ++k)
                 {
-                    std::vector<unsigned> polyIndices;
-                    for(unsigned l = index; l < fbxUV.size(); ++l)
-                        polyIndices.push_back(l);
-                    
-                    for(unsigned l = 0; l < polyIndices.size(); ++l)
+                    Au::Math::Vec2f u(
+                        fbxUV[k * 2],
+                        fbxUV[k * 2 + 1]
+                    );
+                    for(unsigned l = 0; l < polys[k].indices.size(); ++l)
                     {
-                        uv[polyIndices[l] * 2] = fbxUV[k * 2];
-                        uv[polyIndices[l] * 2 + 1] = fbxUV[k * 2 + 1];
+                        int32_t idx = polys[k].indices[l];
+                        uv[idx * 2] = u.x;
+                        uv[idx * 2 + 1] = u.y;
                     }
                 }
             }
@@ -375,22 +441,34 @@ private:
                 
                 if(refType == "Direct")
                 {
+                    unsigned vertexCount = vertices.size() / 3;
                     for(unsigned k = 0; k < fbxIndices.size(); ++k)
                     {
-                        int32_t idx = fbxIndices[k] < 0 ? -fbxIndices[k] - 1 : fbxIndices[k];
-                        uv[k * 2] = fbxUV[k * 2];
-                        uv[k * 2 + 1] = fbxUV[k * 2 + 1];
+                        int32_t idx = fbxIndices[k];
+                        idx = idx < 0 ? -idx - 1 : idx;
+                        Au::Math::Vec2f u(
+                            fbxUV[k * 2],
+                            fbxUV[k * 2 + 1]
+                        );
+                        uv[idx * 2] = u.x;
+                        uv[idx * 2 + 1] = u.y;
                     }
                 }
-                else if(refType == "IndexToDirect")
+                else if(refType == "IndexToDirect" || refType == "Index")
                 {
                     for(unsigned k = 0; k < fbxIndices.size(); ++k)
                     {
-                        int32_t idx = fbxIndices[k] < 0 ? -fbxIndices[k] - 1 : fbxIndices[k];
-                        uv[k * 2] = fbxUV[fbxUVIndex[k] * 2];
-                        uv[k * 2 + 1] = fbxUV[fbxUVIndex[k] * 2 + 1];
+                        int32_t idx = fbxUVIndex[k];
+                        int32_t fidx = fbxIndices[k];
+                        fidx = fidx < 0 ? -fidx - 1 : fidx;
+                        Au::Math::Vec2f u(
+                            fbxUV[idx * 2],
+                            fbxUV[idx * 2 + 1]
+                        );
+                        uv[fidx * 2] = u.x;
+                        uv[fidx * 2 + 1] = u.y;
                     }
-                }
+                } 
             }
             
             uvLayers.push_back(uv);

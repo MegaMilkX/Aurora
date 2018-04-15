@@ -103,14 +103,14 @@ public:
             {
                 if(meshTgt->origVertIndices[j] == indices[i])
                 {
-                    newIndices.push_back(j);
+                    newIndices.push_back(meshTgt->origVertIndices[j]);
                     newWeights.push_back(weights[i]);
                 }
             }
         }
         
-        indices = newIndices;
-        weights = newWeights;
+        //indices = newIndices;
+        //weights = newWeights;
     }
     
     void Index(unsigned i) { index = i; }

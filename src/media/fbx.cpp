@@ -552,26 +552,45 @@ Axis Reader::FBXAxisToAxis(unsigned axis)
 
 bool Reader::ReadMemory(const char* data, unsigned size)
 {
-    if(!ReadFileFBX(data, size))
-        return false;
-    
+    {
+        //Au::Timer t;
+        //t.Start();
+        if(!ReadFileFBX(data, size))
+            return false;
+        //std::cout << "ReadFileFBX: " << t.End() / 1000000.0f << std::endl;
+    }
     settings.origAxes.right = GetRightAxis();
     settings.origAxes.up = GetUpAxis();
     settings.origAxes.front = GetFrontAxis();
     settings.convAxes = settings.origAxes;
     settings.Init(rootNode);
     
-    int meshCount = rootNode.Count("Geometry");
-    for(int i = 0; i < meshCount; ++i)
     {
-        Node& geometry = rootNode.Get("Geometry", i);
-        
-        Mesh mesh(settings, rootNode, geometry);
-        meshes.push_back(mesh);
+        //Au::Timer t;
+        //t.Start();
+        int meshCount = rootNode.Count("Geometry");
+        for(int i = 0; i < meshCount; ++i)
+        {
+            Node& geometry = rootNode.Get("Geometry", i);
+            
+            Mesh mesh(settings, rootNode, geometry);
+            meshes.push_back(mesh);
+        }
+        //std::cout << "Geometry: " << t.End() / 1000000.0f << std::endl;
     }
     
-    _loadModels();
-    _loadBones();
+    {
+        //Au::Timer t;
+        //t.Start();
+        _loadModels();
+        //std::cout << "_loadModels: " << t.End() / 1000000.0f << std::endl;
+    }
+    {
+        //Au::Timer t;
+        //t.Start();
+        _loadBones();
+        //std::cout << "_loadBones: " << t.End() / 1000000.0f << std::endl;
+    }
     
     return true;
 }
